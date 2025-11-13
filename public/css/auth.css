@@ -1,0 +1,137 @@
+/* ==========================
+   AUTH PAGE DARK THEME
+   ========================== */
+
+/* ==== Reset ==== */
+body, html {
+  background-color: #181818;
+  color: #f1f1f1;
+  font-family: "Inter", system-ui, sans-serif;
+}
+
+/* ==== Left side (form) ==== */
+.bg-left {
+  background-color: #181818;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center; /* căn giữa ngang */
+  min-height: 100vh;
+  padding: 1.5rem;
+}
+
+/* ==== Form container (Card) ==== */
+.auth-card {
+  background-color: #212121;          /* nền form xám nhẹ */
+  border-radius: 1rem;                /* bo góc mềm mại */
+  box-shadow: 0 4px 20px rgba(0,0,0,0.45);
+  padding: 2.5rem 2.2rem;             /* tạo khoảng cách trong */
+  width: 100%;
+  max-width: 380px;                   /* giữ form nhỏ gọn */
+  color: #f1f1f1;
+}
+
+.auth-card h3 {
+  color: #ffffff;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+/* ==== Inputs ==== */
+.auth-card .form-control-lg {
+  background-color: #2b2b2b;
+  color: #f5f5f5;
+  border: 1px solid #444;
+  border-radius: 0.5rem;
+  transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
+}
+
+.auth-card .form-control-lg:focus {
+  border-color: #8ad0b6;
+  background-color: #333;
+  box-shadow: 0 0 0 0.15rem rgba(138,208,182,0.25);
+}
+
+/* ==== Buttons ==== */
+.auth-card .btn-info {
+  background: #709085;
+  border-color: #709085;
+  color: #fff;
+  width: 100%;
+  font-weight: 500;
+  transition: 0.2s;
+}
+
+.auth-card .btn-info:hover {
+  background: #5f7b74;
+  border-color: #5f7b74;
+}
+
+/* ==== Links ==== */
+.auth-card a.link-info {
+  color: #6bc8b3;
+  text-decoration: none;
+}
+.auth-card a.link-info:hover {
+  color: #88e4ce;
+  text-decoration: underline;
+}
+
+.auth-card a.text-white {
+  color: #ffffff !important;
+}
+
+/* ==== Small text ==== */
+.auth-card .small,
+.auth-card .text-muted {
+  color: #aaa !important;
+}
+
+/* ==== Divider ==== */
+.auth-card hr {
+  border-color: #444;
+  opacity: 0.8;
+}
+
+/* ==== Social buttons ==== */
+.auth-card .btn-danger {
+  background-color: #e74c3c;
+  border: none;
+}
+.auth-card .btn-danger:hover {
+  background-color: #c0392b;
+}
+
+.auth-card .btn-primary {
+  background-color: #1877F2;
+  border: none;
+}
+.auth-card .btn-primary:hover {
+  background-color: #125ecb;
+}
+
+/* ==== Right slideshow ==== */
+.slideshow-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+.slide {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 1.5s ease-in-out;
+}
+.slide.active { opacity: 1; }
+
+/* ==== Responsive ==== */
+@media (max-width: 768px) {
+  .slideshow-container { display: none; }
+  .auth-card {
+    max-width: 90%;
+    padding: 2rem 1.5rem;
+  }
+}

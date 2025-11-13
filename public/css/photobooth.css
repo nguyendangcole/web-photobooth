@@ -1,0 +1,224 @@
+/* ===============================
+   PhotoBooth — Page + Panels
+   =============================== */
+
+/* --------- Biến màu mặc định cho panel --------- */
+:root{
+  --panel-bg: #F4F6F8;        /* màu nền mặc định */
+  --panel-text: #111;         /* màu chữ mặc định */
+  --panel-radius: 20px;
+  --panel-shadow: 0 12px 35px rgba(0,0,0,.06);
+}
+
+/* --------- Panel khung (dùng cho cả 2 khối) --------- */
+.pb-surface{
+  background: var(--panel-bg);
+  color: var(--panel-text);
+  border-radius: var(--panel-radius);
+  padding: 28px 20px;
+  box-shadow: var(--panel-shadow);
+}
+
+/* Bạn có thể đổi màu riêng từng khối bằng cách override biến */
+.capture-section{
+  --panel-bg: #c1ff72;     /* đổi tại đây */
+  --panel-text: #111;
+
+  /* ====== Bảng màu NÚT (chỉ áp dụng trong .capture-section) ====== */
+  --btn-primary:        #3b82f6;   /* Start */
+  --btn-primary-hover:  #2563eb;
+  --btn-primary-focus:  rgba(59,130,246,.25);
+
+  --btn-success:        #22c55e;   /* Export Frame */
+  --btn-success-hover:  #16a34a;
+  --btn-success-focus:  rgba(34,197,94,.25);
+
+  --btn-secondary:      #6b7280;   /* Timer dropdown */
+  --btn-secondary-hover:#4b5563;
+  --btn-secondary-focus:rgba(107,114,128,.25);
+
+  --btn-outline:        #111;      /* Filter (outline-dark) */
+  --btn-outline-focus:  rgba(17,17,17,.2);
+}
+.gallery-section{
+  --panel-bg: #8c52ff;     /* đổi tại đây */
+  --panel-text: #111;
+}
+
+/* Nếu muốn giao diện tối cho 1 khối, ví dụ:
+.gallery-section{
+  --panel-bg:#181818;
+  --panel-text:#f1f1f1;
+}
+*/
+
+/* ===============================
+   Buttons (SCOPED trong .capture-section)
+   =============================== */
+.capture-section .btn{
+  border-radius: .75rem;
+  font-weight: 600;
+}
+
+/* Primary (Start) */
+.capture-section .btn-primary{
+  background-color: var(--btn-primary) !important;
+  border-color:     var(--btn-primary) !important;
+  color:#fff !important;
+}
+.capture-section .btn-primary:hover,
+.capture-section .btn-primary:active{
+  background-color: var(--btn-primary-hover) !important;
+  border-color:     var(--btn-primary-hover) !important;
+}
+.capture-section .btn-primary:focus{
+  box-shadow: 0 0 0 .25rem var(--btn-primary-focus) !important;
+}
+
+/* Success (Export Frame) */
+.capture-section .btn-success{
+  background-color: var(--btn-success) !important;
+  border-color:     var(--btn-success) !important;
+  color:#fff !important;
+}
+.capture-section .btn-success:hover,
+.capture-section .btn-success:active{
+  background-color: var(--btn-success-hover) !important;
+  border-color:     var(--btn-success-hover) !important;
+}
+.capture-section .btn-success:focus{
+  box-shadow: 0 0 0 .25rem var(--btn-success-focus) !important;
+}
+
+/* Secondary (Timer dropdown) */
+.capture-section .btn-secondary{
+  background-color: var(--btn-secondary) !important;
+  border-color:     var(--btn-secondary) !important;
+  
+  color:#fff !important;
+}
+.capture-section .btn-secondary:hover,
+.capture-section .btn-secondary:active{
+  background-color: var(--btn-secondary-hover) !important;
+  border-color:     var(--btn-secondary-hover) !important;
+}
+.capture-section .btn-secondary:focus{
+  box-shadow: 0 0 0 .25rem var(--btn-secondary-focus) !important;
+}
+
+/* Outline (Filter) */
+.capture-section .btn-outline{
+  color:        var(--btn-outline) !important;
+  border-color: var(--btn-outline) !important;
+  background: #ffbd59 !important;
+}
+.capture-section .btn-outline-dark:hover,
+.capture-section .btn-outline-dark:active{
+  background:   var(--btn-outline) !important;
+  color:#fff !important;
+  border-color: var(--btn-outline) !important;
+}
+.capture-section .btn-outline-dark:focus{
+  box-shadow: 0 0 0 .25rem var(--btn-outline-focus) !important;
+}
+
+/* Cảm giác nhấn/disabled thống nhất */
+.capture-section .btn:active{ transform: translateY(1px); }
+.capture-section .btn:disabled{
+  opacity:.85 !important;
+  filter: grayscale(.1);
+  pointer-events:none;
+}
+
+/* ===============================
+   Camera Frame
+   =============================== */
+.camera-frame {
+  width: 500px;
+  height: 350px;
+  border: 3px solid #333;
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+  background: #000;
+  border-radius: 16px;
+  z-index: 0;
+}
+.camera-frame video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1); /* mirror */
+  z-index: 1;
+}
+.camera-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+/* Countdown */
+#countdown {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 4rem;
+  font-weight: 800;
+  color: #fff;
+  text-shadow: 0 3px 8px rgba(0,0,0,.7);
+  z-index: 3;
+}
+
+/* ===============================
+   Gallery
+   =============================== */
+#captured-images img {
+  width: 140px;
+  border-radius: 10px;
+  border: 2px solid #e5e7eb;
+  box-shadow: 0 4px 12px rgba(0,0,0,.08);
+  cursor: pointer;
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+#captured-images img:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(0,0,0,.12);
+}
+
+/* ===============================
+   Preset Filters (preview)
+   =============================== */
+.camera-frame.preset1 video { filter: brightness(104%) contrast(104%) saturate(122%); }
+.camera-frame.preset1::after { background:#00e1fa; opacity:.13; mix-blend-mode:multiply; }
+
+.camera-frame.preset2 video { filter: contrast(128%) saturate(120%); }
+.camera-frame.preset2::after { background:#fa00cc; opacity:.15; mix-blend-mode:multiply; }
+
+.camera-frame.preset3 video { filter: contrast(128%) grayscale(100%) saturate(120%); }
+.camera-frame.preset3::after { background:#008efa; opacity:.15; mix-blend-mode:multiply; }
+
+.camera-frame.preset4 video { filter: contrast(107%) saturate(165%) sepia(50%); }
+.camera-frame.preset4::after { background:#3a00fa; opacity:.5; mix-blend-mode:soft-light; }
+
+.camera-frame.preset5 video { filter: brightness(105%) contrast(106%) saturate(90%); }
+.camera-frame.preset5::after { background:#fa0000; opacity:.3; mix-blend-mode:overlay; }
+
+/* ===============================
+   Responsive
+   =============================== */
+@media (max-width: 768px){
+  .camera-frame{ width: 92vw; height: 60vw; } /* vừa màn hình hơn */
+  #countdown{ font-size: 3rem; }
+}
+
+/* Button menu trên navbar (nếu có) */
+.btn-menu {
+  background:#FFCC00;
+  color: black;
+}
+.btn-menu:hover {
+  background:#f6db70;
+  color: #111;
+}

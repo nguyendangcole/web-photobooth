@@ -1,0 +1,111 @@
+/* === GALLERY LAYOUT (kiểu Instagram) === */
+#gwMasonry {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1rem;
+    padding-bottom: 3rem;
+  }
+  
+  /* === CARD === */
+  #gwMasonry .card {
+    position: relative;
+    background: #fff;
+    border: none;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  
+  #gwMasonry .card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+  }
+  
+  /* === IMAGE === */
+  #gwMasonry .card-img-top {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 1 / 1;           /* giữ vuông cho kiểu Instagram */
+    object-fit: cover;             /* ảnh vừa khung */
+    display: block;
+    transition: transform 0.25s ease;
+    cursor: pointer;  
+  }
+  
+  #gwMasonry .card:hover .card-img-top {
+    transform: scale(1.03);
+  }
+  
+  /* === DELETE BUTTON === */
+  .delete-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(0,0,0,0.6);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 18px;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.25s ease, transform 0.2s ease;
+  }
+  
+  #gwMasonry .card:hover .delete-btn {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+  
+  .delete-btn:hover {
+    background: rgba(255,0,0,0.75);
+    transform: scale(1.15);
+  }
+  
+  /* === CARD BODY === */
+  #gwMasonry .card-body {
+    padding: 0.5rem 0.75rem 0.75rem;
+    font-size: 0.9rem;
+  }
+  
+  #gwMasonry .card-body strong {
+    display: block;
+    font-weight: 600;
+  }
+  
+  #gwMasonry .card-body .text-muted {
+    font-size: 0.8rem;
+  }
+  
+  /* === RESPONSIVE === */
+  @media (max-width: 768px) {
+    #gwMasonry {
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 0.75rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    #gwMasonry {
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    }
+  
+    .delete-btn {
+      width: 28px;
+      height: 28px;
+      font-size: 16px;
+    }
+  }
+  
+  /* Popup lightbox: căn giữa, vừa phải */
+.modal-content img {
+    transition: transform 0.3s ease, opacity 0.3s ease;
+  }
+  
+  .modal.show .modal-content img {
+    transform: scale(1.02);
+    opacity: 1;
+  }
+  

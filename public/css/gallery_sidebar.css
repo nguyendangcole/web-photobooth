@@ -1,0 +1,40 @@
+.friend-sidebar {
+    position: fixed;
+    top: 0;
+    left: -340px; /* ẩn mặc định */
+    width: 320px;
+    height: 100%;
+    background: #fff;
+    z-index: 1050;
+    transition: left 0.3s ease;
+    border-right: 1px solid #ddd;
+    overflow-y: auto;
+  }
+  
+  .friend-sidebar.open {
+    left: 0;
+  }
+  
+  .friend-sidebar h6 {
+    font-weight: 600;
+  }
+  
+  .friend-sidebar .sidebar-header {
+    background: #f7f7f7;
+  }
+  
+  .friend-sidebar .btn-close {
+    filter: invert(0.5);
+  }
+  
+  #toggleSidebarBtn {
+    font-size: 0.95rem;
+    border-radius: 8px;
+  }
+  
+  @media (max-width: 768px) {
+    .friend-sidebar {
+      width: 100%;
+    }
+  }
+  

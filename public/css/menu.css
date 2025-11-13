@@ -1,0 +1,15 @@
+
+/* Avatar tròn trên navbar */
+.nav-avatar{
+  width: 38px; height: 38px; border-radius: 50%;
+  display: inline-block; object-fit: cover;
+  border: 2px solid #c1ff72;
+  box-shadow: 0 0 0 2px rgba(0,0,0,.25) inset;
+}
+.nav-avatar-fallback,
+.nav-avatar-guest{
+  width: 38px; height: 38px; border-radius: 50%;
+  display: inline-flex; align-items:center; justify-content:center;
+  font-weight: 700; color:#141414; background: #c1ff72;
+}
+

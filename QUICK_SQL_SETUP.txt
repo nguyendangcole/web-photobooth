@@ -1,0 +1,88 @@
+============================================
+QUICK SQL SETUP - PREMIUM FRAMES
+============================================
+
+⚠️ QUAN TRỌNG: Có 2 CÁCH setup
+
+============================================
+CÁCH 1: Import lại toàn bộ database (KHUYẾN KHÍCH)
+============================================
+
+Các file users.sql và frames.sql ĐÃ BAO GỒM cột premium!
+
+1. Mở phpMyAdmin: http://localhost:8888/phpMyAdmin/
+2. Chọn database: myapp
+3. Click tab "Import"
+4. Import lần lượt các file:
+   - config/users.sql (có sẵn is_premium, premium_until)
+   - config/frames.sql (có sẵn is_premium)
+5. Click "Go"
+
+✅ DONE! Database đã sẵn sàng cho premium features!
+
+============================================
+CÁCH 2: Update database hiện tại (nếu không muốn mất data)
+============================================
+
+BƯỚC 1: Mở phpMyAdmin
+- URL: http://localhost:8888/phpMyAdmin/
+- Chọn database: myapp
+- Click tab "SQL"
+
+BƯỚC 2: Copy & paste câu lệnh này để kiểm tra:
+
+--------------------------------------------
+-- Kiểm tra xem đã có cột is_premium chưa
+--------------------------------------------
+
+SHOW COLUMNS FROM users WHERE Field = 'is_premium';
+SHOW COLUMNS FROM frames WHERE Field = 'is_premium';
+
+--------------------------------------------
+-- Nếu KHÔNG có kết quả, chạy các lệnh sau:
+--------------------------------------------
+
+ALTER TABLE users 
+ADD COLUMN is_premium TINYINT(1) NOT NULL DEFAULT 0 COMMENT 'Premium user status' AFTER email_verified;
+
+ALTER TABLE users 
+ADD COLUMN premium_until DATETIME NULL DEFAULT NULL COMMENT 'Premium expiry date' AFTER is_premium;
+
+ALTER TABLE users 
+ADD INDEX idx_is_premium (is_premium);
+
+ALTER TABLE frames 
+ADD COLUMN is_premium TINYINT(1) NOT NULL DEFAULT 0 COMMENT 'Premium frame flag' AFTER layout;
+
+ALTER TABLE frames 
+ADD INDEX idx_is_premium (is_premium);
+
+ALTER TABLE frames 
+ADD INDEX idx_layout_premium (layout, is_premium);
+
+--------------------------------------------
+-- DONE! Kiểm tra kết quả
+--------------------------------------------
+
+SHOW COLUMNS FROM users;
+SHOW COLUMNS FROM frames;
+SELECT id, name, is_premium, premium_until FROM users LIMIT 5;
+SELECT id, name, layout, is_premium FROM frames LIMIT 5;
+
+============================================
+SAU KHI CHẠY SQL XONG:
+============================================
+
+1. Truy cập trang admin:
+   http://localhost:8888/Web-photobooth/admin/frames_add.php
+
+2. Upload frame mới và tick checkbox "⭐ Premium Frame"
+
+3. Quản lý premium users:
+   http://localhost:8888/Web-photobooth/admin/users_premium.php
+
+4. Đọc hướng dẫn chi tiết trong file:
+   PREMIUM_SETUP_GUIDE.md
+
+============================================
+
