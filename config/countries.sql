@@ -53,9 +53,7 @@ CREATE TABLE IF NOT EXISTS countries (
   `wikiDataId` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Rapid API GeoDB Cities',
   PRIMARY KEY (`id`),
   KEY `country_continent` (`region_id`),
-  KEY `country_subregion` (`subregion_id`),
-  CONSTRAINT `country_continent_final` FOREIGN KEY (`region_id`) REFERENCES `regions` (`id`),
-  CONSTRAINT `country_subregion_final` FOREIGN KEY (`subregion_id`) REFERENCES `subregions` (`id`)
+  KEY `country_subregion` (`subregion_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=251 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

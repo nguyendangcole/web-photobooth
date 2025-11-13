@@ -127,6 +127,86 @@ body, html {
 }
 .slide.active { opacity: 1; }
 
+/* ==== Password Toggle Button ==== */
+.password-toggle-btn {
+  background: transparent;
+  border: none;
+  color: #aaa;
+  padding: 0.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
+  z-index: 10;
+  margin-right: 0.5rem;
+}
+
+.password-toggle-btn:hover {
+  color: #8ad0b6;
+}
+
+.password-toggle-btn:focus {
+  outline: none;
+  color: #8ad0b6;
+}
+
+.password-toggle-btn svg {
+  pointer-events: none;
+}
+
+/* Đảm bảo input password có padding bên phải để không che icon */
+input[type="password"],
+input[type="text"][name="password"],
+input[type="text"][name="password2"] {
+  padding-right: 3rem !important;
+}
+
+/* ==== Select Dropdowns ==== */
+.auth-card .form-select {
+  background-color: #2b2b2b;
+  color: #f5f5f5;
+  border: 1px solid #444;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s, opacity 0.2s;
+  position: relative;
+  z-index: 1;
+  pointer-events: auto !important;
+  -webkit-appearance: menulist;
+  -moz-appearance: menulist;
+  appearance: menulist;
+}
+
+.auth-card .form-select:not([disabled]):not(:disabled) {
+  cursor: pointer !important;
+  pointer-events: auto !important;
+  background-color: #2b2b2b !important;
+  color: #f5f5f5 !important;
+  opacity: 1 !important;
+}
+
+.auth-card .form-select[disabled],
+.auth-card .form-select:disabled {
+  background-color: #1f1f1f !important;
+  color: #666 !important;
+  cursor: not-allowed !important;
+  opacity: 0.6 !important;
+  pointer-events: none !important;
+}
+
+.auth-card .form-select:not([disabled]):not(:disabled):hover {
+  border-color: #555;
+  background-color: #333;
+}
+
+.auth-card .form-select:not([disabled]):not(:disabled):focus {
+  border-color: #8ad0b6;
+  background-color: #333;
+  box-shadow: 0 0 0 0.15rem rgba(138,208,182,0.25);
+  outline: none;
+}
+
 /* ==== Responsive ==== */
 @media (max-width: 768px) {
   .slideshow-container { display: none; }
