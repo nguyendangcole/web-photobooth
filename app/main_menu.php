@@ -12,59 +12,78 @@ $userName = $isLoggedIn ? ($user['name'] ?? 'User') : '';
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SPACE PHOTOBOOTH • Studio</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-  <link rel="stylesheet" href="<?= BASE_URL ?>css/style.css">
-  <link rel="stylesheet" href="<?= BASE_URL ?>css/photobooth.css">
-  <link rel="stylesheet" href="<?= BASE_URL ?>css/menu.css">
-  <link href="<?= BASE_URL ?>css/landing.css" rel="stylesheet">
   <style>
-  /* Dark header */
+  /* Compact header - nhỏ gọn nhưng đầy đủ */
   .main-nav {
-    padding: 12px 0 !important;
+    padding: 6px 0 !important;
     background: #0a0a0a !important;
-    border-bottom: 2px solid #c1ff72 !important;
+    border-bottom: 1px solid #c1ff72 !important;
   }
   .nav-wrapper {
-    padding: 0 20px !important;
+    padding: 0 15px !important;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1400px;
+    margin: 0 auto;
+    position: relative;
   }
   .logo {
-    font-size: 16px !important;
+    font-size: 13px !important;
+    display: flex;
+    align-items: center;
+    gap: 4px;
   }
   .logo-icon {
-    font-size: 20px !important;
+    font-size: 16px !important;
     color: #c1ff72 !important;
   }
   .logo-text {
     color: #ffffff !important;
+    font-weight: 600;
   }
   .logo-badge {
-    font-size: 9px !important;
-    padding: 1px 5px !important;
+    font-size: 8px !important;
+    padding: 1px 4px !important;
     background: #c1ff72 !important;
     color: #0a0a0a !important;
+    border-radius: 2px;
+    font-weight: 700;
+  }
+  .nav-menu {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
   }
   .nav-link {
-    font-size: 13px !important;
+    font-size: 11px !important;
     color: #ffffff !important;
+    text-decoration: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: all 0.2s;
   }
   .nav-link:hover {
     color: #c1ff72 !important;
+    background: rgba(193, 255, 114, 0.1);
   }
   .nav-user {
     display: flex;
     align-items: center;
-    margin-left: 20px;
+    margin-left: 15px;
   }
   .nav-avatar {
-    width: 36px;
-    height: 36px;
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid #c1ff72;
+    border: 1.5px solid #c1ff72;
   }
   .nav-avatar-fallback,
   .nav-avatar-guest {
-    width: 36px;
-    height: 36px;
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -72,33 +91,68 @@ $userName = $isLoggedIn ? ($user['name'] ?? 'User') : '';
     background: #c1ff72;
     color: #0a0a0a;
     font-weight: 700;
-    font-size: 16px;
-    border: 2px solid #c1ff72;
+    font-size: 12px;
+    border: 1.5px solid #c1ff72;
+    text-decoration: none;
   }
   .nav-avatar-guest {
     background: #999;
     color: #ffffff;
+    border-color: #999;
+  }
+  .menu-toggle {
+    display: none;
+    flex-direction: column;
+    gap: 3px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
   }
   .menu-toggle span {
+    width: 20px;
+    height: 2px;
     background: #ffffff !important;
+    transition: all 0.3s ease;
+  }
+  .menu-toggle.active span:nth-child(1) {
+    transform: rotate(45deg) translate(4px, 4px);
+  }
+  .menu-toggle.active span:nth-child(2) {
+    opacity: 0;
   }
   @media (max-width: 768px) {
-    .nav-user {
-      margin-left: 0;
-      margin-top: 10px;
+    .menu-toggle {
+      display: flex;
     }
     .nav-menu {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
       background: #0a0a0a !important;
-      border-top: 2px solid #c1ff72 !important;
+      border-top: 1px solid #c1ff72 !important;
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 12px 15px;
+      gap: 0.5rem;
+      display: none;
+    }
+    .nav-menu.active {
+      display: flex;
+    }
+    .nav-user {
+      margin-left: 0;
+      margin-top: 8px;
     }
   }
   
-  /* Compact footer - simplified for main menu page */
+  /* Compact footer - nhỏ gọn nhưng đầy đủ */
   .footer {
-    background: var(--black);
-    color: var(--white);
-    padding: 10px 20px;
-    border-top: 2px solid var(--black);
+    background: #0a0a0a;
+    color: #ffffff;
+    padding: 6px 15px;
+    border-top: 1px solid #0a0a0a;
     margin-top: auto;
   }
   .footer-content {
@@ -108,43 +162,46 @@ $userName = $isLoggedIn ? ($user['name'] ?? 'User') : '';
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
-    gap: 20px;
+    gap: 12px;
   }
   .footer-links {
     display: flex;
     align-items: center;
-    gap: 1.5rem;
+    gap: 1rem;
     flex-wrap: wrap;
   }
   .footer-links a {
-    color: var(--white);
+    color: #ffffff;
     text-decoration: none;
-    font-size: 11px;
+    font-size: 9px;
     font-weight: 500;
     opacity: 0.8;
     transition: opacity 0.2s, color 0.2s;
   }
   .footer-links a:hover {
     opacity: 1;
-    color: var(--c1ff72);
+    color: #c1ff72;
   }
   .footer-copyright {
     color: rgba(255, 255, 255, 0.6);
-    font-size: 10px;
+    font-size: 8px;
     margin: 0;
   }
   .footer-copyright strong {
-    color: var(--c1ff72);
+    color: #c1ff72;
   }
   @media (max-width: 768px) {
     .footer-content {
       flex-direction: column;
       text-align: center;
-      gap: 10px;
+      gap: 6px;
     }
     .footer-links {
       justify-content: center;
-      gap: 1rem;
+      gap: 0.75rem;
+    }
+    .footer {
+      padding: 8px 15px;
     }
   }
   </style>
