@@ -1,83 +1,172 @@
 <?php include __DIR__ . '/header.php'; ?>
 <link rel="stylesheet" href="<?= asset('css/photobooth.css') ?>?v=<?= time() ?>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 
-<style>
-/* Nút nhạc kiểu pill nằm chung hàng với Start/Export */
-.music-pill{
-  display:inline-flex; align-items:center; gap:8px;
-  border:0; border-radius:999px; padding:8px 12px;
-  background:#212529; color:#fff; cursor:pointer;
-  transition:transform .12s ease, background .15s ease;
-}
-.music-pill:hover{ background:#0f1113; }
-.music-pill:active{ transform:scale(.98); }
-.music-pill .music-icon{ width:18px; height:18px; display:inline-block; }
-.music-pill[data-on="1"]{ background:#198754; }        /* bật = xanh */
-.music-pill[data-on="1"]:hover{ background:#157347; }
-</style>
+<!-- GEN Z PHOTOBOOTH STUDIO -->
+<div class="photobooth-studio">
+  
+  <!-- Header -->
+  <div class="studio-header">
+    <h1 class="studio-title">
+      <span class="title-accent">◆</span> PHOTO<span class="gradient">BOOTH</span> <span class="title-accent">◆</span>
+    </h1>
+    <p class="studio-subtitle">Create • Capture • Express yourself</p>
+  </div>
 
-<div class="container py-5">
-
-  <!-- ========== KHU CHỤP ẢNH ========== -->
-  <section class="pb-surface capture-section text-center mb-5">
-
-    <div class="camera-frame position-relative mx-auto mb-3">
-      <video id="video" autoplay playsinline></video>
-      <div id="countdown"></div>
-    </div>
-
-    <!-- Bộ lọc -->
-    <div class="dropdown d-inline-block mb-3">
-      <button class="btn btn-outline-dark dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown">
-        Filter
-      </button>
-      <ul class="dropdown-menu" aria-labelledby="filterDropdown">
-        <li><a class="dropdown-item filter-option active" href="#" data-filter="none">None</a></li>
-        <li><a class="dropdown-item filter-option" href="#" data-filter="grayscale(100%)">Grayscale</a></li>
-        <li><a class="dropdown-item filter-option" href="#" data-filter="sepia(100%)">Sepia</a></li>
-        <li><a class="dropdown-item filter-option" href="#" data-filter="invert(100%)">Invert</a></li>
-        <li><a class="dropdown-item filter-option" href="#" data-filter="contrast(200%)">High Contrast</a></li>
-        <li><a class="dropdown-item filter-option" href="#" data-filter="brightness(150%)">Bright</a></li>
-        <li><hr class="dropdown-divider"></li>
-        <li><a class="dropdown-item filter-option" href="#" data-filter="preset1">Preset Xanh nhạt</a></li>
-        <li><a class="dropdown-item filter-option" href="#" data-filter="preset2">Preset Hồng</a></li>
-        <li><a class="dropdown-item filter-option" href="#" data-filter="preset3">Preset Xanh + Grayscale</a></li>
-        <li><a class="dropdown-item filter-option" href="#" data-filter="preset4">Preset Soft Light</a></li>
-        <li><a class="dropdown-item filter-option" href="#" data-filter="preset5">Preset Overlay Đỏ</a></li>
-      </ul>
-    </div>
-
-    <!-- Nút điều khiển (có Music) -->
-    <div class="d-flex justify-content-center align-items-center flex-wrap gap-3 mt-2">
-
-      <!-- Nút nhạc nằm chung hàng -->
-      <button id="musicToggle" class="music-pill" type="button" title="Music" data-on="0">
-        <span class="music-icon" aria-hidden="true"></span>
-        <span id="musicText">Music</span>
-      </button>
-
-      <div class="dropdown">
-        <button class="btn btn-secondary dropdown-toggle" type="button" id="timerDropdown" data-bs-toggle="dropdown">
-          3 seconds
+  <!-- Main Grid -->
+  <div class="studio-grid">
+    
+    <!-- Filters Section (LEFT) -->
+    <div class="filters-card">
+      <div class="card-label">◆ FILTERS</div>
+      
+      <div class="filter-selector-wrap">
+        <button class="filter-selector" id="filterSelector">
+          <span class="selected-filter-icon">◉</span>
+          <span class="selected-filter-name">NONE</span>
+          <span class="dropdown-arrow">▼</span>
         </button>
-        <ul class="dropdown-menu">
-          <li><a class="dropdown-item timer-option active" href="#" data-time="3">3 seconds</a></li>
-          <li><a class="dropdown-item timer-option" href="#" data-time="5">5 seconds</a></li>
-          <li><a class="dropdown-item timer-option" href="#" data-time="10">10 seconds</a></li>
-        </ul>
+        
+        <div class="filter-dropdown" id="filterDropdown">
+          <button class="filter-option active" data-filter="none" data-icon="◉" data-name="NONE">
+            <span class="filter-icon">◉</span>
+            <span>NONE</span>
+          </button>
+          
+          <!-- Basic Filters -->
+          <div class="filter-group-label">BASIC</div>
+          <button class="filter-option" data-filter="grayscale(100%)" data-icon="○" data-name="B&W">
+            <span class="filter-icon">○</span>
+            <span>B&W</span>
+          </button>
+          <button class="filter-option" data-filter="sepia(100%)" data-icon="◐" data-name="SEPIA">
+            <span class="filter-icon">◐</span>
+            <span>SEPIA</span>
+          </button>
+          <button class="filter-option" data-filter="invert(100%)" data-icon="◑" data-name="INVERT">
+            <span class="filter-icon">◑</span>
+            <span>INVERT</span>
+          </button>
+          <button class="filter-option" data-filter="contrast(200%)" data-icon="◆" data-name="CONTRAST">
+            <span class="filter-icon">◆</span>
+            <span>CONTRAST</span>
+          </button>
+          <button class="filter-option" data-filter="brightness(150%)" data-icon="◇" data-name="BRIGHT">
+            <span class="filter-icon">◇</span>
+            <span>BRIGHT</span>
+          </button>
+          <button class="filter-option" data-filter="saturate(200%)" data-icon="✦" data-name="SATURATE">
+            <span class="filter-icon">✦</span>
+            <span>SATURATE</span>
+          </button>
+          <button class="filter-option" data-filter="blur(3px)" data-icon="◎" data-name="BLUR">
+            <span class="filter-icon">◎</span>
+            <span>BLUR</span>
+          </button>
+          <button class="filter-option" data-filter="hue-rotate(90deg)" data-icon="◉" data-name="HUE SHIFT">
+            <span class="filter-icon">◉</span>
+            <span>HUE SHIFT</span>
+          </button>
+          
+          <!-- Preset Filters -->
+          <div class="filter-group-label">PRESETS</div>
+          <button class="filter-option" data-filter="preset1" data-icon="★" data-name="CYAN DREAM">
+            <span class="filter-icon">★</span>
+            <span>CYAN DREAM</span>
+          </button>
+          <button class="filter-option" data-filter="preset2" data-icon="✦" data-name="PINK MAGIC">
+            <span class="filter-icon">✦</span>
+            <span>PINK MAGIC</span>
+          </button>
+          <button class="filter-option" data-filter="preset3" data-icon="■" data-name="MONO BLUE">
+            <span class="filter-icon">■</span>
+            <span>MONO BLUE</span>
+          </button>
+          <button class="filter-option" data-filter="preset4" data-icon="▲" data-name="SOFT GLOW">
+            <span class="filter-icon">▲</span>
+            <span>SOFT GLOW</span>
+          </button>
+          <button class="filter-option" data-filter="preset5" data-icon="●" data-name="RED HEAT">
+            <span class="filter-icon">●</span>
+            <span>RED HEAT</span>
+          </button>
+          <button class="filter-option" data-filter="preset6" data-icon="◆" data-name="PURPLE HAZE">
+            <span class="filter-icon">◆</span>
+            <span>PURPLE HAZE</span>
+          </button>
+          <button class="filter-option" data-filter="preset7" data-icon="♦" data-name="GOLDEN HOUR">
+            <span class="filter-icon">♦</span>
+            <span>GOLDEN HOUR</span>
+          </button>
+          <button class="filter-option" data-filter="preset8" data-icon="✧" data-name="MINT FRESH">
+            <span class="filter-icon">✧</span>
+            <span>MINT FRESH</span>
+          </button>
+          <button class="filter-option" data-filter="preset9" data-icon="◈" data-name="NEON NIGHT">
+            <span class="filter-icon">◈</span>
+            <span>NEON NIGHT</span>
+          </button>
+          <button class="filter-option" data-filter="preset10" data-icon="⬢" data-name="VINTAGE">
+            <span class="filter-icon">⬢</span>
+            <span>VINTAGE</span>
+          </button>
+        </div>
       </div>
-
-      <button id="startBtn" class="btn btn-primary">Start</button>
-      <button id="exportBtn" class="btn btn-success">Export Frame</button>
     </div>
-  </section>
 
-  <!-- ========== KHU GALLERY ẢNH ========== -->
-  <section class="pb-surface gallery-section">
-    <h3 class="text-center fw-bold mb-4">Your Gallery</h3>
-    <div id="captured-images" class="row g-4 justify-content-center"></div>
-  </section>
+    <!-- Camera Section (CENTER) -->
+    <div class="camera-card">
+      <div class="card-label">LIVE FEED</div>
+      
+      <div class="camera-wrapper">
+        <video id="video" autoplay playsinline></video>
+        <div id="countdown"></div>
+      </div>
+    </div>
 
+    <!-- Controls Section (RIGHT) -->
+    <div class="controls-card">
+      <div class="card-label">CONTROLS</div>
+      
+      <div class="control-btns">
+        <button id="musicToggle" class="ctrl-btn music-btn" data-on="0">
+          <span class="btn-icon music-icon"></span>
+          <span id="musicText">MUSIC</span>
+        </button>
+        
+        <div class="timer-wrap">
+          <button class="ctrl-btn timer-btn" id="timerBtn">
+            <span class="btn-icon">⏱</span>
+            <span id="timerText">3s</span>
+          </button>
+          <div class="timer-dropdown">
+            <button class="timer-option active" data-time="3">3s</button>
+            <button class="timer-option" data-time="5">5s</button>
+            <button class="timer-option" data-time="10">10s</button>
+          </div>
+        </div>
+        
+        <button id="startBtn" class="ctrl-btn start-btn">
+          <span class="btn-icon">●</span>
+          <span>CAPTURE</span>
+        </button>
+        
+        <button id="exportBtn" class="ctrl-btn export-btn">
+          <span class="btn-icon">↓</span>
+          <span>EXPORT</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Gallery Section -->
+    <div class="gallery-card">
+      <div class="card-label">YOUR SHOTS</div>
+      <div id="captured-images" class="gallery-grid"></div>
+    </div>
+    
+  </div>
 </div>
 
 <!-- Modal xem ảnh -->
@@ -113,10 +202,89 @@ if (is_dir($audioDirFs)) {
 
 <!-- Scripts chính -->
 <script src="<?= asset('js/photobooth.js') ?>"></script>
-<script src="<?= asset('js/filter.js') ?>"></script>
 
 <script>
-// ===== Xem ảnh lớn trong modal =====
+// ===== Filter Dropdown Handler =====
+(function(){
+  const filterSelector = document.getElementById('filterSelector');
+  const filterDropdown = document.getElementById('filterDropdown');
+  const filterWrap = filterSelector?.closest('.filter-selector-wrap');
+  const selectedIcon = filterWrap?.querySelector('.selected-filter-icon');
+  const selectedName = filterWrap?.querySelector('.selected-filter-name');
+  const video = document.getElementById('video');
+  const cameraWrapper = document.querySelector('.camera-wrapper');
+
+  function applyFilter(filter){
+    if (!cameraWrapper || !video) return;
+    // Remove all preset classes
+    cameraWrapper.classList.remove('preset1','preset2','preset3','preset4','preset5','preset6','preset7','preset8','preset9','preset10');
+    if (!filter || filter === 'none') {
+      video.style.filter = '';
+      return;
+    }
+    if (filter.startsWith('preset')) {
+      cameraWrapper.classList.add(filter);
+      video.style.filter = 'none';
+    } else {
+      video.style.filter = filter;
+    }
+    // Update currentFilter for capture function
+    if (typeof currentFilter !== 'undefined') {
+      currentFilter = filter;
+    }
+  }
+
+  filterSelector?.addEventListener('click', (e) => {
+    e.preventDefault();
+    filterDropdown?.classList.toggle('active');
+    filterWrap?.classList.toggle('active');
+  });
+
+  document.querySelectorAll('.filter-option').forEach(opt => {
+    opt.addEventListener('click', function(){
+      document.querySelectorAll('.filter-option').forEach(o => o.classList.remove('active'));
+      this.classList.add('active');
+      if (selectedIcon) selectedIcon.textContent = this.dataset.icon || '◉';
+      if (selectedName) selectedName.textContent = this.dataset.name || 'FILTER';
+      applyFilter(this.dataset.filter || 'none');
+      filterDropdown?.classList.remove('active');
+      filterWrap?.classList.remove('active');
+    });
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!filterWrap) return;
+    if (!filterWrap.contains(e.target)) {
+      filterDropdown?.classList.remove('active');
+      filterWrap?.classList.remove('active');
+    }
+  });
+})();
+
+// ===== Timer Dropdown =====
+const timerBtn = document.getElementById('timerBtn');
+const timerDropdown = document.querySelector('.timer-dropdown');
+const timerText = document.getElementById('timerText');
+
+timerBtn?.addEventListener('click', () => {
+  timerDropdown.classList.toggle('active');
+});
+
+document.querySelectorAll('.timer-option').forEach(opt => {
+  opt.addEventListener('click', function() {
+    document.querySelectorAll('.timer-option').forEach(o => o.classList.remove('active'));
+    this.classList.add('active');
+    timerText.textContent = this.dataset.time + 's';
+    timerDropdown.classList.remove('active');
+    
+    // Trigger original dropdown logic
+    const event = new Event('click', { bubbles: true });
+    const originalOption = document.querySelector('.timer-option[data-time="' + this.dataset.time + '"]');
+    if (originalOption) originalOption.dispatchEvent(event);
+  });
+});
+
+// ===== View image in modal =====
 document.addEventListener('click', e => {
   const img = e.target.closest('#captured-images img');
   if (img) {
@@ -232,5 +400,8 @@ document.addEventListener('click', e => {
   loadCurrent();
 })();
 </script>
+
+<!-- Bootstrap Bundle from CDN -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
 <?php include __DIR__ . '/footer.php'; ?>

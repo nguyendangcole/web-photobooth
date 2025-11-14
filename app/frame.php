@@ -1,10 +1,218 @@
-<?php require __DIR__ . '/header.php'; ?>
-
 <?php
-  // Must have session_start() in header.php
-  $isLoggedIn = !empty($_SESSION['user']);
-  $uid = $isLoggedIn ? (int)$_SESSION['user']['id'] : 0;
+// app/frame.php
+require_once __DIR__ . '/config.php';
+$user = current_user();
+$isLoggedIn = !empty($user);
+$userName = $isLoggedIn ? ($user['name'] ?? 'User') : '';
+$uid = $isLoggedIn ? (int)$user['id'] : 0;
 ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SPACE PHOTOBOOTH • Frame Composer</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <link href="<?= BASE_URL ?>css/landing.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Mono:wght@300;400;500&family=Bebas+Neue&display=swap" rel="stylesheet">
+  <style>
+  /* Dark compact header - same as main_menu.php */
+  .main-nav {
+    padding: 12px 0 !important;
+    background: #0a0a0a !important;
+    border-bottom: 2px solid #c1ff72 !important;
+  }
+  .nav-wrapper {
+    padding: 0 20px !important;
+  }
+  .logo {
+    font-size: 16px !important;
+  }
+  .logo-icon {
+    font-size: 20px !important;
+    color: #c1ff72 !important;
+  }
+  .logo-text {
+    color: #ffffff !important;
+  }
+  .logo-badge {
+    font-size: 9px !important;
+    padding: 1px 5px !important;
+    background: #c1ff72 !important;
+    color: #0a0a0a !important;
+  }
+  .nav-link {
+    font-size: 13px !important;
+    color: #ffffff !important;
+  }
+  .nav-link:hover {
+    color: #c1ff72 !important;
+  }
+  .nav-user {
+    display: flex;
+    align-items: center;
+    margin-left: 20px;
+  }
+  .nav-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #c1ff72;
+  }
+  .nav-avatar-fallback,
+  .nav-avatar-guest {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #c1ff72;
+    color: #0a0a0a;
+    font-weight: 700;
+    font-size: 16px;
+    border: 2px solid #c1ff72;
+    text-decoration: none;
+  }
+  .nav-avatar-guest {
+    background: #999;
+    color: #ffffff;
+  }
+  .menu-toggle span {
+    background: #ffffff !important;
+  }
+  @media (max-width: 768px) {
+    .nav-user {
+      margin-left: 0;
+      margin-top: 10px;
+    }
+    .nav-menu {
+      background: #0a0a0a !important;
+      border-top: 2px solid #c1ff72 !important;
+    }
+  }
+  
+  /* Compact footer - same as main_menu.php */
+  .footer {
+    background: var(--black);
+    color: var(--white);
+    padding: 10px 20px;
+    border-top: 2px solid var(--black);
+    margin-top: auto;
+  }
+  .footer-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  .footer-links {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+  .footer-links a {
+    color: var(--white);
+    text-decoration: none;
+    font-size: 11px;
+    font-weight: 500;
+    opacity: 0.8;
+    transition: opacity 0.2s, color 0.2s;
+  }
+  .footer-links a:hover {
+    opacity: 1;
+    color: var(--c1ff72);
+  }
+  .footer-copyright {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 10px;
+    margin: 0;
+  }
+  .footer-copyright strong {
+    color: var(--c1ff72);
+  }
+  @media (max-width: 768px) {
+    .footer-content {
+      flex-direction: column;
+      text-align: center;
+      gap: 10px;
+    }
+    .footer-links {
+      justify-content: center;
+      gap: 1rem;
+    }
+  }
+  
+  /* Adjust page content for compact header */
+  body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  </style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="main-nav">
+  <div class="nav-wrapper">
+    <div class="logo">
+      <span class="logo-icon">✦</span>
+      <span class="logo-text">SPACE PHOTOBOOTH</span>
+      <span class="logo-badge">2025</span>
+    </div>
+    <div class="nav-menu">
+      <a href="?p=landing" class="nav-link">HOME</a>
+      <a href="?p=studio" class="nav-link">STUDIO</a>
+      <a href="?p=photobook" class="nav-link">GALLERY</a>
+      <a href="?p=photobooth" class="nav-link">PHOTOBOOTH</a>
+      <a href="?p=frame" class="nav-link">FRAME</a>
+    </div>
+    <div class="nav-user">
+      <?php if ($isLoggedIn): ?>
+        <div class="dropdown">
+          <button class="btn btn-link p-0" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            <?php
+            // Luôn đảm bảo có avatar URL (Gravatar nếu chưa có)
+            $avatarUrl = $user['avatar_url'] ?? null;
+            if (empty($avatarUrl) && !empty($user['email'])) {
+              $emailHash = md5(strtolower(trim($user['email'])));
+              $avatarUrl = "https://www.gravatar.com/avatar/{$emailHash}?d=identicon&s=200";
+            }
+            
+            if (!empty($avatarUrl)):
+            ?>
+              <img src="<?= htmlspecialchars($avatarUrl) ?>" alt="Avatar" class="nav-avatar" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+              <div class="nav-avatar-fallback" style="display:none;"><?= strtoupper(substr($userName, 0, 1)) ?></div>
+            <?php else: ?>
+              <div class="nav-avatar-fallback"><?= strtoupper(substr($userName, 0, 1)) ?></div>
+            <?php endif; ?>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+            <li><a class="dropdown-item" href="?p=studio">Studio</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="?p=change-avatar">Change Avatar</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="?p=logout">Logout</a></li>
+          </ul>
+        </div>
+      <?php else: ?>
+        <a href="?p=login" class="nav-avatar-guest">?</a>
+      <?php endif; ?>
+    </div>
+    <button class="menu-toggle" id="menuToggle">
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+</nav>
 <script>
 // ==== Auth flags & localStorage namespace (per-user) ====
 const IS_LOGGED_IN = <?= $isLoggedIn ? 'true' : 'false' ?>;
@@ -45,6 +253,7 @@ if (!IS_LOGGED_IN) {
   </div>
 </div>
 
+<!-- Main Content -->
 <div class="container mt-5">
   <div class="row justify-content-center align-items-start">
 
@@ -52,9 +261,14 @@ if (!IS_LOGGED_IN) {
     <div id="leftControls" class="col-12 col-md-3 mb-3 mb-md-0">
       <!-- Container bọc nút -->
       <div class="controls-box border rounded p-3 shadow-sm d-grid gap-2 floaty-ctrl controls-reveal">
+        <div class="controls-header">
+          <h3 class="controls-title">✦ CONTROLS</h3>
+          <p class="controls-subtitle">Craft your frame</p>
+        </div>
 
         <!-- NHÓM: FRAME -->
         <div class="controls-top d-grid gap-2">
+          <div class="section-label">FRAME OPTIONS</div>
           <button class="btn btn-success btn-sm w-100"
                   style="--bg:#E9B3FB; --hover:#4d0e62; --bd:black"
                   data-bs-toggle="offcanvas"
@@ -70,12 +284,16 @@ if (!IS_LOGGED_IN) {
 
           <div class="btn-group w-100">
             <!-- Gọi setFrameLayout để sync với sidebar -->
-            <button class="btn btn-primary btn-sm w-50"
+            <button class="btn btn-primary btn-sm w-50 layout-btn-square"
                     style="--bg:#ffde59; --hover:#f4c60c; --bd:black"
-                    onclick="setFrameLayout('square')">2x2</button>
-            <button class="btn btn-secondary btn-sm w-50"
+                    onclick="setFrameLayout('square')">
+              2×2 Grid
+            </button>
+            <button class="btn btn-secondary btn-sm w-50 layout-btn-vertical"
                     style="--bg:#FF2DF1; --hover:#A5158C; --bd:black"
-                    onclick="setFrameLayout('vertical')">1x4</button>
+                    onclick="setFrameLayout('vertical')">
+              1×4 Strip
+            </button>
           </div>
         </div>
 
@@ -83,6 +301,7 @@ if (!IS_LOGGED_IN) {
 
         <!-- NHÓM: PHOTOS -->
         <div class="controls-bottom d-grid gap-2">
+          <div class="section-label">PHOTO ACTIONS</div>
           <button id="uploadBtn" class="btn btn-primary btn-sm w-100"
                   style="--bg:#6F00FF; --hover:#260452; --bd:black">
             Upload pics
@@ -103,8 +322,13 @@ if (!IS_LOGGED_IN) {
         <!-- Photobook -->
         <hr class="my-2">
         <div class="text-center mt-1 d-grid gap-2">
-          <button id="pbAddBtn" class="btn btn-warning">Add to Photobook</button>
-          <a href="?p=photobook" class="btn btn-outline-dark">Open Photobook</a>
+          <div class="section-label">PHOTOBOOK</div>
+          <button id="pbAddBtn" class="btn btn-warning">
+            Add to Photobook
+          </button>
+          <a href="?p=photobook" class="btn btn-outline-dark">
+            Open Photobook
+          </a>
         </div>
 
         <!-- tăng version nếu vừa sửa file JS để phá cache -->
@@ -115,12 +339,19 @@ if (!IS_LOGGED_IN) {
 
     <!-- Preview -->
     <div class="col-12 col-md-6 text-center">
-      <div id="frame-preview"
-           class="border p-2 bg-white shadow position-relative mx-auto floaty preview-reveal"
-           style="max-width:100%;">
-        <!-- ảnh của 4 ô sẽ được render bằng JS -->
-        <img id="overlayImg" alt=""
-             style="position:absolute; inset:0; width:100%; height:100%; pointer-events:none; display:none;">
+      <div class="canvas-wrapper">
+        <div class="canvas-header">
+          <h3 class="canvas-title">YOUR CANVAS</h3>
+          <span class="canvas-badge">Live Preview</span>
+        </div>
+        <div id="frame-preview"
+             class="border p-2 bg-white shadow position-relative mx-auto floaty preview-reveal"
+             style="max-width:100%;">
+          <!-- ảnh của 4 ô sẽ được render bằng JS -->
+          <img id="overlayImg" alt=""
+               style="position:absolute; inset:0; width:100%; height:100%; pointer-events:none; display:none;">
+        </div>
+        <p class="canvas-hint">✨ Your artistic vision comes to life here</p>
       </div>
     </div>
 
@@ -528,25 +759,109 @@ if (photos.length && photos.length !== MAX_PHOTOS) {
 </script>
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Mono:wght@300;400;500&display=swap');
+
 :root{
   --page-bg-url: url('images/67.png'); /* ← đổi ảnh nền toàn trang ở đây nếu muốn */
+  --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --accent-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  --lime-color: #c1ff72;
+}
+
+/* Controls Header */
+.controls-header {
+  text-align: center;
+  padding-bottom: 1rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 3px solid #000;
+}
+
+.controls-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+  color: #000;
+}
+
+.controls-subtitle {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.85rem;
+  color: #666;
+  margin: 0;
+}
+
+.section-label {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: #666;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+
+/* Canvas Wrapper */
+.canvas-wrapper {
+  position: relative;
+}
+
+.canvas-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.canvas-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin: 0;
+  color: #000;
+}
+
+.canvas-badge {
+  background: var(--lime-color);
+  color: #000;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border: 2px solid #000;
+}
+
+.canvas-hint {
+  font-family: 'DM Mono', monospace;
+  color: #666;
+  font-size: 0.9rem;
+  margin-top: 1rem;
+  font-style: italic;
 }
 
 /* Làm nút to hơn */
 .controls-box .btn {
-  font-size: 1.25rem !important;
-  padding: 17px 22px !important;
-  border-radius: 18px !important;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.1rem !important;
+  padding: 15px 20px !important;
+  border-radius: 16px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
 }
 
 /* ==== Container nút ==== */
 .controls-box{
   position: relative;
-  border: 0 !important;
-  box-shadow: none !important;
-  background: #c1ff72;
-  border-radius: 18px;
-  overflow: hidden;
+  border: 3px solid #000 !important;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.12) !important;
+  background: white;
+  border-radius: 24px;
+  overflow: visible;
 }
 
 /* Mapping màu nút trong #leftControls */
@@ -570,37 +885,55 @@ if (photos.length && photos.length !== MAX_PHOTOS) {
 #leftControls .btn:active{
   filter: drop-shadow(0 12px 26px #00000033)
           drop-shadow(0 0 18px #c1ff7240);
+  transform: scale(0.98);
+}
+
+/* Layout button styles */
+.layout-btn-square,
+.layout-btn-vertical {
+  font-size: 0.9rem !important;
+  padding: 12px 10px !important;
 }
 
 /* Floaty preview */
 @keyframes floaty-preview {
-  0%   { transform: translateY(0) }
-  50%  { transform: translateY(-6px) }
-  100% { transform: translateY(0) }
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  25% { transform: translateY(-8px) rotate(1deg); }
+  75% { transform: translateY(-4px) rotate(-1deg); }
 }
 .floaty{
-  animation: floaty-preview 4.5s ease-in-out infinite;
-  filter: drop-shadow(0 8px 18px rgba(0,0,0,.12));
+  animation: floaty-preview 5s ease-in-out infinite;
+  filter: drop-shadow(0 15px 40px rgba(0,0,0,.15));
   will-change: transform;
   transition: transform .3s cubic-bezier(.2,.8,.2,1), filter .3s ease;
+  border: 4px solid #000 !important;
+  border-radius: 20px !important;
 }
 .floaty:hover{
   animation-play-state: paused;
-  transform: translateY(-8px) scale(1.01);
+  transform: translateY(-12px) scale(1.02) rotate(0deg);
   filter:
-    drop-shadow(0 18px 36px rgba(0,0,0,.20))
-    drop-shadow(0 0 22px rgba(193,255,114,.45));
+    drop-shadow(0 25px 50px rgba(0,0,0,.25))
+    drop-shadow(0 0 30px rgba(102,126,234,.3));
 }
 .floaty:active{
-  transform: translateY(-4px) scale(1.005);
+  transform: translateY(-6px) scale(1.01);
   filter:
-    drop-shadow(0 14px 28px rgba(0,0,0,.18))
-    drop-shadow(0 0 16px rgba(193,255,114,.35));
+    drop-shadow(0 18px 35px rgba(0,0,0,.2))
+    drop-shadow(0 0 20px rgba(102,126,234,.25));
 }
 
 /* Hiệu ứng xuất hiện */
-.preview-reveal{ opacity:0; transform: translateY(14px); transition: opacity .5s ease, transform .5s ease; }
-.preview-reveal.show{ opacity:1; transform:none; }
+.preview-reveal{ 
+  opacity:0; 
+  transform: translateY(30px) scale(0.9); 
+  transition: opacity .7s cubic-bezier(0.34, 1.56, 0.64, 1), 
+              transform .7s cubic-bezier(0.34, 1.56, 0.64, 1); 
+}
+.preview-reveal.show{ 
+  opacity:1; 
+  transform: translateY(0) scale(1); 
+}
 
 /* Reduce motion */
 @media (prefers-reduced-motion: reduce){
@@ -629,8 +962,22 @@ if (photos.length && photos.length !== MAX_PHOTOS) {
 }
 
 /* Hiệu ứng xuất hiện nhẹ */
-.controls-reveal{ opacity:0; transform: translateY(12px); transition: opacity .5s ease, transform .5s ease; }
-.controls-reveal.show{ opacity:1; transform:none; transition:none; }
+.controls-reveal{ 
+  opacity:0; 
+  transform: translateY(20px); 
+  transition: opacity .6s ease .2s, transform .6s ease .2s; 
+}
+.controls-reveal.show{ 
+  opacity:1; 
+  transform:none; 
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .canvas-title {
+    font-size: 1.5rem;
+  }
+}
 
 @media (prefers-reduced-motion: reduce){
   .floaty-ctrl{ animation:none; transition:none; }
@@ -638,4 +985,35 @@ if (photos.length && photos.length !== MAX_PHOTOS) {
 }
 </style>
 
-<?php require __DIR__ . '/footer.php'; ?>
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer-content">
+    <div class="footer-links">
+      <a href="?p=studio">Studio</a>
+      <a href="?p=info">Info</a>
+      <a href="?p=service">Service</a>
+      <a href="?p=qa">Q&A</a>
+      <a href="?p=contact">Contact</a>
+    </div>
+    <p class="footer-copyright">© <?= date('Y') ?> <strong>Space Photobooth</strong> | Show your style</p>
+  </div>
+</footer>
+
+<!-- Bootstrap Bundle from CDN -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+<!-- Mobile Menu Toggle -->
+<script>
+const menuToggle = document.getElementById('menuToggle');
+const navMenu = document.querySelector('.nav-menu');
+
+if (menuToggle) {
+  menuToggle.addEventListener('click', () => {
+    menuToggle.classList.toggle('active');
+    navMenu.classList.toggle('active');
+  });
+}
+</script>
+
+</body>
+</html>

@@ -131,13 +131,55 @@ function redirect(string $path): void {
   header("Location: ".$path);
   exit;
 }
-function current_user(): ?array { return $_SESSION['user'] ?? null; }
+function current_user(): ?array {
+  $user = $_SESSION['user'] ?? null;
+  if (!$user) return null;
+  
+  // Load lại từ database để đảm bảo có avatar_url mới nhất (nếu có từ OAuth)
+  if (!empty($user['id'])) {
+    try {
+      $stmt = db()->prepare("SELECT avatar_url, provider FROM users WHERE id = ? LIMIT 1");
+      $stmt->execute([$user['id']]);
+      $dbUser = $stmt->fetch();
+      if ($dbUser) {
+        // Nếu database có avatar_url, dùng nó (ưu tiên avatar từ OAuth như Gmail)
+        if (!empty($dbUser['avatar_url'])) {
+          $user['avatar_url'] = $dbUser['avatar_url'];
+          $_SESSION['user']['avatar_url'] = $dbUser['avatar_url']; // Cập nhật session
+        } elseif (empty($user['avatar_url']) && !empty($user['email'])) {
+          // Nếu không có avatar_url trong database, tạo Gravatar từ email
+          $emailHash = md5(strtolower(trim($user['email'])));
+          $user['avatar_url'] = "https://www.gravatar.com/avatar/{$emailHash}?d=identicon&s=200";
+        }
+      }
+    } catch (Exception $e) {
+      // Silent fail, dùng session data
+    }
+  }
+  
+  // Fallback: nếu vẫn không có avatar_url, tạo Gravatar từ email
+  if (empty($user['avatar_url']) && !empty($user['email'])) {
+    $emailHash = md5(strtolower(trim($user['email'])));
+    $user['avatar_url'] = "https://www.gravatar.com/avatar/{$emailHash}?d=identicon&s=200";
+  }
+  
+  return $user;
+}
 function login_user(array $user): void {
+  // Giữ nguyên avatar_url từ database (nếu có từ OAuth như Google/Facebook)
+  // Chỉ tạo Gravatar nếu không có avatar_url và có email
+  $avatarUrl = $user['avatar_url'] ?? null;
+  if (!$avatarUrl && !empty($user['email'])) {
+    // Tạo Gravatar URL từ email (fallback cho local accounts hoặc OAuth không có avatar)
+    $emailHash = md5(strtolower(trim($user['email'])));
+    $avatarUrl = "https://www.gravatar.com/avatar/{$emailHash}?d=identicon&s=200";
+  }
+  
   $_SESSION['user'] = [
     'id'         => $user['id'],
     'name'       => $user['name'],
     'email'      => $user['email'],
-    'avatar_url' => $user['avatar_url'] ?? null,
+    'avatar_url' => $avatarUrl, // Giữ nguyên avatar từ OAuth nếu có
     'provider'   => $user['provider'] ?? 'local',
   ];
 }

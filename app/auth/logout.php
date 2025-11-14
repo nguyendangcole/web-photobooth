@@ -1,4 +1,4 @@
 <?php
 require_once __DIR__ . '/../config.php';
 logout_user();
-redirect('?p=home');
+redirect('?p=studio');

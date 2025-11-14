@@ -303,7 +303,7 @@ $currentUser = $_SESSION['user'] ?? null;
       <div class="nav-section-title">Khác</div>
       <ul class="list-unstyled">
         <li class="nav-item">
-          <a href="../public/?p=home" class="nav-link">
+          <a href="../public/?p=studio" class="nav-link">
             <i class="bi bi-box-arrow-left"></i>
             <span>Về trang chính</span>
           </a>
@@ -331,7 +331,7 @@ $currentUser = $_SESSION['user'] ?? null;
           <i class="bi bi-three-dots-vertical"></i>
         </button>
         <ul class="dropdown-menu dropdown-menu-end">
-          <li><a class="dropdown-item" href="../public/?p=home"><i class="bi bi-house me-2"></i> Trang chủ</a></li>
+          <li><a class="dropdown-item" href="../public/?p=studio"><i class="bi bi-house me-2"></i> Studio</a></li>
           <li><hr class="dropdown-divider"></li>
           <li><a class="dropdown-item text-danger" href="../public/?p=logout"><i class="bi bi-box-arrow-right me-2"></i> Logout</a></li>
         </ul>

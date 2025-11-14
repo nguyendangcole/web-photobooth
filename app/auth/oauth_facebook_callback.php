@@ -45,7 +45,7 @@ if (!$u){
   $stmt->execute([$pid]); $u=$stmt->fetch();
 }
 login_user($u);
-redirect('?p=home');
+redirect('?p=studio');
 
 function http_get_json($url, $params){
   $ch = curl_init($url.'?'.http_build_query($params));

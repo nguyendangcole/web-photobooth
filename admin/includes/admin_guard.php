@@ -40,7 +40,7 @@ if (!$user || empty($user['is_admin'])) {
             <h1 class="display-1 text-danger">403</h1>
             <h2 class="mb-3">Access Denied</h2>
             <p class="text-muted mb-4">Bạn không có quyền truy cập trang này. Chỉ admin mới có thể vào Admin Panel.</p>
-            <a href="../public/?p=home" class="btn btn-primary">← Về trang chủ</a>
+            <a href="../public/?p=studio" class="btn btn-primary">← Về Studio</a>
           </div>
         </div>
       </div>

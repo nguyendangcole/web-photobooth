@@ -57,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (session_status() !== PHP_SESSION_ACTIVE) session_start();
     session_regenerate_id(true);
     login_user($user);
-    redirect('?p=home');
+    redirect('?p=studio');
   }
 }
 ?>
@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Đăng ký | PhotoBooth</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="<?= asset('css/auth.css') ?>?v=<?= time() ?>">
+<link rel="stylesheet" href="<?= asset('css/auth.css') ?>?v=<?= time() ?>&t=<?= rand(1000,9999) ?>">
 </head>
 <body>
 
@@ -77,56 +77,56 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="row g-0">
       <!-- Left -->
       <div class="col-12 col-md-6 auth-left bg-left">
-        <div class="auth-left-inner px-4 px-lg-5">
-          <form method="post" style="width:23rem" autocomplete="off" novalidate>
+        <div class="auth-left-inner px-3 px-lg-4">
+          <form method="post" style="width:20rem" autocomplete="off" novalidate>
             <input type="hidden" name="_csrf" value="<?= csrf_token() ?>">
-            <h3 class="fw-normal mb-3 pb-1">Create new account</h3>
+            <h3 class="fw-normal mb-2 pb-1" style="font-size:1.5rem">Create new account</h3>
 
             <?php if ($err): ?>
               <div class="alert alert-danger"><?= htmlspecialchars($err, ENT_QUOTES) ?></div>
             <?php endif; ?>
 
-            <div class="mb-4">
-              <label class="form-label">Username</label>
-              <input name="name" type="text" class="form-control form-control-lg"
+            <div class="mb-3">
+              <label class="form-label" style="font-size:0.9rem">Username</label>
+              <input name="name" type="text" class="form-control" style="font-size:0.9rem;padding:0.5rem"
                      value="<?= htmlspecialchars($name ?? '', ENT_QUOTES) ?>" required minlength="2">
             </div>
 
-            <div class="mb-4">
-              <label class="form-label">Email</label>
-              <input name="email" type="email" class="form-control form-control-lg"
+            <div class="mb-3">
+              <label class="form-label" style="font-size:0.9rem">Email</label>
+              <input name="email" type="email" class="form-control" style="font-size:0.9rem;padding:0.5rem"
                      value="<?= htmlspecialchars($email ?? '', ENT_QUOTES) ?>" required>
             </div>
 
-            <div class="row mb-4">
-              <div class="col-12 mb-3">
-                <label class="form-label">Country</label>
-                <select name="country_id" id="country" class="form-select"><option value="">-- Select Country --</option></select>
+            <div class="row mb-3 g-2">
+              <div class="col-4">
+                <label class="form-label" style="font-size:0.9rem;margin-bottom:0.4rem;display:block">Country</label>
+                <select name="country_id" id="country" class="form-select" style="font-size:0.85rem;padding:0.5rem;height:38px"><option value=""></option></select>
               </div>
-              <div class="col-12 mb-3">
-                <label class="form-label">State/Province</label>
-                <select name="state_id" id="state" class="form-select"><option value="">-- Select State --</option></select>
+              <div class="col-4">
+                <label class="form-label" style="font-size:0.9rem;margin-bottom:0.4rem;display:block">State/Province</label>
+                <select name="state_id" id="state" class="form-select" style="font-size:0.85rem;padding:0.5rem;height:38px"><option value=""></option></select>
               </div>
-              <div class="col-12 mb-3">
-                <label class="form-label">City</label>
-                <select name="city_name" id="city" class="form-select"><option value="">-- Select City --</option></select>
+              <div class="col-4">
+                <label class="form-label" style="font-size:0.9rem;margin-bottom:0.4rem;display:block">City</label>
+                <select name="city_name" id="city" class="form-select" style="font-size:0.85rem;padding:0.5rem;height:38px"><option value=""></option></select>
               </div>
             </div>
 
-            <div class="mb-2">
-              <label class="form-label">Password</label>
-              <input id="password" name="password" type="password" class="form-control form-control-lg" required minlength="8" autocomplete="new-password">
+            <div class="mb-2" style="position:relative">
+              <label class="form-label" style="font-size:0.9rem">Password</label>
+              <input id="password" name="password" type="password" class="form-control" style="font-size:0.9rem;padding:0.5rem" required minlength="8" autocomplete="new-password">
             </div>
-            <div class="mb-4">
-              <small class="form-text text-muted">Password must be <strong>at least 8 characters</strong> and include <strong>uppercase letters</strong>, <strong>lowercase letters</strong>, <strong>numbers</strong>, and <strong>special characters</strong>.</small>
+            <div class="mb-3">
+              <small class="form-text" style="font-size:0.75rem;color:#ffffff">Password must be <strong>at least 8 characters</strong> and include <strong>uppercase letters</strong>, <strong>lowercase letters</strong>, <strong>numbers</strong>, and <strong>special characters</strong>.</small>
             </div>
 
-            <div class="mb-4">
-              <label class="form-label">Re-enter password</label>
-              <input id="password2" name="password2" type="password" class="form-control form-control-lg" required autocomplete="new-password">
+            <div class="mb-3" style="position:relative">
+              <label class="form-label" style="font-size:0.9rem">Re-enter password</label>
+              <input id="password2" name="password2" type="password" class="form-control" style="font-size:0.9rem;padding:0.5rem" required autocomplete="new-password">
             </div>
-            <div class="pt-1 mb-4 d-grid">
-              <button class="btn btn-info btn-lg btn-block" type="submit">Sign up</button>
+            <div class="pt-1 mb-3 d-grid">
+              <button class="btn btn-info" style="font-size:0.9rem;padding:0.5rem" type="submit">Sign up</button>
             </div>
             <p>Do you already have an account? <a href="?p=login" class="link-info">Login</a></p>
           </form>

@@ -8,7 +8,8 @@
     </button>
     <ul class="dropdown-menu" aria-labelledby="menuDropdown">
       <li><a class="dropdown-item" href="index.php">🏠 Về trang chủ</a></li>
-      <li><a class="dropdown-item" href="?p=home">Home</a></li>
+      <li><a class="dropdown-item" href="?p=studio">Studio</a></li>
+      <li><a class="dropdown-item" href="?p=landing">★ Landing</a></li>
       <li><a class="dropdown-item" href="?p=photobooth">Photobooth</a></li>
       <li><a class="dropdown-item" href="?p=frame">Frame</a></li>
       <li><a class="dropdown-item" href="?p=photobook">Gallery</a></li>

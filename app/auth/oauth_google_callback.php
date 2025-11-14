@@ -53,7 +53,7 @@ if (!$u){
   $stmt->execute([$pid]); $u=$stmt->fetch();
 }
 login_user($u);
-redirect('?p=home');
+redirect('?p=studio');
 
 function fetch($url, $data){
   $ch=curl_init($url);

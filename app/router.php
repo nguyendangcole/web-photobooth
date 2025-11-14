@@ -14,7 +14,9 @@ if (!defined('BASE_URL')) {
 
 // Bản đồ route → file
 $routes = [
-  'home'                  => APP_PATH . '/home.php',
+  'studio'                => APP_PATH . '/main_menu.php',
+  'home'                  => APP_PATH . '/main_menu.php', // Alias for backward compatibility
+  'landing'               => APP_PATH . '/landing.php',
   'photobooth'            => APP_PATH . '/photobooth.php',
   'frame'                 => APP_PATH . '/frame.php',
   'frame-sidebar'         => APP_PATH . '/frame_sidebar.php',
@@ -35,10 +37,21 @@ $routes = [
   
   // premium
   'premium-upgrade'       => APP_PATH . '/premium_upgrade.php',
+  
+  // profile
+  'change-avatar'         => APP_PATH . '/change_avatar.php',
+  
+  // info pages
+  'info'                  => APP_PATH . '/info.php',
+  'service'               => APP_PATH . '/service.php',
+  'qa'                    => APP_PATH . '/qa.php',
+  'contact'               => APP_PATH . '/contact.php',
+  'terms'                 => APP_PATH . '/terms.php',
+  'privacy'               => APP_PATH . '/privacy.php',
 ];
 
 // Trang được yêu cầu (?p=...)
-$page = $_GET['p'] ?? 'home';
+$page = $_GET['p'] ?? 'studio';
 
 // File 404 (nếu có)
 $notFoundFile = APP_PATH . '/404.php';

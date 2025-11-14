@@ -60,6 +60,9 @@ timerOptions.forEach(opt => {
 });
 
 // ---------- Filter preview ----------
+// Filter handling is done in photobooth.php inline script to avoid conflicts
+// This code is disabled to prevent duplicate event listeners
+/*
 filterOptions.forEach(opt => {
   opt.addEventListener("click", (e) => {
     e.preventDefault();
@@ -82,6 +85,7 @@ filterOptions.forEach(opt => {
     if (btn) btn.textContent = opt.textContent;
   });
 });
+*/
 
 // ---------- Webcam ----------
 if (navigator.mediaDevices?.getUserMedia) {

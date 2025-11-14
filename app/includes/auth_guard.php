@@ -36,11 +36,11 @@ if (isset($qsArr['p'])) {
 // Đừng ghi đè return_to khi đang ở login/register để tránh vòng lặp
 $skipPages = ['login', 'register', 'oauth-google', 'oauth-facebook'];
 if (!in_array($currP, $skipPages, true)) {
-  $_SESSION['return_to'] = $qs ? ('?' . $qs) : '?p=home';
+  $_SESSION['return_to'] = $qs ? ('?' . $qs) : '?p=studio';
 }
 
 // Điều hướng về trang login, kèm tham số next để form login giữ lại
-$next = $_SESSION['return_to'] ?? '?p=home';
+$next = $_SESSION['return_to'] ?? '?p=studio';
 
 // Lưu ý: vì đây là trang HTML/endpoint riêng tư, các header no-store
 // hãy set tại chính trang/endpoint sau khi require guard (để dễ kiểm soát Content-Type)

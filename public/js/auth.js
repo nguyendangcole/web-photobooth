@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll('input[type="password"]').forEach(pw => {
     const toggle = document.createElement('button');
     toggle.type = 'button';
-    toggle.className = 'password-toggle-btn position-absolute end-0 top-50 translate-middle-y';
+    toggle.className = 'password-toggle-btn';
     toggle.setAttribute('aria-label', 'Toggle password visibility');
     
     // Icon eye (show password)
@@ -43,8 +43,12 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     };
     
-    pw.parentElement.style.position = 'relative';
-    pw.parentElement.appendChild(toggle);
+    // Đảm bảo parent có position relative
+    const parent = pw.parentElement;
+    if (parent) {
+      parent.style.position = 'relative';
+      parent.appendChild(toggle);
+    }
   });
   
   

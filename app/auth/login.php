@@ -81,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // $to = rtrim(BASE_URL, '/') . $to;
       } else {
         // fallback an toàn
-        $to = BASE_URL . '?p=home';
+        $to = BASE_URL . '?p=studio';
       }
 
       header('Location: ' . $to);
