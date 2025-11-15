@@ -789,8 +789,6 @@ $uid = $isLoggedIn ? (int)$user['id'] : 0;
 
 <!-- GEN Z PHOTOBOOTH STUDIO -->
 <div class="photobooth-studio">
-  
-  
 
   <!-- Main Grid -->
   <div class="studio-grid">
@@ -941,6 +939,11 @@ $uid = $isLoggedIn ? (int)$user['id'] : 0;
           </span>
           <span class="selection-count" id="selectionCount">0</span>
         </button>
+        
+        <button id="stickerBtn" class="ctrl-btn sticker-btn">
+          <span class="btn-icon">✨</span>
+          <span>STICKERS</span>
+        </button>
       </div>
     </div>
 
@@ -955,6 +958,37 @@ $uid = $isLoggedIn ? (int)$user['id'] : 0;
 
 <!-- Floating Gallery Container -->
 <div class="floating-gallery" id="floatingGallery"></div>
+
+<!-- Sticker Sidebar -->
+<div class="sticker-sidebar" id="stickerSidebar">
+  <div class="sticker-sidebar-header">
+    <h3>✨ STICKERS</h3>
+    <button class="sticker-close-btn" id="closeStickerBtn">✕</button>
+  </div>
+  <div class="sticker-content">
+    <div class="sticker-grid">
+      <!-- Placeholder stickers - you can add your own images later -->
+      <div class="sticker-item" draggable="true" data-sticker="star">
+        <img src="<?= asset('images/stickers/star.png') ?>" alt="Star" onerror="this.src='data:image/svg+xml,<svg width=&quot;100&quot; height=&quot;100&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;><text x=&quot;50&quot; y=&quot;50&quot; font-size=&quot;60&quot; text-anchor=&quot;middle&quot; dominant-baseline=&quot;middle&quot;>⭐</text></svg>'">
+      </div>
+      <div class="sticker-item" draggable="true" data-sticker="heart">
+        <img src="<?= asset('images/stickers/heart.png') ?>" alt="Heart" onerror="this.src='data:image/svg+xml,<svg width=&quot;100&quot; height=&quot;100&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;><text x=&quot;50&quot; y=&quot;50&quot; font-size=&quot;60&quot; text-anchor=&quot;middle&quot; dominant-baseline=&quot;middle&quot;>❤️</text></svg>'">
+      </div>
+      <div class="sticker-item" draggable="true" data-sticker="sparkle">
+        <img src="<?= asset('images/stickers/sparkle.png') ?>" alt="Sparkle" onerror="this.src='data:image/svg+xml,<svg width=&quot;100&quot; height=&quot;100&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;><text x=&quot;50&quot; y=&quot;50&quot; font-size=&quot;60&quot; text-anchor=&quot;middle&quot; dominant-baseline=&quot;middle&quot;>✨</text></svg>'">
+      </div>
+      <div class="sticker-item" draggable="true" data-sticker="smile">
+        <img src="<?= asset('images/stickers/smile.png') ?>" alt="Smile" onerror="this.src='data:image/svg+xml,<svg width=&quot;100&quot; height=&quot;100&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;><text x=&quot;50&quot; y=&quot;50&quot; font-size=&quot;60&quot; text-anchor=&quot;middle&quot; dominant-baseline=&quot;middle&quot;>😊</text></svg>'">
+      </div>
+      <div class="sticker-item" draggable="true" data-sticker="cool">
+        <img src="<?= asset('images/stickers/cool.png') ?>" alt="Cool" onerror="this.src='data:image/svg+xml,<svg width=&quot;100&quot; height=&quot;100&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;><text x=&quot;50&quot; y=&quot;50&quot; font-size=&quot;60&quot; text-anchor=&quot;middle&quot; dominant-baseline=&quot;middle&quot;>😎</text></svg>'">
+      </div>
+      <div class="sticker-item" draggable="true" data-sticker="fire">
+        <img src="<?= asset('images/stickers/fire.png') ?>" alt="Fire" onerror="this.src='data:image/svg+xml,<svg width=&quot;100&quot; height=&quot;100&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;><text x=&quot;50&quot; y=&quot;50&quot; font-size=&quot;60&quot; text-anchor=&quot;middle&quot; dominant-baseline=&quot;middle&quot;>🔥</text></svg>'">
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- Modal xem ảnh -->
 <div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
@@ -989,6 +1023,31 @@ $uid = $isLoggedIn ? (int)$user['id'] : 0;
         <button type="button" class="btn btn-primary" id="confirmExportBtn"
                 style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; background: #c1ff72; color: #000; border: 2px solid #000; border-radius: 8px; padding: 10px 20px;">
           Continue Anyway
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- No Selection Guidance Modal -->
+<div class="modal fade" id="noSelectionModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border: 3px solid #000; border-radius: 16px;">
+      <div class="modal-header" style="border-bottom: 2px solid #000; background: linear-gradient(135deg, #ffd4ff 0%, #ffe8ff 100%);">
+        <h5 class="modal-title" style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; color: #000;">How to select photos</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" style="font-family: 'Space Grotesk', sans-serif; padding: 1.5rem; color: #222;">
+        <ol style="margin-left: 1rem;">
+          <li>Double‑click vào ảnh floating để <strong>chọn</strong> (ảnh sẽ có viền xanh).</li>
+          <li>Có thể chọn tối đa <strong>4 ảnh</strong>.</li>
+          <li>Sau khi chọn xong, bấm <strong>EXPORT</strong> để tiếp tục.</li>
+        </ol>
+      </div>
+      <div class="modal-footer" style="border-top: 2px solid #000; gap: 10px;">
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal"
+                style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; background: #c1ff72; color: #000; border: 2px solid #000; border-radius: 8px; padding: 10px 20px;">
+          Got it!
         </button>
       </div>
     </div>
@@ -1360,7 +1419,8 @@ document.addEventListener('click', (e) => {
     if (exportBtn && selectionCount) {
       const count = selectedPhotos.size;
       selectionCount.textContent = count;
-      exportBtn.disabled = count === 0;
+      // Keep button enabled so we can show guidance when nothing is selected
+      exportBtn.disabled = false;
     }
   }
   
@@ -1402,22 +1462,19 @@ document.addEventListener('click', (e) => {
     checkmark.innerHTML = '✓';
     photoEl.appendChild(checkmark);
     
-    // Random position, rotation, and size for chaotic style
+    // Random position and size (no rotation - keep photos straight)
     const pos = getRandomPosition();
-    const rotation = (Math.random() - 0.5) * 50; // -25 to 25 degrees (more chaotic)
     const scale = 0.85 + Math.random() * 0.3; // 0.85 to 1.15 (varying sizes)
     const zIndex = 10 + Math.floor(Math.random() * 20); // Random stacking
     
     photoEl.style.left = pos.x + 'px';
     photoEl.style.top = pos.y + 'px';
-    photoEl.style.transform = `rotate(${rotation}deg) scale(${scale})`;
-    photoEl.style.setProperty('--rotation', rotation + 'deg');
+    photoEl.style.transform = `scale(${scale})`; // No rotation
     photoEl.style.zIndex = zIndex;
     
     // Store position
     photoEl.dataset.x = pos.x;
     photoEl.dataset.y = pos.y;
-    photoEl.dataset.rotation = rotation;
     
     // Double-click handler for selection
     photoEl.addEventListener('dblclick', function(e) {
@@ -1431,9 +1488,6 @@ document.addEventListener('click', (e) => {
     
     floatingGallery.appendChild(photoEl);
     capturedImages.push(photoEl);
-    
-    // Remove animation class after animation completes
-    setTimeout(() => photoEl.classList.remove('new-photo'), 800);
   };
   
   function startDrag(e) {
@@ -1497,7 +1551,13 @@ document.addEventListener('click', (e) => {
   exportBtn?.addEventListener('click', function(e) {
     e.preventDefault();
     e.stopImmediatePropagation();
-    if (selectedPhotos.size === 0) return;
+    if (selectedPhotos.size === 0) {
+      if (typeof bootstrap !== 'undefined') {
+        const modal = new bootstrap.Modal(document.getElementById('noSelectionModal'));
+        modal.show();
+      }
+      return;
+    }
     
     // Convert selected photos to array
     const photosArray = Array.from(selectedPhotos);
@@ -1675,6 +1735,41 @@ if (originalCapturedImages) {
   setIcon(enabled);
   loadCurrent();
 })();
+
+// Fallback inline hint (non-blocking, no browser alert)
+function showInlineHint(message) {
+  let el = document.getElementById('inline-hint-toast');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'inline-hint-toast';
+    el.style.position = 'fixed';
+    el.style.left = '50%';
+    el.style.bottom = '24px';
+    el.style.transform = 'translateX(-50%)';
+    el.style.zIndex = '10000';
+    el.style.maxWidth = '90%';
+    el.style.background = '#0a0a0a';
+    el.style.color = '#fff';
+    el.style.padding = '12px 16px';
+    el.style.border = '2px solid #c1ff72';
+    el.style.borderRadius = '12px';
+    el.style.fontFamily = "'Space Grotesk', sans-serif";
+    el.style.fontSize = '14px';
+    el.style.boxShadow = '0 10px 24px rgba(0,0,0,0.25)';
+    el.style.opacity = '0';
+    el.style.transition = 'opacity 200ms ease, transform 200ms ease';
+    document.body.appendChild(el);
+  }
+  el.textContent = message;
+  // show
+  el.style.opacity = '1';
+  el.style.transform = 'translateX(-50%) translateY(0)';
+  // hide after 3s
+  clearTimeout(window.__inline_hint_timer);
+  window.__inline_hint_timer = setTimeout(() => {
+    el.style.opacity = '0';
+  }, 3000);
+}
 </script>
 
 <!-- Footer -->
@@ -1703,6 +1798,92 @@ if (menuToggle) {
   menuToggle.addEventListener('click', () => {
     menuToggle.classList.toggle('active');
     navMenu.classList.toggle('active');
+  });
+}
+</script>
+
+<script>
+// Sticker Sidebar Toggle
+const stickerBtn = document.getElementById('stickerBtn');
+const stickerSidebar = document.getElementById('stickerSidebar');
+const closeStickerBtn = document.getElementById('closeStickerBtn');
+
+stickerBtn?.addEventListener('click', () => {
+  stickerSidebar.classList.add('active');
+});
+
+closeStickerBtn?.addEventListener('click', () => {
+  stickerSidebar.classList.remove('active');
+});
+
+// Sticker Drag & Drop
+const stickerItems = document.querySelectorAll('.sticker-item');
+const photboothStudio = document.querySelector('.photobooth-studio');
+
+stickerItems.forEach(item => {
+  item.addEventListener('dragstart', (e) => {
+    const imgSrc = item.querySelector('img').src;
+    e.dataTransfer.setData('sticker-src', imgSrc);
+    e.dataTransfer.effectAllowed = 'copy';
+  });
+});
+
+photboothStudio?.addEventListener('dragover', (e) => {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'copy';
+});
+
+photboothStudio?.addEventListener('drop', (e) => {
+  e.preventDefault();
+  const stickerSrc = e.dataTransfer.getData('sticker-src');
+  
+  if (stickerSrc) {
+    // Create sticker element
+    const sticker = document.createElement('div');
+    sticker.className = 'placed-sticker';
+    sticker.style.left = (e.clientX - 50) + 'px';
+    sticker.style.top = (e.clientY - 50) + 'px';
+    
+    const img = document.createElement('img');
+    img.src = stickerSrc;
+    sticker.appendChild(img);
+    
+    photboothStudio.appendChild(sticker);
+    
+    // Make sticker draggable
+    makeStickerDraggable(sticker);
+  }
+});
+
+function makeStickerDraggable(sticker) {
+  let isDragging = false;
+  let offsetX, offsetY;
+  
+  sticker.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    offsetX = e.clientX - sticker.offsetLeft;
+    offsetY = e.clientY - sticker.offsetTop;
+    sticker.style.zIndex = 1000;
+    e.preventDefault();
+  });
+  
+  document.addEventListener('mousemove', (e) => {
+    if (isDragging) {
+      sticker.style.left = (e.clientX - offsetX) + 'px';
+      sticker.style.top = (e.clientY - offsetY) + 'px';
+    }
+  });
+  
+  document.addEventListener('mouseup', () => {
+    if (isDragging) {
+      isDragging = false;
+      sticker.style.zIndex = 100;
+    }
+  });
+  
+  // Double click to remove
+  sticker.addEventListener('dblclick', () => {
+    sticker.remove();
   });
 }
 </script>
