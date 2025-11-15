@@ -13,9 +13,9 @@ $uid = $isLoggedIn ? (int)$user['id'] : 0;
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SPACE PHOTOBOOTH • Photobooth</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-  <link rel="stylesheet" href="<?= asset('css/photobooth.css') ?>?v=<?= time() ?>">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="<?= asset('css/photobooth.css') ?>?v=<?= time() ?>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Mono:wght@300;400;500&family=Bebas+Neue&display=swap" rel="stylesheet">
   <style>
   /* Compact header - Light theme - nhỏ gọn nhưng đầy đủ */
@@ -219,6 +219,516 @@ $uid = $isLoggedIn ? (int)$user['id'] : 0;
     flex-direction: column;
     min-height: 100vh;
   }
+  
+  /* Redesign Controls Card - Better spacing and layout */
+  .controls-card {
+    background: linear-gradient(135deg, #fff4d4 0%, #fff9e8 100%) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 16px !important;
+    width: 260px !important;
+    min-height: auto !important;
+    max-height: none !important;
+    padding: 20px !important;
+    align-self: center !important;
+    flex-shrink: 0 !important;
+    overflow: visible !important;
+  }
+  
+  .control-btns {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    width: 100% !important;
+  }
+  
+  .ctrl-btn {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 10px !important;
+    padding: 16px 20px !important;
+    background: var(--white) !important;
+    border: 2px solid var(--black) !important;
+    border-radius: 12px !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.5px !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    font-family: 'Space Grotesk', sans-serif !important;
+    text-align: center !important;
+    width: 100% !important;
+    min-height: 50px !important;
+    position: relative !important;
+    z-index: 1 !important;
+  }
+  
+  .ctrl-btn:disabled {
+    opacity: 0.5 !important;
+    cursor: not-allowed !important;
+  }
+  
+  .ctrl-btn:hover:not(:disabled) {
+    transform: translateY(-2px) !important;
+    box-shadow: 4px 4px 0 var(--black) !important;
+  }
+  
+  .ctrl-btn:active:not(:disabled) {
+    transform: translateY(0) !important;
+    box-shadow: 2px 2px 0 var(--black) !important;
+  }
+  
+  /* Timer wrapper - ensure dropdown doesn't overlap */
+  .timer-wrap {
+    position: relative !important;
+    width: 100% !important;
+    z-index: 10 !important;
+  }
+  
+  /* Timer button dropdown arrow */
+  .timer-btn .dropdown-arrow {
+    font-size: 10px !important;
+    margin-left: auto !important;
+    transition: transform 0.3s ease !important;
+    display: inline-block !important;
+  }
+  
+  .timer-wrap.active .timer-btn .dropdown-arrow {
+    transform: rotate(180deg) !important;
+  }
+  
+  .timer-dropdown {
+    position: absolute !important;
+    top: 100% !important;
+    left: 0 !important;
+    right: 0 !important;
+    margin-top: 8px !important;
+    background: var(--white) !important;
+    border: 2px solid var(--black) !important;
+    border-radius: 12px !important;
+    padding: 8px !important;
+    display: none !important;
+    flex-direction: column !important;
+    gap: 4px !important;
+    z-index: 100 !important;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15) !important;
+  }
+  
+  .timer-dropdown.active {
+    display: flex !important;
+  }
+  
+  .timer-option {
+    padding: 12px 16px !important;
+    background: transparent !important;
+    border: none !important;
+    border-radius: 8px !important;
+    cursor: pointer !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    text-align: center !important;
+    transition: all 0.2s ease !important;
+  }
+  
+  .timer-option:hover {
+    background: rgba(193, 255, 114, 0.2) !important;
+  }
+  
+  .timer-option.active {
+    background: #c1ff72 !important;
+    color: var(--black) !important;
+  }
+  
+  /* Music button */
+  .music-btn {
+    background: #ffd4e9 !important;
+    order: 1 !important;
+  }
+  
+  /* Timer button */
+  .timer-btn {
+    background: #d4ffd4 !important;
+    order: 2 !important;
+    justify-content: space-between !important;
+  }
+  
+  .timer-btn .btn-icon {
+    flex-shrink: 0 !important;
+  }
+  
+  .timer-btn #timerText {
+    flex: 1 !important;
+    text-align: left !important;
+  }
+  
+  /* Start/Capture button */
+  .start-btn {
+    background: var(--black) !important;
+    color: var(--white) !important;
+    order: 3 !important;
+    font-size: 14px !important;
+    padding: 18px 20px !important;
+  }
+  
+  /* Export button */
+  .export-btn {
+    background: #f0f0f0 !important;
+    order: 4 !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+  }
+  
+  .selection-count {
+    background: var(--black) !important;
+    color: var(--white) !important;
+    border-radius: 50% !important;
+    width: 24px !important;
+    height: 24px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    flex-shrink: 0 !important;
+  }
+  
+  /* Ensure buttons don't overlap */
+  .control-btns > * {
+    margin: 0 !important;
+    flex-shrink: 0 !important;
+  }
+  
+  /* Camera Card - Resizable only (no drag) */
+  .camera-card {
+    position: relative !important;
+    cursor: default !important;
+    user-select: none !important;
+  }
+  
+  .camera-wrapper {
+    position: relative !important;
+  }
+  
+  /* Resize handles */
+  .resize-handle {
+    position: absolute !important;
+    background: rgba(193, 255, 114, 0.8) !important;
+    border: 2px solid var(--black) !important;
+    z-index: 101 !important;
+    opacity: 0 !important;
+    transition: opacity 0.2s ease !important;
+    pointer-events: auto !important;
+  }
+  
+  .camera-card:hover .resize-handle,
+  .camera-card.resizing .resize-handle {
+    opacity: 1 !important;
+  }
+  
+  .resize-handle-nw {
+    top: -6px !important;
+    left: -6px !important;
+    width: 16px !important;
+    height: 16px !important;
+    border-radius: 50% !important;
+    cursor: nwse-resize !important;
+  }
+  
+  .resize-handle-ne {
+    top: -6px !important;
+    right: -6px !important;
+    width: 16px !important;
+    height: 16px !important;
+    border-radius: 50% !important;
+    cursor: nesw-resize !important;
+  }
+  
+  .resize-handle-sw {
+    bottom: -6px !important;
+    left: -6px !important;
+    width: 16px !important;
+    height: 16px !important;
+    border-radius: 50% !important;
+    cursor: nesw-resize !important;
+  }
+  
+  .resize-handle-se {
+    bottom: -6px !important;
+    right: -6px !important;
+    width: 16px !important;
+    height: 16px !important;
+    border-radius: 50% !important;
+    cursor: nwse-resize !important;
+  }
+  
+  .camera-card.resizing {
+    cursor: nwse-resize !important;
+  }
+  
+  /* ===== MOBILE RESPONSIVE ===== */
+  @media (max-width: 768px) {
+    /* Photobooth studio container */
+    .photobooth-studio {
+      padding: 80px 12px 20px !important;
+      min-height: auto !important;
+      overflow: visible !important;
+    }
+    
+    /* Studio grid - stack vertically on mobile */
+    .studio-grid {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 16px !important;
+      align-items: stretch !important;
+      max-width: 100% !important;
+      width: 100% !important;
+      position: relative !important;
+      z-index: 1 !important;
+    }
+    
+    /* Camera card - full width, smaller height */
+    .camera-card {
+      width: 100% !important;
+      order: 1 !important;
+      position: relative !important;
+      z-index: 1 !important;
+      margin-bottom: 0 !important;
+    }
+    
+    .camera-wrapper {
+      max-width: 100% !important;
+      max-height: 60vh !important;
+      aspect-ratio: 4/3 !important;
+      position: relative !important;
+      z-index: 1 !important;
+    }
+    
+    /* Controls card - full width, comes before filters on mobile */
+    .controls-card {
+      width: 100% !important;
+      order: 2 !important;
+      padding: 16px !important;
+      max-height: none !important;
+      position: relative !important;
+      z-index: 2 !important;
+      margin-bottom: 0 !important;
+      overflow: visible !important;
+    }
+    
+    /* Timer dropdown - ensure it's above controls but below filter dropdown */
+    .timer-wrap {
+      position: relative !important;
+      z-index: 10 !important;
+    }
+    
+    .timer-dropdown {
+      position: absolute !important;
+      top: 100% !important;
+      left: 0 !important;
+      right: 0 !important;
+      width: 100% !important;
+      margin-top: 8px !important;
+      z-index: 100 !important;
+    }
+    
+    /* Filters card - full width, at the bottom on mobile */
+    .filters-card {
+      width: 100% !important;
+      order: 3 !important;
+      padding: 16px !important;
+      max-height: none !important;
+      overflow: visible !important;
+      position: relative !important;
+      z-index: 3 !important;
+      margin-bottom: 0 !important;
+    }
+    
+    .filter-selector {
+      padding: 12px 14px !important;
+      font-size: 12px !important;
+      position: relative !important;
+      z-index: 1 !important;
+    }
+    
+    /* Filter dropdown - bottom sheet style on mobile */
+    .filter-selector-wrap {
+      position: relative !important;
+      z-index: 1 !important;
+      overflow: visible !important;
+    }
+    
+    .filter-dropdown {
+      position: fixed !important;
+      top: auto !important;
+      bottom: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      width: 100vw !important;
+      max-width: 100vw !important;
+      max-height: 70vh !important;
+      overflow-y: auto !important;
+      overflow-x: hidden !important;
+      border-radius: 24px 24px 0 0 !important;
+      border-left: none !important;
+      border-right: none !important;
+      border-bottom: none !important;
+      border-top: 3px solid var(--black) !important;
+      margin: 0 !important;
+      padding: 20px 16px !important;
+      padding-bottom: calc(20px + env(safe-area-inset-bottom)) !important;
+      box-shadow: 0 -8px 32px rgba(0,0,0,0.3) !important;
+      z-index: 99999 !important;
+      transform: translateY(100%) !important;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+      will-change: transform !important;
+      display: flex !important;
+      flex-direction: column !important;
+      background: var(--white) !important;
+    }
+    
+    .filter-dropdown.active {
+      transform: translateY(0) !important;
+      display: flex !important;
+    }
+    
+    /* Overlay backdrop when dropdown is open */
+    .filter-selector-wrap.active::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 99998;
+      display: block;
+      opacity: 0;
+      animation: fadeIn 0.3s ease forwards;
+      pointer-events: auto;
+    }
+    
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+      }
+    }
+    
+    /* Prevent body scroll when dropdown is open */
+    body.filter-dropdown-open {
+      overflow: hidden !important;
+      position: fixed !important;
+      width: 100% !important;
+      height: 100% !important;
+    }
+    
+    /* Ensure filter options are visible */
+    .filter-option {
+      position: relative !important;
+      z-index: 1 !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+    }
+    
+    .control-btns {
+      gap: 10px !important;
+      position: relative !important;
+      z-index: 1 !important;
+    }
+    
+    .ctrl-btn {
+      padding: 14px 16px !important;
+      font-size: 12px !important;
+      min-height: 48px !important;
+      position: relative !important;
+      z-index: 1 !important;
+    }
+    
+    .start-btn {
+      padding: 16px 18px !important;
+      font-size: 13px !important;
+    }
+    
+    /* Countdown - larger on mobile */
+    #countdown {
+      font-size: 5rem !important;
+    }
+    
+    /* Card labels - slightly smaller */
+    .card-label {
+      font-size: 9px !important;
+      padding: 5px 12px !important;
+      margin-bottom: 12px !important;
+    }
+    
+    /* Gallery card - if visible */
+    .gallery-card {
+      order: 4 !important;
+      position: relative !important;
+      bottom: auto !important;
+      width: 100% !important;
+      max-height: 200px !important;
+    }
+    
+    /* Floating gallery - adjust for mobile */
+    .floating-gallery {
+      z-index: 5 !important;
+    }
+    
+    .floating-photo {
+      width: 150px !important;
+      height: 150px !important;
+    }
+  }
+  
+  /* Small mobile devices */
+  @media (max-width: 480px) {
+    .photobooth-studio {
+      padding: 70px 10px 15px !important;
+    }
+    
+    .studio-grid {
+      gap: 12px !important;
+    }
+    
+    .camera-wrapper {
+      max-height: 50vh !important;
+      border-radius: 12px !important;
+      border-width: 2px !important;
+    }
+    
+    .filters-card,
+    .controls-card {
+      padding: 12px !important;
+      border-radius: 12px !important;
+    }
+    
+    .ctrl-btn {
+      padding: 12px 14px !important;
+      font-size: 11px !important;
+      min-height: 44px !important;
+    }
+    
+    .start-btn {
+      padding: 14px 16px !important;
+      font-size: 12px !important;
+    }
+    
+    #countdown {
+      font-size: 4rem !important;
+    }
+    
+    .card-label {
+      font-size: 8px !important;
+      padding: 4px 10px !important;
+    }
+    
+    .filter-selector {
+      padding: 10px 12px !important;
+      font-size: 11px !important;
+    }
+  }
   </style>
 </head>
 <body>
@@ -384,10 +894,15 @@ $uid = $isLoggedIn ? (int)$user['id'] : 0;
     </div>
 
     <!-- Camera Section (CENTER) -->
-    <div class="camera-card">
-      <div class="camera-wrapper">
+    <div class="camera-card" id="cameraCard">
+      <div class="camera-wrapper" id="cameraWrapper">
         <video id="video" autoplay playsinline></video>
         <div id="countdown"></div>
+        <!-- Resize handles -->
+        <div class="resize-handle resize-handle-nw"></div>
+        <div class="resize-handle resize-handle-ne"></div>
+        <div class="resize-handle resize-handle-sw"></div>
+        <div class="resize-handle resize-handle-se"></div>
       </div>
     </div>
 
@@ -405,6 +920,7 @@ $uid = $isLoggedIn ? (int)$user['id'] : 0;
           <button class="ctrl-btn timer-btn" id="timerBtn">
             <span class="btn-icon">⏱</span>
             <span id="timerText">3s</span>
+            <span class="dropdown-arrow">▼</span>
           </button>
           <div class="timer-dropdown">
             <button class="timer-option active" data-time="3">3s</button>
@@ -500,11 +1016,16 @@ if (is_dir($audioDirFs)) {
 <audio id="pbMusic" preload="auto"></audio>
 
 <!-- Scripts chính -->
-<script src="<?= asset('js/photobooth.js') ?>"></script>
+<script src="<?= asset('js/photobooth.js') ?>?v=<?= time() ?>"></script>
 
 <script>
 // ===== Filter Dropdown Handler =====
 (function(){
+  // Initialize global currentFilter if not set
+  if (typeof window.currentFilter === 'undefined') {
+    window.currentFilter = 'none';
+  }
+  
   const filterSelector = document.getElementById('filterSelector');
   const filterDropdown = document.getElementById('filterDropdown');
   const filterWrap = filterSelector?.closest('.filter-selector-wrap');
@@ -519,6 +1040,7 @@ if (is_dir($audioDirFs)) {
     cameraWrapper.classList.remove('preset1','preset2','preset3','preset4','preset5','preset6','preset7','preset8','preset9','preset10');
     if (!filter || filter === 'none') {
       video.style.filter = '';
+      window.currentFilter = 'none';
       return;
     }
     if (filter.startsWith('preset')) {
@@ -527,54 +1049,117 @@ if (is_dir($audioDirFs)) {
     } else {
       video.style.filter = filter;
     }
-    // Update currentFilter for capture function
-    if (typeof currentFilter !== 'undefined') {
-      currentFilter = filter;
+    // Update currentFilter globally for capture function
+    window.currentFilter = filter;
+    console.log("Filter applied:", filter, "window.currentFilter:", window.currentFilter); // Debug
+  }
+
+  let isClosing = false;
+
+  function closeFilterDropdown() {
+    if (isClosing) return;
+    isClosing = true;
+    filterDropdown?.classList.remove('active');
+    filterWrap?.classList.remove('active');
+    document.body.classList.remove('filter-dropdown-open');
+    setTimeout(() => { isClosing = false; }, 100);
+  }
+
+  function openFilterDropdown() {
+    if (isClosing) return;
+    filterDropdown?.classList.add('active');
+    filterWrap?.classList.add('active');
+    // Prevent body scroll on mobile when dropdown is open
+    if (window.innerWidth <= 768) {
+      document.body.classList.add('filter-dropdown-open');
     }
   }
 
   filterSelector?.addEventListener('click', (e) => {
     e.preventDefault();
-    filterDropdown?.classList.toggle('active');
-    filterWrap?.classList.toggle('active');
+    e.stopPropagation();
+    const isActive = filterDropdown?.classList.contains('active');
+    if (isActive) {
+      closeFilterDropdown();
+    } else {
+      openFilterDropdown();
+    }
   });
 
   document.querySelectorAll('.filter-option').forEach(opt => {
-    opt.addEventListener('click', function(){
+    opt.addEventListener('click', function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      const selectedFilter = this.dataset.filter || 'none';
+      console.log("Filter option clicked:", selectedFilter); // Debug
       document.querySelectorAll('.filter-option').forEach(o => o.classList.remove('active'));
       this.classList.add('active');
       if (selectedIcon) selectedIcon.textContent = this.dataset.icon || '◉';
       if (selectedName) selectedName.textContent = this.dataset.name || 'FILTER';
-      applyFilter(this.dataset.filter || 'none');
-      filterDropdown?.classList.remove('active');
-      filterWrap?.classList.remove('active');
+      applyFilter(selectedFilter);
+      closeFilterDropdown();
+      // Double check that filter was set
+      console.log("After applyFilter, window.currentFilter:", window.currentFilter); // Debug
     });
   });
 
+  // Close dropdown when clicking outside (including overlay)
+  // Use capture phase to handle before other click handlers
   document.addEventListener('click', (e) => {
-    if (!filterWrap) return;
-    if (!filterWrap.contains(e.target)) {
-      filterDropdown?.classList.remove('active');
-      filterWrap?.classList.remove('active');
+    if (!filterWrap || !filterDropdown || isClosing) return;
+    const isDropdownActive = filterDropdown.classList.contains('active');
+    if (!isDropdownActive) return;
+    
+    // Check if click is outside filter dropdown
+    const clickedInsideDropdown = filterDropdown.contains(e.target);
+    const clickedOnSelector = filterSelector?.contains(e.target);
+    
+    // Close if clicked outside dropdown and not on selector
+    if (!clickedInsideDropdown && !clickedOnSelector) {
+      e.stopPropagation();
+      closeFilterDropdown();
+    }
+  }, true);
+
+  // Close on escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && filterDropdown?.classList.contains('active')) {
+      closeFilterDropdown();
     }
   });
+  
+  // Check if there's an active filter option on page load (after DOM is ready)
+  setTimeout(() => {
+    const activeFilterOption = document.querySelector('.filter-option.active');
+    if (activeFilterOption) {
+      const defaultFilter = activeFilterOption.dataset.filter || 'none';
+      window.currentFilter = defaultFilter;
+      applyFilter(defaultFilter);
+    }
+  }, 100);
 })();
 
 // ===== Timer Dropdown =====
 const timerBtn = document.getElementById('timerBtn');
 const timerDropdown = document.querySelector('.timer-dropdown');
 const timerText = document.getElementById('timerText');
+const timerWrap = timerBtn?.closest('.timer-wrap');
 
-timerBtn?.addEventListener('click', () => {
+timerBtn?.addEventListener('click', (e) => {
+  e.preventDefault();
+  e.stopPropagation();
   timerDropdown.classList.toggle('active');
+  timerWrap?.classList.toggle('active');
 });
 
 document.querySelectorAll('.timer-option').forEach(opt => {
-  opt.addEventListener('click', function() {
+  opt.addEventListener('click', function(e) {
+    e.stopPropagation();
     document.querySelectorAll('.timer-option').forEach(o => o.classList.remove('active'));
     this.classList.add('active');
     timerText.textContent = this.dataset.time + 's';
     timerDropdown.classList.remove('active');
+    timerWrap?.classList.remove('active');
     
     // Trigger original dropdown logic
     const event = new Event('click', { bubbles: true });
@@ -582,6 +1167,146 @@ document.querySelectorAll('.timer-option').forEach(opt => {
     if (originalOption) originalOption.dispatchEvent(event);
   });
 });
+
+// Close timer dropdown when clicking outside
+document.addEventListener('click', (e) => {
+  if (!timerWrap) return;
+  if (!timerWrap.contains(e.target)) {
+    timerDropdown?.classList.remove('active');
+    timerWrap?.classList.remove('active');
+  }
+});
+
+// ===== Camera Resize System (no drag) =====
+(function() {
+  const cameraCard = document.getElementById('cameraCard');
+  const cameraWrapper = document.getElementById('cameraWrapper');
+  if (!cameraCard || !cameraWrapper) return;
+  
+  let isResizing = false;
+  let resizeHandle = null;
+  let startX = 0, startY = 0;
+  let startWidth = 0, startHeight = 0;
+  
+  // Load saved size
+  const savedState = localStorage.getItem('cameraCardSize');
+  if (savedState) {
+    try {
+      const state = JSON.parse(savedState);
+      if (state.width) cameraWrapper.style.width = state.width;
+      if (state.height) cameraWrapper.style.height = state.height;
+      if (state.maxWidth) cameraWrapper.style.maxWidth = state.maxWidth;
+      if (state.maxHeight) cameraWrapper.style.maxHeight = state.maxHeight;
+    } catch(e) {}
+  }
+  
+  // Save size to localStorage
+  function saveState() {
+    const state = {
+      width: cameraWrapper.style.width || '',
+      height: cameraWrapper.style.height || '',
+      maxWidth: cameraWrapper.style.maxWidth || '',
+      maxHeight: cameraWrapper.style.maxHeight || ''
+    };
+    localStorage.setItem('cameraCardSize', JSON.stringify(state));
+  }
+  
+  // Resize functionality
+  const resizeHandles = cameraWrapper.querySelectorAll('.resize-handle');
+  
+  function startResize(e, handle) {
+    isResizing = true;
+    resizeHandle = handle;
+    cameraCard.classList.add('resizing');
+    
+    startX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
+    startY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
+    
+    const rect = cameraWrapper.getBoundingClientRect();
+    startWidth = rect.width;
+    startHeight = rect.height;
+    
+    e.preventDefault();
+    e.stopPropagation();
+  }
+  
+  function doResize(e) {
+    if (!isResizing || !resizeHandle) return;
+    const clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
+    const clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
+    
+    const deltaX = clientX - startX;
+    const deltaY = clientY - startY;
+    
+    let newWidth = startWidth;
+    let newHeight = startHeight;
+    
+    // Calculate new size based on handle (resize from center)
+    // Use SE handle as primary, others adjust proportionally
+    if (resizeHandle.classList.contains('resize-handle-se')) {
+      newWidth = startWidth + deltaX;
+      newHeight = startHeight + deltaY;
+    } else if (resizeHandle.classList.contains('resize-handle-sw')) {
+      newWidth = startWidth - deltaX;
+      newHeight = startHeight + deltaY;
+    } else if (resizeHandle.classList.contains('resize-handle-ne')) {
+      newWidth = startWidth + deltaX;
+      newHeight = startHeight - deltaY;
+    } else if (resizeHandle.classList.contains('resize-handle-nw')) {
+      newWidth = startWidth - deltaX;
+      newHeight = startHeight - deltaY;
+    }
+    
+    // Maintain aspect ratio
+    const aspectRatio = startWidth / startHeight;
+    newHeight = newWidth / aspectRatio;
+    
+    // Min and max constraints
+    const minSize = 200;
+    const maxSize = Math.min(window.innerWidth - 40, window.innerHeight - 200);
+    
+    newWidth = Math.max(minSize, Math.min(newWidth, maxSize));
+    newHeight = Math.max(minSize, Math.min(newHeight, maxSize));
+    
+    cameraWrapper.style.width = newWidth + 'px';
+    cameraWrapper.style.height = newHeight + 'px';
+    cameraWrapper.style.maxWidth = 'none';
+    cameraWrapper.style.maxHeight = 'none';
+    
+    e.preventDefault();
+  }
+  
+  function endResize() {
+    if (isResizing) {
+      isResizing = false;
+      resizeHandle = null;
+      cameraCard.classList.remove('resizing');
+      saveState();
+    }
+  }
+  
+  // Event listeners for resize
+  resizeHandles.forEach(handle => {
+    handle.addEventListener('mousedown', (e) => startResize(e, handle));
+    handle.addEventListener('touchstart', (e) => startResize(e, handle), { passive: false });
+  });
+  
+  // Global event listeners
+  document.addEventListener('mousemove', doResize);
+  document.addEventListener('touchmove', doResize, { passive: false });
+  document.addEventListener('mouseup', endResize);
+  document.addEventListener('touchend', endResize);
+  
+  // Double-click on camera wrapper to reset size
+  cameraWrapper.addEventListener('dblclick', (e) => {
+    if (e.target === cameraWrapper || e.target.closest('.resize-handle')) return;
+    cameraWrapper.style.width = '';
+    cameraWrapper.style.height = '';
+    cameraWrapper.style.maxWidth = '';
+    cameraWrapper.style.maxHeight = '';
+    localStorage.removeItem('cameraCardSize');
+  });
+})();
 
 // ===== Floating Gallery System =====
 (function() {
@@ -639,14 +1364,21 @@ document.querySelectorAll('.timer-option').forEach(opt => {
     }
   }
   
-  // Toggle photo selection
+  // Toggle photo selection (max 4 photos)
   function togglePhotoSelection(photoEl) {
     const imgSrc = photoEl.querySelector('img').src;
     
     if (photoEl.classList.contains('selected')) {
+      // Deselect
       photoEl.classList.remove('selected');
       selectedPhotos.delete(imgSrc);
     } else {
+      // Check if already at limit (4 photos)
+      if (selectedPhotos.size >= 4) {
+        showAlert("Bạn chỉ có thể chọn tối đa 4 ảnh!");
+        return;
+      }
+      // Select
       photoEl.classList.add('selected');
       selectedPhotos.add(imgSrc);
     }
@@ -670,14 +1402,17 @@ document.querySelectorAll('.timer-option').forEach(opt => {
     checkmark.innerHTML = '✓';
     photoEl.appendChild(checkmark);
     
-    // Random position and rotation
+    // Random position, rotation, and size for chaotic style
     const pos = getRandomPosition();
-    const rotation = (Math.random() - 0.5) * 30; // -15 to 15 degrees
+    const rotation = (Math.random() - 0.5) * 50; // -25 to 25 degrees (more chaotic)
+    const scale = 0.85 + Math.random() * 0.3; // 0.85 to 1.15 (varying sizes)
+    const zIndex = 10 + Math.floor(Math.random() * 20); // Random stacking
     
     photoEl.style.left = pos.x + 'px';
     photoEl.style.top = pos.y + 'px';
-    photoEl.style.transform = `rotate(${rotation}deg)`;
+    photoEl.style.transform = `rotate(${rotation}deg) scale(${scale})`;
     photoEl.style.setProperty('--rotation', rotation + 'deg');
+    photoEl.style.zIndex = zIndex;
     
     // Store position
     photoEl.dataset.x = pos.x;

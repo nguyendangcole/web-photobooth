@@ -22,7 +22,10 @@ const FRAME_URL = window.APP_BASE + "index.php?p=frame";
 
 // ---------- CONFIG ----------
 let captureDelay = 3;
-let currentFilter = "none";
+// Use global currentFilter if available, otherwise default to "none"
+if (typeof window.currentFilter === 'undefined') {
+  window.currentFilter = "none";
+}
 const MAX_SHOTS = 4;
 
 // Ảnh đã chụp (dataURL JPEG nén)
@@ -179,56 +182,136 @@ function captureOncePNG() {
   ctx.translate(canvas.width, 0);
   ctx.scale(-1, 1);
 
-  // lớp gốc
-  ctx.filter = "none";
-  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-  // áp filter/preset
-  if (!currentFilter.startsWith("preset")) {
-    ctx.globalCompositeOperation = "source-over";
-    ctx.filter = currentFilter;
+  // Get current filter - read directly from DOM (most reliable)
+  let currentFilter = "none";
+  
+  // First, check camera-wrapper for preset classes
+  const cameraWrapper = document.querySelector('.camera-wrapper');
+  if (cameraWrapper) {
+    for (let i = 1; i <= 10; i++) {
+      if (cameraWrapper.classList.contains(`preset${i}`)) {
+        currentFilter = `preset${i}`;
+        break;
+      }
+    }
+  }
+  
+  // If no preset class found, check active filter option
+  if (currentFilter === "none") {
+    const activeFilterOption = document.querySelector('.filter-option.active');
+    if (activeFilterOption && activeFilterOption.dataset.filter) {
+      currentFilter = activeFilterOption.dataset.filter;
+    }
+  }
+  
+  // Fallback to window.currentFilter
+  if (currentFilter === "none" && window.currentFilter) {
+    currentFilter = window.currentFilter;
+  }
+  
+  
+  // Reset composite operation
+  ctx.globalCompositeOperation = "source-over";
+  ctx.globalAlpha = 1.0;
+  
+  // Apply filter/preset
+  if (!currentFilter || currentFilter === "none" || !currentFilter.startsWith("preset")) {
+    // For CSS filters (non-preset)
+    // Read filter from multiple sources
+    const videoInlineFilter = video.style.filter;
+    const computedStyle = window.getComputedStyle(video);
+    const computedFilter = computedStyle.filter;
+    
+    // Priority: computed > inline > currentFilter
+    let filterToApply = "none";
+    if (computedFilter && computedFilter !== "none") {
+      filterToApply = computedFilter;
+    } else if (videoInlineFilter && videoInlineFilter !== "none" && videoInlineFilter !== "") {
+      filterToApply = videoInlineFilter;
+    } else if (currentFilter && currentFilter !== "none") {
+      filterToApply = currentFilter;
+    }
+    
+    ctx.filter = filterToApply;
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
   } else {
+    // For preset filters: 
+    // Apply filter with stronger color overlay to match preview
+    
+    // Step 1: Draw video with CSS filter
+    let cssFilter = "none";
     switch (currentFilter) {
-      case "preset1":
-        ctx.globalCompositeOperation = "multiply";
-        ctx.fillStyle = "rgba(0,225,250,0.13)";
-        ctx.fillRect(0,0,canvas.width,canvas.height);
-        ctx.globalCompositeOperation = "source-over";
-        ctx.filter = "brightness(104%) contrast(104%) saturate(122%)";
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      case "preset1": cssFilter = "brightness(104%) contrast(104%) saturate(122%)"; break;
+      case "preset2": cssFilter = "contrast(128%) saturate(120%)"; break;
+      case "preset3": cssFilter = "contrast(128%) grayscale(100%) saturate(120%)"; break;
+      case "preset4": cssFilter = "contrast(107%) saturate(165%) sepia(50%)"; break;
+      case "preset5": cssFilter = "brightness(105%) contrast(106%) saturate(90%)"; break;
+      case "preset6": cssFilter = "brightness(105%) contrast(115%) saturate(130%)"; break;
+      case "preset7": cssFilter = "brightness(110%) contrast(105%) saturate(140%) sepia(30%)"; break;
+      case "preset8": cssFilter = "brightness(108%) contrast(102%) saturate(115%)"; break;
+      case "preset9": cssFilter = "brightness(115%) contrast(130%) saturate(150%)"; break;
+      case "preset10": cssFilter = "brightness(95%) contrast(110%) saturate(80%) sepia(40%)"; break;
+    }
+    
+    ctx.filter = cssFilter;
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    ctx.filter = "none"; // Reset filter
+    
+    // Step 2: Apply color overlay to match preview
+    // Use subtle opacity to match CSS preview exactly
+    switch (currentFilter) {
+      case "preset1": 
+        // Cyan Dream
+        ctx.fillStyle = "rgba(0, 225, 250, 0.18)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
         break;
-      case "preset2":
-        ctx.globalCompositeOperation = "multiply";
-        ctx.fillStyle = "rgba(250,0,204,0.15)";
-        ctx.fillRect(0,0,canvas.width,canvas.height);
-        ctx.globalCompositeOperation = "source-over";
-        ctx.filter = "contrast(128%) saturate(120%)";
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      case "preset2": 
+        // Pink Magic
+        ctx.fillStyle = "rgba(250, 0, 204, 0.2)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
         break;
-      case "preset3":
-        ctx.globalCompositeOperation = "multiply";
-        ctx.fillStyle = "rgba(0,142,250,0.15)";
-        ctx.fillRect(0,0,canvas.width,canvas.height);
-        ctx.globalCompositeOperation = "source-over";
-        ctx.filter = "contrast(128%) grayscale(100%) saturate(120%)";
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      case "preset3": 
+        // Mono Blue
+        ctx.fillStyle = "rgba(0, 142, 250, 0.2)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
         break;
-      case "preset4":
-        ctx.globalCompositeOperation = "soft-light";
-        ctx.fillStyle = "rgba(58,0,250,0.5)";
-        ctx.fillRect(0,0,canvas.width,canvas.height);
-        ctx.globalCompositeOperation = "source-over";
-        ctx.filter = "contrast(107%) saturate(165%) sepia(50%)";
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      case "preset4": 
+        // Soft Glow
+        ctx.fillStyle = "rgba(58, 0, 250, 0.25)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
         break;
-      case "preset5":
-        ctx.globalCompositeOperation = "overlay";
-        ctx.fillStyle = "rgba(250,0,0,0.3)";
-        ctx.fillRect(0,0,canvas.width,canvas.height);
-        ctx.globalCompositeOperation = "source-over";
-        ctx.filter = "brightness(105%) contrast(106%) saturate(90%)";
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      case "preset5": 
+        // Red Heat
+        ctx.fillStyle = "rgba(250, 0, 0, 0.2)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        break;
+      case "preset6": 
+        // Purple Haze
+        ctx.fillStyle = "rgba(140, 82, 255, 0.2)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        break;
+      case "preset7": 
+        // Golden Hour
+        ctx.fillStyle = "rgba(255, 189, 89, 0.22)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        break;
+      case "preset8": 
+        // Mint Fresh
+        ctx.fillStyle = "rgba(193, 255, 114, 0.2)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        break;
+      case "preset9": 
+        // Neon Night - gradient overlay
+        const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+        gradient.addColorStop(0, "rgba(255, 0, 110, 0.18)");
+        gradient.addColorStop(1, "rgba(0, 245, 255, 0.18)");
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        break;
+      case "preset10": 
+        // Vintage
+        ctx.fillStyle = "rgba(139, 115, 85, 0.22)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
         break;
     }
   }
@@ -260,7 +343,7 @@ async function startGuidedSession(totalShots = MAX_SHOTS) {
 
       const raw = captureOncePNG();
       if (raw) {
-        // NÉN TRƯỚC KHI LƯU → JPEG nhỏ
+        // Compress before saving → smaller JPEG
         const compressed = await compressDataURL(raw, 1400, 0.82);
         photos.push(compressed);
         addThumb(compressed);
@@ -316,3 +399,4 @@ exportBtn?.addEventListener("click", async () => {
 
 // ---------- Init ----------
 document.addEventListener("DOMContentLoaded", toggleExportButton);
+
