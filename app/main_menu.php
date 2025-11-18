@@ -9,6 +9,7 @@ $userName = $isLoggedIn ? ($user['name'] ?? 'User') : '';
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <link rel="icon" type="image/png" href="<?= BASE_URL ?>images/S.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SPACE PHOTOBOOTH • Studio</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
@@ -68,6 +69,10 @@ $userName = $isLoggedIn ? ($user['name'] ?? 'User') : '';
     color: #c1ff72 !important;
     background: rgba(193, 255, 114, 0.1);
   }
+  .nav-link.active {
+    border-bottom: 2px solid #c1ff72 !important;
+    padding-bottom: 2px;
+  }
   .nav-user {
     display: flex;
     align-items: center;
@@ -125,19 +130,19 @@ $userName = $isLoggedIn ? ($user['name'] ?? 'User') : '';
     .menu-toggle {
       display: flex;
     }
-    .nav-menu {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
-      background: #0a0a0a !important;
-      border-top: 1px solid #c1ff72 !important;
-      flex-direction: column;
-      align-items: flex-start;
-      padding: 12px 15px;
-      gap: 0.5rem;
-      display: none;
-    }
+      .nav-menu {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: #0a0a0a !important;
+        border-top: 1px solid #c1ff72 !important;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 12px 15px;
+        gap: 0.5rem;
+        display: none;
+      }
     .nav-menu.active {
       display: flex;
     }
@@ -221,7 +226,7 @@ $userName = $isLoggedIn ? ($user['name'] ?? 'User') : '';
     </div>
     <div class="nav-menu">
       <a href="?p=landing" class="nav-link">HOME</a>
-      <a href="?p=studio" class="nav-link">STUDIO</a>
+      <a href="?p=studio" class="nav-link active">STUDIO</a>
       <a href="?p=photobook" class="nav-link">GALLERY</a>
       <a href="?p=photobooth" class="nav-link">PHOTOBOOTH</a>
       <a href="?p=frame" class="nav-link">FRAME</a>
@@ -293,12 +298,12 @@ $userName = $isLoggedIn ? ($user['name'] ?? 'User') : '';
       <?php else: ?>
         <!-- Guest -->
         <div class="dropdown">
-          <button class="btn p-0 border-0 bg-transparent" data-bs-toggle="dropdown" aria-expanded="false" title="Đăng nhập">
+          <button class="btn p-0 border-0 bg-transparent" data-bs-toggle="dropdown" aria-expanded="false" title="Login">
             <span class="nav-avatar nav-avatar-guest">?</span>
           </button>
           <ul class="dropdown-menu dropdown-menu-end">
-            <li><a class="dropdown-item" href="?p=login">Đăng nhập</a></li>
-            <li><a class="dropdown-item" href="?p=register">Đăng ký</a></li>
+            <li><a class="dropdown-item" href="?p=login">Login</a></li>
+            <li><a class="dropdown-item" href="?p=register">Register</a></li>
             <li><hr class="dropdown-divider"></li>
             <li><a class="dropdown-item" href="?p=oauth-google">Login with Google</a></li>
             <li><a class="dropdown-item" href="?p=oauth-facebook">Login with Facebook</a></li>

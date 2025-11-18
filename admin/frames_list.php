@@ -21,20 +21,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id'])) {
     $MSG = '✅ Đã xóa frame!';
     $OK = true;
   } catch (Exception $e) {
-    $MSG = '❌ Lỗi: ' . $e->getMessage();
+    $MSG = '❌ Error: ' . $e->getMessage();
   }
 }
 
-// Xử lý cập nhật premium status
+// Handle edit frame
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_id'])) {
+  $editId = (int)$_POST['edit_id'];
+  $name = trim($_POST['name'] ?? '');
+  $layout = trim($_POST['layout'] ?? 'vertical');
+  $src = trim($_POST['src'] ?? '');
+  $isPremium = isset($_POST['is_premium']) ? 1 : 0;
+  
+  try {
+    if (empty($name)) {
+      $MSG = '❌ Frame name is required.';
+    } elseif (empty($src)) {
+      $MSG = '❌ Frame src is required.';
+    } else {
+      $stmt = $pdo->prepare("UPDATE frames SET name = ?, layout = ?, src = ?, is_premium = ? WHERE id = ?");
+      $stmt->execute([$name, $layout, $src, $isPremium, $editId]);
+      $MSG = '✅ Frame updated successfully!';
+      $OK = true;
+    }
+  } catch (Exception $e) {
+    $MSG = '❌ Error: ' . $e->getMessage();
+  }
+}
+
+// Handle toggle premium status
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['toggle_premium_id'])) {
   $frameId = (int)$_POST['toggle_premium_id'];
   try {
     $stmt = $pdo->prepare("UPDATE frames SET is_premium = NOT is_premium WHERE id = ?");
     $stmt->execute([$frameId]);
-    $MSG = '✅ Đã cập nhật premium status!';
+    $MSG = '✅ Premium status updated!';
     $OK = true;
   } catch (Exception $e) {
-    $MSG = '❌ Lỗi: ' . $e->getMessage();
+    $MSG = '❌ Error: ' . $e->getMessage();
   }
 }
 
@@ -90,17 +114,72 @@ require __DIR__ . '/includes/layout_header.php';
         </div>
         <div class="card-footer bg-white border-top-0">
           <div class="btn-group w-100" role="group">
+            <button type="button" class="btn btn-sm btn-outline-primary flex-fill" data-bs-toggle="modal" data-bs-target="#editModal<?= $frame['id'] ?>">
+              <i class="bi bi-pencil"></i>
+            </button>
             <form method="post" class="flex-fill" onsubmit="return confirm('Toggle premium status?');">
               <input type="hidden" name="toggle_premium_id" value="<?= $frame['id'] ?>">
               <button type="submit" class="btn btn-sm btn-outline-warning w-100">
                 <i class="bi bi-star"></i>
               </button>
             </form>
-            <form method="post" class="flex-fill" onsubmit="return confirm('Xóa frame này?');">
+            <form method="post" class="flex-fill" onsubmit="return confirm('Delete this frame?');">
               <input type="hidden" name="delete_id" value="<?= $frame['id'] ?>">
               <button type="submit" class="btn btn-sm btn-outline-danger w-100">
                 <i class="bi bi-trash"></i>
               </button>
+            </form>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Edit Modal -->
+      <div class="modal fade" id="editModal<?= $frame['id'] ?>" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <form method="post">
+              <input type="hidden" name="edit_id" value="<?= $frame['id'] ?>">
+              <div class="modal-header">
+                <h5 class="modal-title">Edit Frame #<?= $frame['id'] ?></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+              </div>
+              <div class="modal-body">
+                <div class="mb-3">
+                  <label class="form-label">Frame Name *</label>
+                  <input type="text" name="name" class="form-control" value="<?= htmlspecialchars($frame['name']) ?>" required>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Layout</label>
+                  <select name="layout" class="form-select">
+                    <option value="vertical" <?= $frame['layout'] === 'vertical' ? 'selected' : '' ?>>Vertical</option>
+                    <option value="horizontal" <?= $frame['layout'] === 'horizontal' ? 'selected' : '' ?>>Horizontal</option>
+                    <option value="square" <?= $frame['layout'] === 'square' ? 'selected' : '' ?>>Square</option>
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Image Source (src) *</label>
+                  <input type="text" name="src" class="form-control" value="<?= htmlspecialchars($frame['src']) ?>" required>
+                  <small class="text-muted">Example: public/images/frame-name.png</small>
+                </div>
+                <div class="mb-3">
+                  <div class="form-check">
+                    <input type="checkbox" name="is_premium" value="1" class="form-check-input" id="premium<?= $frame['id'] ?>" <?= $frame['is_premium'] ? 'checked' : '' ?>>
+                    <label class="form-check-label" for="premium<?= $frame['id'] ?>">
+                      <span class="text-warning fw-bold">⭐ Premium Frame</span>
+                    </label>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Preview</label>
+                  <div class="border rounded p-2" style="background: #f8f9fa;">
+                    <img src="<?= '../' . htmlspecialchars($frame['src']) ?>" alt="Preview" class="img-fluid" style="max-height: 150px; object-fit: contain;">
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Save Changes</button>
+              </div>
             </form>
           </div>
         </div>
@@ -111,7 +190,7 @@ require __DIR__ . '/includes/layout_header.php';
 
 <?php if (empty($frames)): ?>
   <div class="alert alert-info mt-3">
-    Chưa có frame nào. <a href="frames_add.php">Thêm frame mới</a>
+    No frames yet. <a href="frames_add.php">Add new frame</a>
   </div>
 <?php endif; ?>
 

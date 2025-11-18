@@ -1,43 +1,43 @@
 <?php
 // admin/users_premium.php
-// Quản lý premium users: set/unset premium status
+// Manage premium users: set/unset premium status
 
 require_once __DIR__ . '/includes/admin_guard.php';
 require_once __DIR__ . '/../config/db.php';
 
 $pdo = db();
 $currentPage = 'users_premium';
-$pageTitle = 'Quản lý Premium Users';
+$pageTitle = 'Manage Premium Users';
 
 $MSG = '';
 $OK = false;
 
-// Xử lý form nâng cấp/hạ cấp user
+// Handle upgrade/downgrade user form
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $userId = (int)($_POST['user_id'] ?? 0);
   $action = $_POST['action'] ?? '';
   $premiumMonths = (int)($_POST['premium_months'] ?? 1);
 
   if ($userId <= 0) {
-    $MSG = '❌ User ID không hợp lệ.';
+    $MSG = '❌ Invalid User ID.';
   } else {
     if ($action === 'upgrade') {
-      // Tính ngày hết hạn
+      // Calculate expiry date
       $premiumUntil = date('Y-m-d H:i:s', strtotime("+$premiumMonths months"));
       
       $stmt = $pdo->prepare("UPDATE users SET is_premium = 1, premium_until = ? WHERE id = ?");
       $stmt->execute([$premiumUntil, $userId]);
       
       $OK = true;
-      $MSG = "✅ Đã nâng cấp user #$userId lên Premium (hết hạn: $premiumUntil)";
+      $MSG = "✅ User #$userId upgraded to Premium (expires: $premiumUntil)";
     } elseif ($action === 'downgrade') {
       $stmt = $pdo->prepare("UPDATE users SET is_premium = 0, premium_until = NULL WHERE id = ?");
       $stmt->execute([$userId]);
       
       $OK = true;
-      $MSG = "✅ Đã hạ cấp user #$userId về Free";
+      $MSG = "✅ User #$userId downgraded to Free";
     } elseif ($action === 'extend') {
-      // Gia hạn thêm
+      // Extend subscription
       $stmt = $pdo->prepare("SELECT premium_until FROM users WHERE id = ?");
       $stmt->execute([$userId]);
       $currentUntil = $stmt->fetchColumn();
@@ -52,12 +52,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $stmt->execute([$newUntil, $userId]);
       
       $OK = true;
-      $MSG = "✅ Đã gia hạn user #$userId đến $newUntil";
+      $MSG = "✅ User #$userId extended until $newUntil";
     }
   }
 }
 
-// Lấy danh sách users
+// Get users list
 $searchQuery = $_GET['search'] ?? '';
 $sql = "SELECT id, name, email, provider, is_premium, premium_until, created_at FROM users";
 $params = [];
@@ -73,11 +73,11 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Đếm số premium users
+// Count premium users
 $stmtCount = $pdo->query("SELECT COUNT(*) FROM users WHERE is_premium = 1");
 $premiumCount = $stmtCount->fetchColumn();
 
-// Đếm số pending requests
+// Count pending requests
 $stmtPending = $pdo->query("SELECT COUNT(*) FROM premium_requests WHERE status = 'pending'");
 $totalPending = $stmtPending->fetchColumn();
 
@@ -94,8 +94,8 @@ require __DIR__ . '/includes/layout_header.php';
 <!-- Search -->
 <form method="get" class="mb-3">
   <div class="input-group">
-    <input type="text" name="search" class="form-control" placeholder="Tìm user theo tên hoặc email..." value="<?= htmlspecialchars($searchQuery) ?>">
-    <button class="btn btn-primary" type="submit"><i class="bi bi-search"></i> Tìm</button>
+    <input type="text" name="search" class="form-control" placeholder="Search user by name or email..." value="<?= htmlspecialchars($searchQuery) ?>">
+    <button class="btn btn-primary" type="submit"><i class="bi bi-search"></i> Search</button>
     <?php if ($searchQuery): ?>
       <a href="users_premium.php" class="btn btn-outline-secondary"><i class="bi bi-x-circle"></i> Clear</a>
     <?php endif; ?>
@@ -110,12 +110,12 @@ require __DIR__ . '/includes/layout_header.php';
             <thead class="table-light">
               <tr>
                 <th>ID</th>
-                <th>Tên</th>
+                <th>Name</th>
                 <th>Email</th>
                 <th>Provider</th>
                 <th>Status</th>
                 <th>Premium Until</th>
-                <th>Đăng ký</th>
+                <th>Registered</th>
                 <th class="text-end">Actions</th>
               </tr>
             </thead>
@@ -148,7 +148,7 @@ require __DIR__ . '/includes/layout_header.php';
                     <?php if ($premiumUntil): ?>
                       <small class="<?= $isExpired ? 'expired' : '' ?>">
                         <?= date('d/m/Y H:i', strtotime($premiumUntil)) ?>
-                        <?= $isExpired ? ' (Hết hạn)' : '' ?>
+                        <?= $isExpired ? ' (Expired)' : '' ?>
                       </small>
                     <?php else: ?>
                       <small class="text-muted">-</small>
@@ -158,28 +158,28 @@ require __DIR__ . '/includes/layout_header.php';
                   <td class="actions-cell text-end">
                     <!-- Dropdown actions -->
                     <div class="btn-group btn-group-sm">
-                      <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown">
+                      <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" data-bs-boundary="viewport">
                         Actions
                       </button>
                       <ul class="dropdown-menu dropdown-menu-end">
                         <?php if (!$isPremium || $isExpired): ?>
                           <li>
-                            <form method="post" class="dropdown-item p-0">
+                            <form method="post" style="margin: 0;">
                               <input type="hidden" name="user_id" value="<?= $u['id'] ?>">
                               <input type="hidden" name="action" value="upgrade">
                               <input type="hidden" name="premium_months" value="1">
-                              <button type="submit" class="btn btn-sm btn-link text-decoration-none text-start w-100">
-                                ⬆️ Nâng lên Premium (1 tháng)
+                              <button type="submit" class="dropdown-item" style="white-space: nowrap; cursor: pointer;">
+                                ⬆️ Upgrade to Premium (1 month)
                               </button>
                             </form>
                           </li>
                           <li>
-                            <form method="post" class="dropdown-item p-0">
+                            <form method="post" style="margin: 0;">
                               <input type="hidden" name="user_id" value="<?= $u['id'] ?>">
                               <input type="hidden" name="action" value="upgrade">
                               <input type="hidden" name="premium_months" value="12">
-                              <button type="submit" class="btn btn-sm btn-link text-decoration-none text-start w-100">
-                                ⬆️ Nâng lên Premium (1 năm)
+                              <button type="submit" class="dropdown-item" style="white-space: nowrap; cursor: pointer;">
+                                ⬆️ Upgrade to Premium (1 year)
                               </button>
                             </form>
                           </li>
@@ -187,32 +187,32 @@ require __DIR__ . '/includes/layout_header.php';
                         
                         <?php if ($isPremium && !$isExpired): ?>
                           <li>
-                            <form method="post" class="dropdown-item p-0">
+                            <form method="post" style="margin: 0;">
                               <input type="hidden" name="user_id" value="<?= $u['id'] ?>">
                               <input type="hidden" name="action" value="extend">
                               <input type="hidden" name="premium_months" value="1">
-                              <button type="submit" class="btn btn-sm btn-link text-decoration-none text-start w-100">
-                                🔄 Gia hạn thêm 1 tháng
+                              <button type="submit" class="dropdown-item" style="white-space: nowrap; cursor: pointer;">
+                                ➡️ Extend 1 month
                               </button>
                             </form>
                           </li>
                           <li>
-                            <form method="post" class="dropdown-item p-0">
+                            <form method="post" style="margin: 0;">
                               <input type="hidden" name="user_id" value="<?= $u['id'] ?>">
                               <input type="hidden" name="action" value="extend">
                               <input type="hidden" name="premium_months" value="12">
-                              <button type="submit" class="btn btn-sm btn-link text-decoration-none text-start w-100">
-                                🔄 Gia hạn thêm 1 năm
+                              <button type="submit" class="dropdown-item" style="white-space: nowrap; cursor: pointer;">
+                                ➡️ Extend 1 year
                               </button>
                             </form>
                           </li>
                           <li><hr class="dropdown-divider"></li>
                           <li>
-                            <form method="post" class="dropdown-item p-0" onsubmit="return confirm('Chắc chắn hạ cấp user này?')">
+                            <form method="post" style="margin: 0;" onsubmit="return confirm('Are you sure to downgrade this user?')">
                               <input type="hidden" name="user_id" value="<?= $u['id'] ?>">
                               <input type="hidden" name="action" value="downgrade">
-                              <button type="submit" class="btn btn-sm btn-link text-decoration-none text-danger text-start w-100">
-                                ⬇️ Hạ về Free
+                              <button type="submit" class="dropdown-item text-danger" style="white-space: nowrap; cursor: pointer;">
+                                ⬇️ Downgrade to Free
                               </button>
                             </form>
                           </li>
@@ -230,7 +230,7 @@ require __DIR__ . '/includes/layout_header.php';
 
     <?php if (empty($users)): ?>
       <div class="alert alert-info mt-3">
-        Không tìm thấy user nào<?= $searchQuery ? ' phù hợp với từ khóa "' . htmlspecialchars($searchQuery) . '"' : '' ?>.
+        No users found<?= $searchQuery ? ' matching keyword "' . htmlspecialchars($searchQuery) . '"' : '' ?>.
       </div>
     <?php endif; ?>
   </div>

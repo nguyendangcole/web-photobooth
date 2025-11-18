@@ -1,13 +1,13 @@
 <!-- app/menu.php -->
 <nav class="navbar px-3" style="background:#141414;">
-  <!-- Trái: dropdown Menu -->
+  <!-- Left: dropdown Menu -->
   <div class="dropdown">
     <button class="btn btn-menu dropdown-toggle no-caret"
             type="button" id="menuDropdown" data-bs-toggle="dropdown" aria-expanded="false">
       Menu
     </button>
     <ul class="dropdown-menu" aria-labelledby="menuDropdown">
-      <li><a class="dropdown-item" href="index.php">🏠 Về trang chủ</a></li>
+      <li><a class="dropdown-item" href="index.php">🏠 Home</a></li>
       <li><a class="dropdown-item" href="?p=studio">Studio</a></li>
       <li><a class="dropdown-item" href="?p=landing">★ Landing</a></li>
       <li><a class="dropdown-item" href="?p=photobooth">Photobooth</a></li>
@@ -16,7 +16,7 @@
     </ul>
   </div>
 
-  <!-- Phải: AVATAR -->
+  <!-- Right: AVATAR -->
   <div class="ms-auto d-flex align-items-center gap-2">
     <?php $u = current_user(); ?>
     <?php if ($u): ?>
@@ -36,7 +36,7 @@
             <div class="fw-semibold"><?= htmlspecialchars($u['name']) ?></div>
             <div><?= htmlspecialchars($u['email']) ?></div>
             <?php
-            // Kiểm tra premium status
+            // Check premium status
             if (!empty($u['id'])) {
               try {
                 $stmt = db()->prepare("SELECT is_premium, premium_until FROM users WHERE id = ?");
@@ -53,7 +53,7 @@
                   if ($isActive) {
                     echo '<div class="mt-2"><span style="background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%); color: white; padding: 3px 10px; border-radius: 12px; font-size: 10px; font-weight: 700;">⭐ PREMIUM</span></div>';
                     if ($premiumUntil) {
-                      echo '<div style="font-size: 10px; margin-top: 4px;">Hết hạn: ' . date('d/m/Y', strtotime($premiumUntil)) . '</div>';
+                      echo '<div style="font-size: 10px; margin-top: 4px;">Expires: ' . date('d/m/Y', strtotime($premiumUntil)) . '</div>';
                     }
                   }
                 }
@@ -70,12 +70,12 @@
     <?php else: ?>
       <!-- Guest -->
       <div class="dropdown">
-        <button class="btn p-0 border-0 bg-transparent" data-bs-toggle="dropdown" aria-expanded="false" title="Đăng nhập">
+        <button class="btn p-0 border-0 bg-transparent" data-bs-toggle="dropdown" aria-expanded="false" title="Login">
           <span class="nav-avatar nav-avatar-guest">?</span>
         </button>
         <ul class="dropdown-menu dropdown-menu-end">
-          <li><a class="dropdown-item" href="?p=login">Đăng nhập</a></li>
-          <li><a class="dropdown-item" href="?p=register">Đăng ký</a></li>
+          <li><a class="dropdown-item" href="?p=login">Login</a></li>
+          <li><a class="dropdown-item" href="?p=register">Register</a></li>
           <li><hr class="dropdown-divider"></li>
           <li><a class="dropdown-item" href="?p=oauth-google">Login with Google</a></li>
           <li><a class="dropdown-item" href="?p=oauth-facebook">Login with Facebook</a></li>

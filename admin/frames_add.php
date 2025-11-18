@@ -1,13 +1,13 @@
 <?php
 // admin/frames_add.php
-// Thêm frame mới: upload ảnh vào public/images/ hoặc nhập src thủ công, rồi insert DB.
+// Add new frame: upload image to public/images/ or manually enter src, then insert to DB.
 
 require_once __DIR__ . '/includes/admin_guard.php';
 require_once __DIR__ . '/../config/db.php';
 
 $pdo = db();
 $currentPage = 'frames_add';
-$pageTitle = 'Thêm Frame';
+$pageTitle = 'Add Frame';
 
 $MSG = '';
 $OK  = false;
@@ -16,7 +16,7 @@ $lastName = '';
 $lastLayout = 'vertical';
 
 function clean_filename($name) {
-  // bỏ ký tự đặc biệt, giữ lại a-z0-9-_.
+  // remove special characters, keep only a-z0-9-_.
   $name = strtolower($name);
   $name = preg_replace('/[^a-z0-9\-\._]+/i', '-', $name);
   $name = preg_replace('/-+/', '-', $name);
@@ -30,16 +30,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $lastName = $name;
   $lastLayout = $layout;
 
-  $src = trim($_POST['src'] ?? ''); // nếu không upload, cho phép nhập src
+  $src = trim($_POST['src'] ?? ''); // if not uploading, allow entering src
 
-  // Nếu có upload file
+  // If uploading file
   if (!empty($_FILES['file']['name'])) {
     $file = $_FILES['file'];
 
     if ($file['error'] !== UPLOAD_ERR_OK) {
-      $MSG = 'Upload lỗi (mã ' . $file['error'] . ').';
     } else {
-      // Kiểm tra mime & đuôi
+      // Check mime & extension
       $finfo = new finfo(FILEINFO_MIME_TYPE);
       $mime  = $finfo->file($file['tmp_name']);
       $allowed = [
@@ -48,9 +47,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'image/webp' => 'webp',
       ];
       if (!isset($allowed[$mime])) {
-        $MSG = 'Chỉ chấp nhận PNG, JPG, WEBP.';
+        $MSG = 'Only PNG, JPG, WEBP accepted.';
       } else {
-        // Tạo tên file an toàn + unique
+        // Create safe + unique filename
         $orig = clean_filename($file['name']);
         $ext  = pathinfo($orig, PATHINFO_EXTENSION);
         if (!$ext) $ext = $allowed[$mime];
@@ -59,17 +58,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $newName = $basename . '-' . date('Ymd-His') . '-' . substr(bin2hex(random_bytes(3)),0,6) . '.' . $ext;
 
-        // Đường dẫn tương đối (lưu DB) & tuyệt đối (ghi file)
+        // Relative path (save to DB) & absolute path (write file)
         $rel  = 'public/images/' . $newName;
         $abs  = dirname(__DIR__) . '/' . $rel;  // …/WEB-PHOTOBOOTH/public/images/xxx.png
 
-        // Tạo thư mục nếu thiếu
+        // Create directory if missing
         @mkdir(dirname($abs), 0777, true);
 
         if (!move_uploaded_file($file['tmp_name'], $abs)) {
-          $MSG = 'Không thể lưu file lên server.';
+          $MSG = 'Cannot save file to server.';
         } else {
-          $src = $rel; // dùng ảnh vừa upload
+          $src = $rel; // use uploaded image
           $lastSrc = $src;
         }
       }
@@ -78,18 +77,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   if (!$MSG) {
     if (!$name) {
-      $MSG = 'Thiếu tên frame (name).';
+      $MSG = 'Missing frame name.';
     } elseif (!$src) {
-      $MSG = 'Bạn cần upload ảnh hoặc nhập đường dẫn src.';
+      $MSG = 'You need to upload image or enter src path.';
     } else {
-      // Chèn vào DB (bao gồm cả is_premium)
+      // Insert to DB (including is_premium)
       $stmt = $pdo->prepare("INSERT INTO frames (name, src, layout, is_premium) VALUES (:n, :s, :l, :p)");
       $stmt->execute([':n' => $name, ':s' => $src, ':l' => $layout, ':p' => $isPremium]);
       $OK  = true;
-      $MSG = '✅ Đã thêm frame' . ($isPremium ? ' PREMIUM' : '') . '!';
-      // reset form (trừ layout cho tiện thêm tiếp)
+      $MSG = '✅ Frame added' . ($isPremium ? ' PREMIUM' : '') . '!';
+      // reset form (except layout for convenience)
       $lastName = '';
-      // Nếu bạn muốn reset luôn layout, bỏ comment dòng dưới:
+      // If you want to reset layout too, uncomment line below:
       // $lastLayout = 'vertical';
     }
   }
@@ -109,12 +108,12 @@ require __DIR__ . '/includes/layout_header.php';
   <div class="col-lg-6">
     <div class="card shadow-sm">
       <div class="card-header bg-white">
-        <h5 class="mb-0"><i class="bi bi-plus-circle"></i> Thêm Frame Mới</h5>
+        <h5 class="mb-0"><i class="bi bi-plus-circle"></i> Add New Frame</h5>
       </div>
       <div class="card-body">
         <form method="post" enctype="multipart/form-data">
           <div class="mb-3">
-            <label class="form-label">Tên Frame *</label>
+            <label class="form-label">Frame Name *</label>
             <input type="text" name="name" class="form-control" value="<?= htmlspecialchars($lastName) ?>" required>
           </div>
 
@@ -131,7 +130,7 @@ require __DIR__ . '/includes/layout_header.php';
               <input type="checkbox" name="is_premium" value="1" class="form-check-input" id="isPremium">
               <label class="form-check-label" for="isPremium">
                 <span class="text-warning fw-bold">⭐ Premium Frame</span>
-                <small class="d-block text-muted">Chỉ user premium mới dùng được</small>
+                <small class="d-block text-muted">Only premium users can use</small>
               </label>
             </div>
           </div>
@@ -141,17 +140,17 @@ require __DIR__ . '/includes/layout_header.php';
           <div class="mb-3">
             <label class="form-label">Upload File (PNG/JPG/WEBP)</label>
             <input type="file" name="file" class="form-control" accept="image/png,image/jpeg,image/webp">
-            <small class="text-muted">Nếu không upload, hãy nhập đường dẫn src bên dưới</small>
+            <small class="text-muted">If not uploading, enter src path below</small>
           </div>
 
           <div class="mb-3">
-            <label class="form-label">Hoặc nhập Src</label>
+            <label class="form-label">Or Enter Src</label>
             <input type="text" name="src" class="form-control" placeholder="public/images/ten-anh.png">
           </div>
 
           <div class="d-grid">
             <button type="submit" class="btn btn-primary">
-              <i class="bi bi-plus-circle"></i> Thêm Frame
+              <i class="bi bi-plus-circle"></i> Add Frame
             </button>
           </div>
         </form>
@@ -162,19 +161,19 @@ require __DIR__ . '/includes/layout_header.php';
   <div class="col-lg-6">
     <div class="card shadow-sm">
       <div class="card-header bg-white">
-        <h5 class="mb-0"><i class="bi bi-info-circle"></i> Hướng dẫn</h5>
+        <h5 class="mb-0"><i class="bi bi-info-circle"></i> Instructions</h5>
       </div>
       <div class="card-body">
         <ol class="mb-0">
-          <li class="mb-2">Điền <strong>tên frame</strong> và chọn <strong>layout</strong></li>
-          <li class="mb-2">Tick <strong>Premium Frame</strong> nếu muốn frame này chỉ dành cho premium users</li>
-          <li class="mb-2">Upload ảnh <em>hoặc</em> nhập đường dẫn <code>src</code></li>
-          <li class="mb-2">Click <strong>Thêm Frame</strong></li>
+          <li class="mb-2">Fill in <strong>frame name</strong> and select <strong>layout</strong></li>
+          <li class="mb-2">Tick <strong>Premium Frame</strong> if you want this frame for premium users only</li>
+          <li class="mb-2">Upload image <em>or</em> enter <code>src</code> path</li>
+          <li class="mb-2">Click <strong>Add Frame</strong></li>
         </ol>
 
         <?php if ($OK && $lastSrc): ?>
           <div class="alert alert-success mt-3">
-            <strong>Ảnh vừa upload:</strong><br>
+            <strong>Just uploaded image:</strong><br>
             <img src="<?= '../' . htmlspecialchars($lastSrc) ?>" alt="" class="img-fluid mt-2 rounded" style="max-height: 200px;">
             <small class="d-block mt-2 text-muted">
               Path: <code><?= htmlspecialchars($lastSrc) ?></code>

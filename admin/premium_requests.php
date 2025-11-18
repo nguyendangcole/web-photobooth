@@ -1,6 +1,6 @@
 <?php
 // admin/premium_requests.php
-// Quản lý requests nâng cấp premium
+// Manage premium upgrade requests
 
 require_once __DIR__ . '/includes/admin_guard.php';
 require_once __DIR__ . '/../config/db.php';
@@ -12,7 +12,7 @@ $pageTitle = 'Premium Requests';
 $MSG = '';
 $OK = false;
 
-// Xử lý approve/reject
+// Handle approve/reject
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $requestId = (int)($_POST['request_id'] ?? 0);
   $action = $_POST['action'] ?? '';
@@ -20,26 +20,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $premiumMonths = (int)($_POST['premium_months'] ?? 1);
 
   if ($requestId <= 0) {
-    $MSG = '❌ Request ID không hợp lệ.';
+    $MSG = '❌ Invalid Request ID.';
   } else {
-    // Lấy thông tin request
+    // Get request info
     $stmt = $pdo->prepare("SELECT user_id, status FROM premium_requests WHERE id = ?");
     $stmt->execute([$requestId]);
     $request = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$request) {
-      $MSG = '❌ Request không tồn tại.';
+      $MSG = '❌ Request does not exist.';
     } elseif ($request['status'] !== 'pending') {
-      $MSG = '❌ Request này đã được xử lý rồi.';
+      $MSG = '❌ This request has already been processed.';
     } else {
       $userId = $request['user_id'];
       $now = date('Y-m-d H:i:s');
 
       if ($action === 'approve') {
-        // Tính ngày hết hạn
+        // Calculate expiry date
         $premiumUntil = date('Y-m-d H:i:s', strtotime("+$premiumMonths months"));
         
-        // Update user thành premium
+        // Update user to premium
         $stmt = $pdo->prepare("UPDATE users SET is_premium = 1, premium_until = ? WHERE id = ?");
         $stmt->execute([$premiumUntil, $userId]);
         
@@ -48,20 +48,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute([$now, $notes, $requestId]);
         
         $OK = true;
-        $MSG = "✅ Đã phê duyệt request #$requestId. User #$userId đã được nâng cấp lên Premium (hết hạn: $premiumUntil)";
+        $MSG = "✅ Request #$requestId approved. User #$userId has been upgraded to Premium (expires: $premiumUntil)";
       } elseif ($action === 'reject') {
         // Update request status
         $stmt = $pdo->prepare("UPDATE premium_requests SET status = 'rejected', processed_at = ?, notes = ? WHERE id = ?");
         $stmt->execute([$now, $notes, $requestId]);
         
         $OK = true;
-        $MSG = "✅ Đã từ chối request #$requestId";
+        $MSG = "✅ Request #$requestId rejected";
       }
     }
   }
 }
 
-// Lấy danh sách requests
+// Get requests list
 $statusFilter = $_GET['status'] ?? 'all';
 $sql = "SELECT pr.*, u.name as user_name, u.email as user_email 
         FROM premium_requests pr
@@ -79,7 +79,7 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $requests = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Đếm theo status
+// Count by status
 $stmtCount = $pdo->query("SELECT status, COUNT(*) as cnt FROM premium_requests GROUP BY status");
 $counts = [];
 while ($row = $stmtCount->fetch(PDO::FETCH_ASSOC)) {
@@ -100,12 +100,12 @@ require __DIR__ . '/includes/layout_header.php';
 <div class="mb-3 d-flex justify-content-between align-items-center">
   <div>
     <span class="text-muted">
-      Tổng số pending: <strong class="text-warning"><?= $totalPending ?></strong>
+      Total pending: <strong class="text-warning"><?= $totalPending ?></strong>
     </span>
   </div>
   <div class="btn-group" role="group">
     <a href="?status=all" class="btn btn-sm btn-outline-secondary <?= $statusFilter === 'all' ? 'active' : '' ?>">
-      Tất cả
+      All
     </a>
     <a href="?status=pending" class="btn btn-sm btn-outline-warning <?= $statusFilter === 'pending' ? 'active' : '' ?>">
       Pending (<?= $counts['pending'] ?? 0 ?>)
@@ -122,7 +122,7 @@ require __DIR__ . '/includes/layout_header.php';
 <!-- Requests List -->
 <?php if (empty($requests)): ?>
   <div class="alert alert-info">
-    Không có request nào<?= $statusFilter !== 'all' ? " với status '$statusFilter'" : '' ?>.
+    No requests<?= $statusFilter !== 'all' ? " with status '$statusFilter'" : '' ?>.
   </div>
 <?php else: ?>
   <div class="row g-3">
@@ -138,7 +138,7 @@ require __DIR__ . '/includes/layout_header.php';
                   <small class="text-muted"><?= htmlspecialchars($req['user_email']) ?></small>
                 </p>
                 <small class="text-muted">
-                  <i class="bi bi-clock"></i> Yêu cầu: <?= date('d/m/Y H:i', strtotime($req['requested_at'])) ?>
+                  <i class="bi bi-clock"></i> Requested: <?= date('d/m/Y H:i', strtotime($req['requested_at'])) ?>
                 </small>
               </div>
               <div class="col-md-2 text-center">
@@ -156,7 +156,7 @@ require __DIR__ . '/includes/layout_header.php';
               <div class="col-md-3">
                 <?php if ($req['processed_at']): ?>
                   <small class="text-muted">
-                    <i class="bi bi-check-circle"></i> Xử lý: <?= date('d/m/Y H:i', strtotime($req['processed_at'])) ?>
+                    <i class="bi bi-check-circle"></i> Processed: <?= date('d/m/Y H:i', strtotime($req['processed_at'])) ?>
                   </small>
                   <?php if ($req['notes']): ?>
                     <br><small class="text-muted"><i class="bi bi-chat-left-text"></i> Note: <?= htmlspecialchars($req['notes']) ?></small>
@@ -176,7 +176,7 @@ require __DIR__ . '/includes/layout_header.php';
                     <i class="bi bi-x-circle"></i> Reject
                   </button>
                 <?php else: ?>
-                  <span class="text-muted small"><i class="bi bi-check-all"></i> Đã xử lý</span>
+                  <span class="text-muted small"><i class="bi bi-check-all"></i> Processed</span>
                 <?php endif; ?>
               </div>
             </div>
@@ -192,29 +192,29 @@ require __DIR__ . '/includes/layout_header.php';
               <input type="hidden" name="request_id" value="<?= $req['id'] ?>">
               <input type="hidden" name="action" value="approve">
               <div class="modal-header">
-                <h5 class="modal-title">Phê duyệt Request #<?= $req['id'] ?></h5>
+                <h5 class="modal-title">Approve Request #<?= $req['id'] ?></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
               </div>
               <div class="modal-body">
-                <p>Bạn có chắc muốn phê duyệt yêu cầu của <strong><?= htmlspecialchars($req['user_name']) ?></strong>?</p>
+                <p>Are you sure you want to approve the request from <strong><?= htmlspecialchars($req['user_name']) ?></strong>?</p>
                 <div class="mb-3">
-                  <label class="form-label">Thời hạn Premium:</label>
+                  <label class="form-label">Premium Duration:</label>
                   <select name="premium_months" class="form-select">
-                    <option value="1">1 tháng</option>
-                    <option value="3">3 tháng</option>
-                    <option value="6">6 tháng</option>
-                    <option value="12" selected>1 năm</option>
-                    <option value="24">2 năm</option>
+                    <option value="1">1 month</option>
+                    <option value="3">3 months</option>
+                    <option value="6">6 months</option>
+                    <option value="12" selected>1 year</option>
+                    <option value="24">2 years</option>
                   </select>
                 </div>
                 <div class="mb-3">
-                  <label class="form-label">Ghi chú (tùy chọn):</label>
-                  <textarea name="notes" class="form-control" rows="2" placeholder="Ghi chú cho request này..."></textarea>
+                  <label class="form-label">Notes (optional):</label>
+                  <textarea name="notes" class="form-control" rows="2" placeholder="Notes for this request..."></textarea>
                 </div>
               </div>
               <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                <button type="submit" class="btn btn-success"><i class="bi bi-check-circle"></i> Phê duyệt</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-success"><i class="bi bi-check-circle"></i> Approve</button>
               </div>
             </form>
           </div>
@@ -229,19 +229,19 @@ require __DIR__ . '/includes/layout_header.php';
               <input type="hidden" name="request_id" value="<?= $req['id'] ?>">
               <input type="hidden" name="action" value="reject">
               <div class="modal-header">
-                <h5 class="modal-title">Từ chối Request #<?= $req['id'] ?></h5>
+                <h5 class="modal-title">Reject Request #<?= $req['id'] ?></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
               </div>
               <div class="modal-body">
-                <p>Bạn có chắc muốn từ chối yêu cầu của <strong><?= htmlspecialchars($req['user_name']) ?></strong>?</p>
+                <p>Are you sure you want to reject the request from <strong><?= htmlspecialchars($req['user_name']) ?></strong>?</p>
                 <div class="mb-3">
-                  <label class="form-label">Lý do từ chối (tùy chọn):</label>
-                  <textarea name="notes" class="form-control" rows="3" placeholder="Nhập lý do từ chối..."></textarea>
+                  <label class="form-label">Rejection reason (optional):</label>
+                  <textarea name="notes" class="form-control" rows="3" placeholder="Enter rejection reason..."></textarea>
                 </div>
               </div>
               <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                <button type="submit" class="btn btn-danger"><i class="bi bi-x-circle"></i> Từ chối</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-danger"><i class="bi bi-x-circle"></i> Reject</button>
               </div>
             </form>
           </div>

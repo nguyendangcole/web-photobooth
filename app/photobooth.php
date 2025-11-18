@@ -10,15 +10,16 @@ $uid = $isLoggedIn ? (int)$user['id'] : 0;
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <link rel="icon" type="image/png" href="<?= BASE_URL ?>images/S.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SPACE PHOTOBOOTH • Photobooth</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-<link rel="stylesheet" href="<?= asset('css/photobooth.css') ?>?v=<?= time() ?>">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="<?= asset('css/photobooth.css') ?>?v=<?= time() ?>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Mono:wght@300;400;500&family=Bebas+Neue&display=swap" rel="stylesheet">
   <style>
-  /* Compact header - Light theme - nhỏ gọn nhưng đầy đủ */
+  /* Compact header - Light theme - compact but complete */
   .main-nav {
     padding: 6px 0 !important;
     background: #ffffff !important;
@@ -46,7 +47,7 @@ $uid = $isLoggedIn ? (int)$user['id'] : 0;
   }
   .logo-text {
     color: #0a0a0a !important;
-    font-weight: 600;
+    font-weight: 700;
   }
   .logo-badge {
     font-size: 8px !important;
@@ -64,15 +65,21 @@ $uid = $isLoggedIn ? (int)$user['id'] : 0;
   }
   .nav-link {
     font-size: 11px !important;
+    font-weight: 700 !important;
     color: #333333 !important;
     text-decoration: none;
     padding: 4px 8px;
     border-radius: 4px;
     transition: all 0.2s;
+    text-transform: uppercase;
   }
   .nav-link:hover {
     color: #c1ff72 !important;
     background: rgba(193, 255, 114, 0.15);
+  }
+  .nav-link.active {
+    border-bottom: 2px solid #c1ff72 !important;
+    padding-bottom: 2px;
   }
   .nav-user {
     display: flex;
@@ -154,7 +161,7 @@ $uid = $isLoggedIn ? (int)$user['id'] : 0;
     }
   }
   
-  /* Compact footer - Light theme - nhỏ gọn nhưng đầy đủ */
+  /* Compact footer - Light theme - compact but complete */
   .footer {
     background: #ffffff;
     color: #333333;
@@ -182,9 +189,10 @@ $uid = $isLoggedIn ? (int)$user['id'] : 0;
     color: #666666;
     text-decoration: none;
     font-size: 9px;
-    font-weight: 500;
+    font-weight: 700;
     opacity: 0.8;
     transition: opacity 0.2s, color 0.2s;
+    text-transform: uppercase;
   }
   .footer-links a:hover {
     opacity: 1;
@@ -193,10 +201,12 @@ $uid = $isLoggedIn ? (int)$user['id'] : 0;
   .footer-copyright {
     color: #999999;
     font-size: 8px;
+    font-weight: 700;
     margin: 0;
   }
   .footer-copyright strong {
     color: #333333;
+    font-weight: 700;
   }
   @media (max-width: 768px) {
     .footer-content {
@@ -745,7 +755,7 @@ $uid = $isLoggedIn ? (int)$user['id'] : 0;
       <a href="?p=landing" class="nav-link">HOME</a>
       <a href="?p=studio" class="nav-link">STUDIO</a>
       <a href="?p=photobook" class="nav-link">GALLERY</a>
-      <a href="?p=photobooth" class="nav-link">PHOTOBOOTH</a>
+      <a href="?p=photobooth" class="nav-link active">PHOTOBOOTH</a>
       <a href="?p=frame" class="nav-link">FRAME</a>
     </div>
     <div class="nav-user">
@@ -753,7 +763,7 @@ $uid = $isLoggedIn ? (int)$user['id'] : 0;
         <div class="dropdown">
           <button class="btn btn-link p-0" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
             <?php
-            // Luôn đảm bảo có avatar URL (Gravatar nếu chưa có)
+            // Always ensure avatar URL (Gravatar if not available)
             $avatarUrl = $user['avatar_url'] ?? null;
             if (empty($avatarUrl) && !empty($user['email'])) {
               $emailHash = md5(strtolower(trim($user['email'])));
@@ -990,7 +1000,7 @@ $uid = $isLoggedIn ? (int)$user['id'] : 0;
   </div>
 </div>
 
-<!-- Modal xem ảnh -->
+<!-- Image view modal -->
 <div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content bg-dark border-0">
@@ -1039,9 +1049,9 @@ $uid = $isLoggedIn ? (int)$user['id'] : 0;
       </div>
       <div class="modal-body" style="font-family: 'Space Grotesk', sans-serif; padding: 1.5rem; color: #222;">
         <ol style="margin-left: 1rem;">
-          <li>Double‑click vào ảnh floating để <strong>chọn</strong> (ảnh sẽ có viền xanh).</li>
-          <li>Có thể chọn tối đa <strong>4 ảnh</strong>.</li>
-          <li>Sau khi chọn xong, bấm <strong>EXPORT</strong> để tiếp tục.</li>
+          <li>Double‑click on floating image to <strong>select</strong> (image will have blue border).</li>
+          <li>Can select up to <strong>4 photos</strong>.</li>
+          <li>After selecting, click <strong>EXPORT</strong> to continue.</li>
         </ol>
       </div>
       <div class="modal-footer" style="border-top: 2px solid #000; gap: 10px;">
@@ -1055,7 +1065,7 @@ $uid = $isLoggedIn ? (int)$user['id'] : 0;
 </div>
 
 <?php
-// ===== Playlist: quét public/audio/*.mp3 (đặt audio1.mp3 ở đây là nhận) =====
+// ===== Playlist: scan public/audio/*.mp3 (put audio1.mp3 here to recognize) =====
 $audioDirFs = dirname(__DIR__) . '/public/audio';
 $audioWeb   = BASE_URL . 'audio/';
 $tracks = [];
@@ -1067,14 +1077,14 @@ if (is_dir($audioDirFs)) {
     }
   }
 }
-// Ví dụ chỉ 1 bài: $tracks = [ BASE_URL . 'audio/audio1.mp3' ];
+// Example with only 1 track: $tracks = [ BASE_URL . 'audio/audio1.mp3' ];
 ?>
 <script id="pbMusicData" type="application/json"><?= json_encode($tracks, JSON_UNESCAPED_SLASHES) ?></script>
 
-<!-- Thẻ audio đặt cuối (không hiển thị) -->
+<!-- Audio tag placed at the end (not displayed) -->
 <audio id="pbMusic" preload="auto"></audio>
 
-<!-- Scripts chính -->
+<!-- Main scripts -->
 <script src="<?= asset('js/photobooth.js') ?>?v=<?= time() ?>"></script>
 
 <script>
@@ -1435,7 +1445,7 @@ document.addEventListener('click', (e) => {
     } else {
       // Check if already at limit (4 photos)
       if (selectedPhotos.size >= 4) {
-        showAlert("Bạn chỉ có thể chọn tối đa 4 ảnh!");
+        showAlert("You can only select up to 4 photos!");
         return;
       }
       // Select
@@ -1630,7 +1640,7 @@ if (originalCapturedImages) {
   console.error('captured-images element not found!');
 }
 
-// ===== MUSIC PLAYER (ambience) — nút ở hàng control =====
+// ===== MUSIC PLAYER (ambience) — button in control row =====
 (function(){
   const audioEl   = document.getElementById('pbMusic');
   const toggleBtn = document.getElementById('musicToggle');
@@ -1642,7 +1652,7 @@ if (originalCapturedImages) {
   let tracks = [];
   try { tracks = JSON.parse(raw) || []; } catch(_) {}
 
-  // Ẩn nút nếu không có nhạc
+  // Hide button if no music
   if (!tracks.length && toggleBtn) { toggleBtn.style.display = 'none'; return; }
 
   /** Fisher–Yates shuffle (in-place) */
@@ -1654,9 +1664,9 @@ if (originalCapturedImages) {
     return arr;
   }
 
-  /** Queue phát nhạc (đã shuffle) */
+  /** Music play queue (already shuffled) */
   let queue = shuffle([...tracks]);
-  let qidx  = 0;                                // con trỏ trong queue
+  let qidx  = 0;                                // pointer in queue
   let enabled = (localStorage.getItem('pb_music_enabled') === '1');
   let userInteracted = false;
 
@@ -1704,16 +1714,16 @@ if (originalCapturedImages) {
     if (enabled) pause(); else play();
   }
 
-  /** Next: tăng qidx; khi hết list → reshuffle, nhưng tránh lặp lại bài vừa phát */
+  /** Next: increase qidx; when list ends → reshuffle, but avoid repeating last played track */
   function next(){
     if (!queue.length) return;
     qidx++;
     if (qidx >= queue.length){
-      const last = queue[queue.length - 1];       // bài vừa nghe xong
+      const last = queue[queue.length - 1];       // track just finished
       queue = shuffle([...tracks]);
-      // tránh trùng ngay bài vừa rồi
+      // avoid repeating the track just played
       if (queue[0] === last && queue.length > 1){
-        // đổi chỗ 0 với một vị trí ngẫu nhiên khác
+        // swap position 0 with another random position
         const j = 1 + Math.floor(Math.random() * (queue.length - 1));
         [queue[0], queue[j]] = [queue[j], queue[0]];
       }
@@ -1726,12 +1736,12 @@ if (originalCapturedImages) {
   toggleBtn?.addEventListener('click', toggle);
   audioEl?.addEventListener('ended', next);
 
-  // Tương tác đầu tiên → nếu đã set bật thì play
+  // First interaction → if already set to on then play
   window.addEventListener('click', () => {
     if (!userInteracted){ userInteracted = true; if (enabled) play(); }
   }, { once: true });
 
-  // Khởi tạo UI & nguồn nhạc ban đầu
+  // Initialize UI & initial music source
   setIcon(enabled);
   loadCurrent();
 })();

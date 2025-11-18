@@ -1,12 +1,12 @@
 <?php
 /**
  * app/config.php
- * - Load ENV (.env qua phpdotenv nếu có, fallback parser tay nếu không)
+ * - Load ENV (.env via phpdotenv if available, fallback manual parser if not)
  * - DB (PDO)
  * - Session & helpers (csrf, redirect, current_user, login/logout)
- * - OAuth constants (Google/Facebook) lấy từ ENV
+ * - OAuth constants (Google/Facebook) from ENV
  * - GOOGLE_REDIRECT_URI / FB_REDIRECT_URI: ENV override, DEFAULT = localhost:8888/WEB-PHOTOBOOTH/...
- * - send_mail(): ưu tiên SMTP/PHPMailer nếu bật, fallback mail()
+ * - send_mail(): priority SMTP/PHPMailer if enabled, fallback mail()
  */
 
 if (session_status() === PHP_SESSION_NONE) {
@@ -107,7 +107,7 @@ define('GOOGLE_CLIENT_SECRET', envx('GOOGLE_CLIENT_SECRET', null, $requiredOauth
 define('FB_APP_ID',            envx('FB_APP_ID',            null, $requiredOauth));
 define('FB_APP_SECRET',        envx('FB_APP_SECRET',        null, $requiredOauth));
 
-/* ENV override, DEFAULT = các URL bạn yêu cầu */
+/* ENV override, DEFAULT = requested URLs */
 define('GOOGLE_REDIRECT_URI',
   envx('GOOGLE_REDIRECT_URI', 'http://localhost:8888/WEB-PHOTOBOOTH/public/index.php?p=oauth-google-callback')
 );
@@ -135,29 +135,29 @@ function current_user(): ?array {
   $user = $_SESSION['user'] ?? null;
   if (!$user) return null;
   
-  // Load lại từ database để đảm bảo có avatar_url mới nhất (nếu có từ OAuth)
+  // Reload from database to ensure latest avatar_url (if available from OAuth)
   if (!empty($user['id'])) {
     try {
       $stmt = db()->prepare("SELECT avatar_url, provider FROM users WHERE id = ? LIMIT 1");
       $stmt->execute([$user['id']]);
       $dbUser = $stmt->fetch();
       if ($dbUser) {
-        // Nếu database có avatar_url, dùng nó (ưu tiên avatar từ OAuth như Gmail)
+        // If database has avatar_url, use it (priority avatar from OAuth like Gmail)
         if (!empty($dbUser['avatar_url'])) {
           $user['avatar_url'] = $dbUser['avatar_url'];
-          $_SESSION['user']['avatar_url'] = $dbUser['avatar_url']; // Cập nhật session
+          $_SESSION['user']['avatar_url'] = $dbUser['avatar_url']; // Update session
         } elseif (empty($user['avatar_url']) && !empty($user['email'])) {
-          // Nếu không có avatar_url trong database, tạo Gravatar từ email
+          // If no avatar_url in database, create Gravatar from email
           $emailHash = md5(strtolower(trim($user['email'])));
           $user['avatar_url'] = "https://www.gravatar.com/avatar/{$emailHash}?d=identicon&s=200";
         }
       }
     } catch (Exception $e) {
-      // Silent fail, dùng session data
+      // Silent fail, use session data
     }
   }
   
-  // Fallback: nếu vẫn không có avatar_url, tạo Gravatar từ email
+  // Fallback: if still no avatar_url, create Gravatar from email
   if (empty($user['avatar_url']) && !empty($user['email'])) {
     $emailHash = md5(strtolower(trim($user['email'])));
     $user['avatar_url'] = "https://www.gravatar.com/avatar/{$emailHash}?d=identicon&s=200";
@@ -166,11 +166,11 @@ function current_user(): ?array {
   return $user;
 }
 function login_user(array $user): void {
-  // Giữ nguyên avatar_url từ database (nếu có từ OAuth như Google/Facebook)
-  // Chỉ tạo Gravatar nếu không có avatar_url và có email
+  // Keep avatar_url from database (if available from OAuth like Google/Facebook)
+  // Only create Gravatar if no avatar_url and has email
   $avatarUrl = $user['avatar_url'] ?? null;
   if (!$avatarUrl && !empty($user['email'])) {
-    // Tạo Gravatar URL từ email (fallback cho local accounts hoặc OAuth không có avatar)
+    // Create Gravatar URL from email (fallback for local accounts or OAuth without avatar)
     $emailHash = md5(strtolower(trim($user['email'])));
     $avatarUrl = "https://www.gravatar.com/avatar/{$emailHash}?d=identicon&s=200";
   }
@@ -179,7 +179,7 @@ function login_user(array $user): void {
     'id'         => $user['id'],
     'name'       => $user['name'],
     'email'      => $user['email'],
-    'avatar_url' => $avatarUrl, // Giữ nguyên avatar từ OAuth nếu có
+    'avatar_url' => $avatarUrl, // Keep avatar from OAuth if available
     'provider'   => $user['provider'] ?? 'local',
   ];
 }
@@ -243,8 +243,8 @@ if (!function_exists('asset')) {
 
   /* ========= Extra auth helpers (optional) ========= */
 /**
- * Trả về user hiện tại nếu có (ưu tiên $_SESSION['user'], fallback $_SESSION['auth_user'])
- * Dùng song song với current_user() đang có, không xung đột.
+ * Return current user if available (priority $_SESSION['user'], fallback $_SESSION['auth_user'])
+ * Use alongside existing current_user(), no conflict.
  */
 if (!function_exists('current_user_or_null')) {
   function current_user_or_null(): ?array {
@@ -253,14 +253,14 @@ if (!function_exists('current_user_or_null')) {
 }
 
 /**
- * Yêu cầu đăng nhập cho các trang cần bảo vệ.
- * Gọi ở đầu mỗi page cần login: require_login_or_redirect();
+ * Require login for protected pages.
+ * Call at the beginning of each page requiring login: require_login_or_redirect();
  */
 if (!function_exists('require_login_or_redirect')) {
   function require_login_or_redirect(): void {
     if (!current_user_or_null()) {
-      // (tuỳ chọn) có thể set flash để báo lý do
-      $_SESSION['_flash_err'] = $_SESSION['_flash_err'] ?? 'Vui lòng đăng nhập để tiếp tục.';
+      // (optional) can set flash to show reason
+      $_SESSION['_flash_err'] = $_SESSION['_flash_err'] ?? 'Please login to continue.';
       redirect('?p=login');
       exit;
     }

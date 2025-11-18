@@ -1,18 +1,18 @@
 <?php
 // admin/includes/admin_guard.php
-// Bảo vệ trang admin - chỉ admin mới vào được
+// Protect admin pages - only admins can access
 
 if (session_status() !== PHP_SESSION_ACTIVE) {
   session_start();
 }
 
-// Kiểm tra đã login chưa
+// Check if logged in
 if (empty($_SESSION['user']['id'])) {
   header('Location: ../public/?p=login');
   exit;
 }
 
-// Kiểm tra role admin
+// Check admin role
 require_once __DIR__ . '/../../config/db.php';
 $pdo = db();
 
@@ -22,7 +22,7 @@ $stmt->execute([$userId]);
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$user || empty($user['is_admin'])) {
-  // Không phải admin
+  // Not an admin
   header('HTTP/1.1 403 Forbidden');
   echo '<!DOCTYPE html>
 <html>
@@ -39,8 +39,8 @@ if (!$user || empty($user['is_admin'])) {
           <div class="card-body py-5">
             <h1 class="display-1 text-danger">403</h1>
             <h2 class="mb-3">Access Denied</h2>
-            <p class="text-muted mb-4">Bạn không có quyền truy cập trang này. Chỉ admin mới có thể vào Admin Panel.</p>
-            <a href="../public/?p=studio" class="btn btn-primary">← Về Studio</a>
+           <p class="text-muted mb-4">You do not have permission to access this page. Only admins can access the Admin Panel.</p>
+            <a href="../public/?p=studio" class="btn btn-primary">← Back to Studio</a>
           </div>
         </div>
       </div>
@@ -51,6 +51,6 @@ if (!$user || empty($user['is_admin'])) {
   exit;
 }
 
-// Admin OK - cho phép tiếp tục
+// Admin OK - allow to continue
 ?>
 

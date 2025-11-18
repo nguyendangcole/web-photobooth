@@ -1,18 +1,18 @@
 <?php
 // app/router.php
 
-// Định nghĩa đường dẫn tuyệt đối để tránh lạc đường dẫn
+// Define absolute paths to avoid path confusion
 define('APP_PATH', __DIR__);                 // .../WEB-PHOTOBOOTH/app
 define('ROOT_PATH', dirname(APP_PATH));      // .../WEB-PHOTOBOOTH
 define('PUBLIC_PATH', ROOT_PATH . '/public');
 
-// (Tuỳ chọn) BASE_URL nếu view cần dùng
+// (Optional) BASE_URL if view needs to use
 if (!defined('BASE_URL')) {
   $base = rtrim(dirname($_SERVER['SCRIPT_NAME'] ?? '/public/index.php'), '/\\') . '/';
   define('BASE_URL', $base === '//' ? '/' : $base);
 }
 
-// Bản đồ route → file
+// Route map → file
 $routes = [
   'studio'                => APP_PATH . '/main_menu.php',
   'home'                  => APP_PATH . '/main_menu.php', // Alias for backward compatibility
@@ -50,13 +50,13 @@ $routes = [
   'privacy'               => APP_PATH . '/privacy.php',
 ];
 
-// Trang được yêu cầu (?p=...)
+// Requested page (?p=...)
 $page = $_GET['p'] ?? 'studio';
 
-// File 404 (nếu có)
+// 404 file (if exists)
 $notFoundFile = APP_PATH . '/404.php';
 
-// Hàm render an toàn
+// Safe render function
 function render_file($filePath) {
   if (is_string($filePath) && is_file($filePath)) {
     require $filePath;
@@ -65,13 +65,13 @@ function render_file($filePath) {
   return false;
 }
 
-// Điều hướng
+// Routing
 if (isset($routes[$page]) && render_file($routes[$page])) {
   // ok
 } else {
   http_response_code(404);
   if (!render_file($notFoundFile)) {
-    // Fallback 404 tối thiểu khi thiếu app/404.php
+    // Minimal 404 fallback when app/404.php is missing
     $home = htmlspecialchars(BASE_URL, ENT_QUOTES);
     echo "<!doctype html><meta charset='utf-8'><title>404</title>";
     echo "<div style='font-family:system-ui;max-width:680px;margin:48px auto;text-align:center'>";

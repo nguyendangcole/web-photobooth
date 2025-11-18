@@ -6,7 +6,7 @@ $name = $email = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   if (!csrf_verify($_POST['_csrf'] ?? null)) {
-    $err = 'Phiên không hợp lệ.';
+    $err = 'Invalid session.';
   }
 
   $name  = trim($_POST['name'] ?? '');
@@ -17,28 +17,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $stateId = !empty($_POST['state_id']) ? (int)$_POST['state_id'] : null;
   $cityName = trim($_POST['city_name'] ?? '');
 
-  if (!$err && strlen($name) < 2) $err = 'Tên quá ngắn.';
-  if (!$err && !filter_var($email, FILTER_VALIDATE_EMAIL)) $err = 'Email không hợp lệ.';
+  if (!$err && strlen($name) < 2) $err = 'Name is too short.';
+  if (!$err && !filter_var($email, FILTER_VALIDATE_EMAIL)) $err = 'Invalid email.';
   if (!$err && strlen($pass) < 8) {
-    $err = 'Mật khẩu phải có ít nhất 8 ký tự.';
+    $err = 'Password must be at least 8 characters.';
   } elseif (!$err && (
     !preg_match('/[A-Z]/', $pass) || !preg_match('/[a-z]/', $pass) ||
     !preg_match('/[0-9]/', $pass) || !preg_match('/[^A-Za-z0-9]/', $pass)
   )) {
-    $err = 'Mật khẩu phải bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt.';
+    $err = 'Password must include uppercase, lowercase, numbers and special characters.';
   }
-  if (!$err && $pass !== $pass2) $err = 'Mật khẩu xác nhận không khớp.';
+  if (!$err && $pass !== $pass2) $err = 'Password confirmation does not match.';
   if (!$err) {
     $stmt = db()->prepare("SELECT 1 FROM users WHERE email=? LIMIT 1");
     $stmt->execute([$email]);
-    if ($stmt->fetch()) $err = 'Email đã tồn tại.';
+    if ($stmt->fetch()) $err = 'Email already exists.';
   }
   if (!$err) {
     $ip = $_SERVER['REMOTE_ADDR'] ?? null;
     try {
       $stmt = db()->prepare("SELECT COUNT(*) FROM users WHERE ip_address = ? AND created_at >= NOW() - INTERVAL 1 HOUR");
       $stmt->execute([$ip]);
-      if ((int)$stmt->fetchColumn() >= 5) $err = 'Bạn đã đăng ký quá nhiều lần. Vui lòng thử lại sau.';
+      if ((int)$stmt->fetchColumn() >= 5) $err = 'You have registered too many times. Please try again later.';
     } catch (Exception $e) {}
   }
 
@@ -65,8 +65,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
+<link rel="icon" type="image/png" href="<?= asset('images/S.png') ?>">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Đăng ký | PhotoBooth</title>
+<title>Register | PhotoBooth</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="<?= asset('css/auth.css') ?>?v=<?= time() ?>&t=<?= rand(1000,9999) ?>">
 </head>
@@ -162,7 +163,7 @@ function loadCities(url, citySelect, stateName = null) {
         citySelect.appendChild(o);
       });
     } else {
-      // Nếu không có cities, tự động set city = state (cho các nước như Việt Nam)
+      // If no cities, automatically set city = state (for countries like Vietnam)
       if (stateName) {
         citySelect.disabled = false;
         const o = document.createElement('option');
@@ -176,7 +177,7 @@ function loadCities(url, citySelect, stateName = null) {
       }
     }
   }).catch(() => {
-    // Nếu lỗi, tự động set city = state (cho các nước như Việt Nam)
+    // If error, automatically set city = state (for countries like Vietnam)
     if (stateName) {
       citySelect.disabled = false;
       citySelect.innerHTML = '<option value="">-- Select City --</option>';
@@ -203,7 +204,7 @@ document.addEventListener('DOMContentLoaded', function() {
   
   if (c) c.disabled = true;
   
-  // Function để handle state change
+  // Function to handle state change
   function handleStateChange() {
     const stateValue = this.value;
     const stateText = this.options[this.selectedIndex].text;
@@ -220,7 +221,7 @@ document.addEventListener('DOMContentLoaded', function() {
   if (co) {
     co.addEventListener('change', function() {
       const v = this.value;
-      // Remove old event listener nếu có
+      // Remove old event listener if any
       const newS = s.cloneNode(true);
       s.parentNode.replaceChild(newS, s);
       const sNew = document.getElementById('state');
@@ -286,7 +287,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
       }
     })
-    .catch(() => alert('Không thể load countries'));
+    .catch(() => alert('Cannot load countries'));
 });
 </script>
 </body>

@@ -14,14 +14,14 @@ $tokenResp = http_get_json('https://graph.facebook.com/v19.0/oauth/access_token'
 if (empty($tokenResp['access_token'])) redirect('?p=login');
 $token=$tokenResp['access_token'];
 
-// 2) Lấy profile
+// 2) Get profile
 $me = http_get_json('https://graph.facebook.com/me', [
   'fields'=>'id,name,email,picture.type(large)',
   'access_token'=>$token
 ]);
 $pid   = $me['id'] ?? null;
 $name  = $me['name'] ?? 'Facebook User';
-$email = $me['email'] ?? ($pid.'@facebook.local'); // FB có thể không trả email
+$email = $me['email'] ?? ($pid.'@facebook.local'); // FB may not return email
 $avatar= $me['picture']['data']['url'] ?? null;
 if (!$pid) redirect('?p=login');
 

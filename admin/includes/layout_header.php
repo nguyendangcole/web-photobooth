@@ -12,21 +12,34 @@ $currentUser = $_SESSION['user'] ?? null;
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title><?= $pageTitle ?? 'Admin Panel' ?> - Photobooth Admin</title>
+  <title><?= $pageTitle ?? 'Admin Panel' ?> - SPACE PHOTOBOOTH Admin</title>
   <link rel="icon" type="image/png" href="../public/images/S.png">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;900&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
     :root {
-      --sidebar-width: 260px;
-      --topbar-height: 60px;
-      --primary-color: #ff6b35;
-      --primary-hover: #f7931e;
+      --sidebar-width: 280px;
+      --topbar-height: 70px;
+      --black: #0a0a0a;
+      --white: #ffffff;
+      --lime: #c1ff72;
+      --gray-light: #f5f5f5;
+      --gray-mid: #666666;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
     
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #f8f9fa;
+      font-family: 'Space Grotesk', sans-serif;
+      background: var(--white);
+      color: var(--black);
     }
     
     /* Sidebar */
@@ -36,93 +49,112 @@ $currentUser = $_SESSION['user'] ?? null;
       left: 0;
       width: var(--sidebar-width);
       height: 100vh;
-      background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
-      color: white;
+      background: var(--black);
+      color: var(--white);
       overflow-y: auto;
       z-index: 1000;
       transition: transform 0.3s ease;
+      border-right: 3px solid var(--black);
     }
     
     .admin-sidebar::-webkit-scrollbar {
-      width: 6px;
+      width: 8px;
+    }
+    
+    .admin-sidebar::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
     }
     
     .admin-sidebar::-webkit-scrollbar-thumb {
-      background: rgba(255,255,255,0.2);
-      border-radius: 3px;
+      background: var(--lime);
+      border-radius: 4px;
+    }
+    
+    .admin-sidebar::-webkit-scrollbar-thumb:hover {
+      background: #a8e05a;
     }
     
     .sidebar-header {
-      padding: 20px;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-      background: rgba(0,0,0,0.2);
+      padding: 32px 24px;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.1);
     }
     
     .sidebar-logo {
-      font-size: 24px;
-      font-weight: 700;
-      background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      font-size: 20px;
+      font-weight: 900;
+      color: var(--white);
       text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      letter-spacing: -0.5px;
+    }
+    
+    .sidebar-logo .logo-icon {
+      font-size: 28px;
+      color: var(--lime);
+      font-weight: normal;
     }
     
     .sidebar-nav {
-      padding: 20px 0;
+      padding: 24px 0;
     }
     
     .nav-item {
-      margin: 4px 12px;
+      margin: 0;
     }
     
     .nav-link {
       display: flex;
       align-items: center;
-      gap: 12px;
-      padding: 12px 16px;
-      color: rgba(255,255,255,0.8);
+      gap: 14px;
+      padding: 16px 24px;
+      color: rgba(255, 255, 255, 0.75);
       text-decoration: none;
-      border-radius: 8px;
       transition: all 0.2s ease;
-      font-size: 14px;
+      font-size: 15px;
+      font-weight: 600;
+      border-left: 3px solid transparent;
     }
     
     .nav-link:hover {
-      background: rgba(255,255,255,0.1);
-      color: white;
-      transform: translateX(4px);
+      background: rgba(193, 255, 114, 0.1);
+      color: var(--lime);
+      border-left-color: var(--lime);
     }
     
     .nav-link.active {
-      background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
-      color: white;
-      font-weight: 600;
+      background: rgba(193, 255, 114, 0.15);
+      color: var(--lime);
+      border-left-color: var(--lime);
+      font-weight: 700;
     }
     
     .nav-link i {
-      font-size: 18px;
+      font-size: 20px;
       width: 24px;
       text-align: center;
     }
     
     .nav-badge {
       margin-left: auto;
-      background: #dc3545;
-      color: white;
-      padding: 2px 8px;
-      border-radius: 12px;
+      background: var(--lime);
+      color: var(--black);
+      padding: 3px 10px;
+      border-radius: 20px;
       font-size: 11px;
-      font-weight: 600;
+      font-weight: 700;
+      font-family: 'DM Mono', monospace;
     }
     
     .nav-section-title {
-      padding: 8px 28px;
-      font-size: 11px;
-      font-weight: 600;
-      color: rgba(255,255,255,0.5);
+      padding: 20px 24px 12px;
+      font-size: 10px;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.4);
       text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-top: 16px;
+      letter-spacing: 2px;
+      font-family: 'DM Mono', monospace;
     }
     
     /* Topbar */
@@ -132,69 +164,234 @@ $currentUser = $_SESSION['user'] ?? null;
       left: var(--sidebar-width);
       right: 0;
       height: var(--topbar-height);
-      background: white;
-      border-bottom: 1px solid #e9ecef;
+      background: var(--white);
+      border-bottom: 3px solid var(--black);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 24px;
+      padding: 0 32px;
       z-index: 999;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.04);
     }
     
     .topbar-title {
-      font-size: 20px;
-      font-weight: 600;
-      color: #2c3e50;
+      font-size: 28px;
+      font-weight: 900;
+      color: var(--black);
+      letter-spacing: -0.5px;
+      text-transform: uppercase;
     }
     
     .topbar-user {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 16px;
     }
     
     .user-avatar {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+      width: 44px;
+      height: 44px;
+      border-radius: 8px;
+      background: var(--black);
+      border: 2px solid var(--black);
       display: flex;
       align-items: center;
       justify-content: center;
-      color: white;
-      font-weight: 600;
-      font-size: 14px;
+      color: var(--lime);
+      font-weight: 700;
+      font-size: 18px;
     }
     
     /* Main Content */
     .admin-content {
       margin-left: var(--sidebar-width);
       margin-top: var(--topbar-height);
-      padding: 24px;
+      padding: 40px;
       min-height: calc(100vh - var(--topbar-height));
+      background: var(--gray-light);
     }
     
     /* Cards */
     .stat-card {
-      border-radius: 12px;
-      border: none;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      border-radius: 16px;
+      border: 2px solid var(--black);
+      background: var(--white);
+      transition: all 0.3s ease;
     }
     
     .stat-card:hover {
       transform: translateY(-4px);
-      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.15);
     }
     
     .stat-icon {
-      width: 48px;
-      height: 48px;
+      width: 56px;
+      height: 56px;
       border-radius: 12px;
+      border: 2px solid var(--black);
+      background: var(--lime);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 24px;
+      font-size: 28px;
+      color: var(--black);
+    }
+    
+    /* Card Text Styles */
+    .card-body .text-muted {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-family: 'DM Mono', monospace;
+      color: var(--gray-mid) !important;
+    }
+    
+    .card-body .h4 {
+      font-weight: 900 !important;
+      color: var(--black) !important;
+      font-size: 36px !important;
+    }
+    
+    .card-body .small {
+      font-family: 'DM Mono', monospace;
+      font-weight: 500;
+    }
+    
+    /* Tables */
+    .table {
+      border: 2px solid var(--black);
+      border-radius: 12px;
+      overflow: visible !important;
+      position: relative;
+    }
+    
+    /* Table responsive - allow dropdown to overflow */
+    .table-responsive {
+      overflow-x: auto !important;
+      overflow-y: visible !important;
+      position: relative;
+    }
+    
+    .table thead {
+      background: var(--black);
+      color: var(--white);
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 12px;
+      letter-spacing: 1px;
+    }
+    
+    .table thead th {
+      padding: 20px 12px !important;
+      vertical-align: middle;
+    }
+    
+    .table tbody tr {
+      border-bottom: 1px solid #e0e0e0;
+    }
+    
+    .table tbody td {
+      padding: 24px 12px !important;
+      vertical-align: middle;
+      line-height: 1.6;
+    }
+    
+    .table tbody tr:last-child {
+      border-bottom: none;
+    }
+    
+    /* Buttons */
+    .btn {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      border-radius: 8px;
+      padding: 10px 20px;
+      border: 2px solid var(--black);
+      transition: all 0.2s ease;
+    }
+    
+    .btn-primary {
+      background: var(--black);
+      color: var(--white);
+      border-color: var(--black);
+    }
+    
+    .btn-primary:hover {
+      background: var(--lime);
+      color: var(--black);
+      border-color: var(--black);
+    }
+    
+    .btn-outline-secondary {
+      background: transparent;
+      color: var(--black);
+      border-color: var(--black);
+    }
+    
+    .btn-outline-secondary:hover {
+      background: var(--black);
+      color: var(--white);
+    }
+    
+    /* Dropdown - use Bootstrap's boundary feature */
+    .dropdown-menu {
+      border: 2px solid var(--black);
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+      padding: 8px;
+      z-index: 1050 !important;
+      background: var(--white) !important;
+      min-width: 220px;
+    }
+    
+    /* Actions cell */
+    .actions-cell {
+      position: relative;
+    }
+    
+    /* Card body - allow dropdown overflow */
+    .card {
+      overflow: visible !important;
+    }
+    
+    .card-body {
+      overflow: visible !important;
+    }
+    
+    .card-body .table-responsive {
+      overflow-x: auto !important;
+      overflow-y: visible !important;
+    }
+    
+    /* Ensure dropdowns are not clipped by any container */
+    .admin-content {
+      overflow: visible !important;
+    }
+    
+    .admin-content > * {
+      overflow: visible !important;
+    }
+    
+    .dropdown-item {
+      font-weight: 600;
+      border-radius: 6px;
+      padding: 10px 16px;
+      background: transparent;
+      border: none;
+      transition: all 0.2s ease;
+      color: var(--black);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 14px;
+    }
+    
+    .dropdown-item:hover {
+      background: var(--gray-light) !important;
+      color: var(--black) !important;
+    }
+    
+    .dropdown-item:active {
+      background: var(--lime) !important;
+      color: var(--black) !important;
     }
     
     /* Mobile */
@@ -212,11 +409,15 @@ $currentUser = $_SESSION['user'] ?? null;
         margin-left: 0;
         left: 0;
       }
+      
+      .topbar-title {
+        font-size: 20px;
+      }
     }
     
     /* Animations */
     .fade-in {
-      animation: fadeIn 0.3s ease;
+      animation: fadeIn 0.4s ease;
     }
     
     @keyframes fadeIn {
@@ -229,10 +430,11 @@ $currentUser = $_SESSION['user'] ?? null;
   <!-- Sidebar -->
   <div class="admin-sidebar">
     <div class="sidebar-header">
-      <a href="index.php" class="sidebar-logo d-block text-center">
-        <i class="bi bi-house-heart-fill"></i> Photobooth
+      <a href="index.php" class="sidebar-logo">
+        <span class="logo-icon">✦</span>
+        <span>SPACE PHOTOBOOTH</span>
       </a>
-      <p class="text-center text-white-50 mb-0 mt-2 small">Admin Panel</p>
+      <p class="text-center mb-0 mt-3" style="font-size: 10px; font-weight: 700; font-family: 'DM Mono', monospace; color: var(--lime); text-transform: uppercase; letter-spacing: 2px;">ADMIN PANEL</p>
     </div>
     
     <nav class="sidebar-nav">
@@ -246,18 +448,18 @@ $currentUser = $_SESSION['user'] ?? null;
         </li>
       </ul>
       
-      <div class="nav-section-title">Quản lý Frames</div>
+      <div class="nav-section-title">Manage Frames</div>
       <ul class="list-unstyled">
         <li class="nav-item">
           <a href="frames_list.php" class="nav-link <?= ($currentPage ?? '') === 'frames_list' ? 'active' : '' ?>">
             <i class="bi bi-images"></i>
-            <span>Danh sách Frames</span>
+            <span>List of Frames</span>
           </a>
         </li>
         <li class="nav-item">
           <a href="frames_add.php" class="nav-link <?= ($currentPage ?? '') === 'frames_add' ? 'active' : '' ?>">
             <i class="bi bi-plus-circle"></i>
-            <span>Thêm Frame</span>
+            <span>Add Frame</span>
           </a>
         </li>
       </ul>
@@ -327,7 +529,7 @@ $currentUser = $_SESSION['user'] ?? null;
         <?= strtoupper(substr($currentUser['name'] ?? 'A', 0, 1)) ?>
       </div>
       <div class="dropdown">
-        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-boundary="viewport">
           <i class="bi bi-three-dots-vertical"></i>
         </button>
         <ul class="dropdown-menu dropdown-menu-end">

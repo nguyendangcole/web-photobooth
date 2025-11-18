@@ -2,7 +2,7 @@
 <link rel="stylesheet" href="<?= asset('css/photobooth.css') ?>?v=<?= time() ?>">
 
 <style>
-/* Nút nhạc kiểu pill nằm chung hàng với Start/Export */
+/* Music button pill style in same row as Start/Export */
 .music-pill{
   display:inline-flex; align-items:center; gap:8px;
   border:0; border-radius:999px; padding:8px 12px;
@@ -12,13 +12,13 @@
 .music-pill:hover{ background:#0f1113; }
 .music-pill:active{ transform:scale(.98); }
 .music-pill .music-icon{ width:18px; height:18px; display:inline-block; }
-.music-pill[data-on="1"]{ background:#198754; }        /* bật = xanh */
+.music-pill[data-on="1"]{ background:#198754; }        /* on = green */
 .music-pill[data-on="1"]:hover{ background:#157347; }
 </style>
 
 <div class="container py-5">
 
-  <!-- ========== KHU CHỤP ẢNH ========== -->
+  <!-- ========== PHOTO CAPTURE AREA ========== -->
   <section class="pb-surface capture-section text-center mb-5">
 
     <div class="camera-frame position-relative mx-auto mb-3">
@@ -26,7 +26,7 @@
       <div id="countdown"></div>
     </div>
 
-    <!-- Bộ lọc -->
+    <!-- Filters -->
     <div class="dropdown d-inline-block mb-3">
       <button class="btn btn-outline-dark dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown">
         Filter
@@ -39,18 +39,18 @@
         <li><a class="dropdown-item filter-option" href="#" data-filter="contrast(200%)">High Contrast</a></li>
         <li><a class="dropdown-item filter-option" href="#" data-filter="brightness(150%)">Bright</a></li>
         <li><hr class="dropdown-divider"></li>
-        <li><a class="dropdown-item filter-option" href="#" data-filter="preset1">Preset Xanh nhạt</a></li>
-        <li><a class="dropdown-item filter-option" href="#" data-filter="preset2">Preset Hồng</a></li>
-        <li><a class="dropdown-item filter-option" href="#" data-filter="preset3">Preset Xanh + Grayscale</a></li>
+        <li><a class="dropdown-item filter-option" href="#" data-filter="preset1">Preset Light Blue</a></li>
+        <li><a class="dropdown-item filter-option" href="#" data-filter="preset2">Preset Pink</a></li>
+        <li><a class="dropdown-item filter-option" href="#" data-filter="preset3">Preset Blue + Grayscale</a></li>
         <li><a class="dropdown-item filter-option" href="#" data-filter="preset4">Preset Soft Light</a></li>
-        <li><a class="dropdown-item filter-option" href="#" data-filter="preset5">Preset Overlay Đỏ</a></li>
+        <li><a class="dropdown-item filter-option" href="#" data-filter="preset5">Preset Red Overlay</a></li>
       </ul>
     </div>
 
-    <!-- Nút điều khiển (có Music) -->
+    <!-- Control buttons (with Music) -->
     <div class="d-flex justify-content-center align-items-center flex-wrap gap-3 mt-2">
 
-      <!-- Nút nhạc nằm chung hàng -->
+      <!-- Music button in same row -->
       <button id="musicToggle" class="music-pill" type="button" title="Music" data-on="0">
         <span class="music-icon" aria-hidden="true"></span>
         <span id="musicText">Music</span>
@@ -72,7 +72,7 @@
     </div>
   </section>
 
-  <!-- ========== KHU GALLERY ẢNH ========== -->
+  <!-- ========== PHOTO GALLERY AREA ========== -->
   <section class="pb-surface gallery-section">
     <h3 class="text-center fw-bold mb-4">Your Gallery</h3>
     <div id="captured-images" class="row g-4 justify-content-center"></div>
@@ -80,7 +80,7 @@
 
 </div>
 
-<!-- Modal xem ảnh -->
+<!-- Image view modal -->
 <div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content bg-dark border-0">
@@ -92,7 +92,7 @@
 </div>
 
 <?php
-// ===== Playlist: quét public/audio/*.mp3 (đặt audio1.mp3 ở đây là nhận) =====
+// ===== Playlist: scan public/audio/*.mp3 (put audio1.mp3 here to recognize) =====
 $audioDirFs = dirname(__DIR__) . '/public/audio';
 $audioWeb   = BASE_URL . 'audio/';
 $tracks = [];
@@ -104,19 +104,19 @@ if (is_dir($audioDirFs)) {
     }
   }
 }
-// Ví dụ chỉ 1 bài: $tracks = [ BASE_URL . 'audio/audio1.mp3' ];
+// Example with only 1 track: $tracks = [ BASE_URL . 'audio/audio1.mp3' ];
 ?>
 <script id="pbMusicData" type="application/json"><?= json_encode($tracks, JSON_UNESCAPED_SLASHES) ?></script>
 
-<!-- Thẻ audio đặt cuối (không hiển thị) -->
+<!-- Audio tag placed at the end (not displayed) -->
 <audio id="pbMusic" preload="auto"></audio>
 
-<!-- Scripts chính -->
+<!-- Main scripts -->
 <script src="<?= asset('js/photobooth.js') ?>"></script>
 <script src="<?= asset('js/filter.js') ?>"></script>
 
 <script>
-// ===== Xem ảnh lớn trong modal =====
+// ===== View large image in modal =====
 document.addEventListener('click', e => {
   const img = e.target.closest('#captured-images img');
   if (img) {
@@ -126,7 +126,7 @@ document.addEventListener('click', e => {
   }
 });
 
-// ===== MUSIC PLAYER (ambience) — nút ở hàng control =====
+// ===== MUSIC PLAYER (ambience) — button in control row =====
 (function(){
   const audioEl   = document.getElementById('pbMusic');
   const toggleBtn = document.getElementById('musicToggle');
@@ -138,7 +138,7 @@ document.addEventListener('click', e => {
   let tracks = [];
   try { tracks = JSON.parse(raw) || []; } catch(_) {}
 
-  // Ẩn nút nếu không có nhạc
+  // Hide button if no music
   if (!tracks.length && toggleBtn) { toggleBtn.style.display = 'none'; return; }
 
   /** Fisher–Yates shuffle (in-place) */
@@ -150,9 +150,9 @@ document.addEventListener('click', e => {
     return arr;
   }
 
-  /** Queue phát nhạc (đã shuffle) */
+  /** Music play queue (already shuffled) */
   let queue = shuffle([...tracks]);
-  let qidx  = 0;                                // con trỏ trong queue
+  let qidx  = 0;                                // pointer in queue
   let enabled = (localStorage.getItem('pb_music_enabled') === '1');
   let userInteracted = false;
 
@@ -200,16 +200,16 @@ document.addEventListener('click', e => {
     if (enabled) pause(); else play();
   }
 
-  /** Next: tăng qidx; khi hết list → reshuffle, nhưng tránh lặp lại bài vừa phát */
+  /** Next: increase qidx; when list ends → reshuffle, but avoid repeating last played track */
   function next(){
     if (!queue.length) return;
     qidx++;
     if (qidx >= queue.length){
-      const last = queue[queue.length - 1];       // bài vừa nghe xong
+      const last = queue[queue.length - 1];       // track just finished
       queue = shuffle([...tracks]);
-      // tránh trùng ngay bài vừa rồi
+      // avoid repeating the track just played
       if (queue[0] === last && queue.length > 1){
-        // đổi chỗ 0 với một vị trí ngẫu nhiên khác
+        // swap position 0 with another random position
         const j = 1 + Math.floor(Math.random() * (queue.length - 1));
         [queue[0], queue[j]] = [queue[j], queue[0]];
       }
@@ -222,12 +222,12 @@ document.addEventListener('click', e => {
   toggleBtn?.addEventListener('click', toggle);
   audioEl?.addEventListener('ended', next);
 
-  // Tương tác đầu tiên → nếu đã set bật thì play
+  // First interaction → if already set to on then play
   window.addEventListener('click', () => {
     if (!userInteracted){ userInteracted = true; if (enabled) play(); }
   }, { once: true });
 
-  // Khởi tạo UI & nguồn nhạc ban đầu
+  // Initialize UI & initial music source
   setIcon(enabled);
   loadCurrent();
 })();

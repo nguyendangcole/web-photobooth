@@ -6,17 +6,17 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
   session_start();
 }
 
-// ---- Flash error (nếu có) ----
+// ---- Flash error (if any) ----
 $err = $_SESSION['_flash_err'] ?? '';
 unset($_SESSION['_flash_err']);
 
-// ---- Lấy & chuẩn hoá 'next' (điểm đến sau khi login) ----
+// ---- Get & normalize 'next' (destination after login) ----
 $next = $_GET['next'] ?? $_POST['next'] ?? '?p=photobook';
 
-// Chỉ chấp nhận URL nội bộ dạng:
-//   1) "?p=..." hoặc "index.php?p=..."
-//   2) "/?p=..." hoặc "/index.php?p=..." (bắt đầu bằng "/")
-//   + cho phép thêm tham số [&=a-z0-9_-% ,] an toàn
+// Only accept internal URL format:
+//   1) "?p=..." or "index.php?p=..."
+//   2) "/?p=..." or "/index.php?p=..." (starts with "/")
+//   + allow additional parameters [&=a-z0-9_-% ,] safely
 $allow1 = '/^(?:\?p=[a-z0-9_\-]+(?:[&=a-z0-9_\-%,]*)?|index\.php\?p=[a-z0-9_\-]+(?:[&=a-z0-9_\-%,]*)?)$/i';
 $allow2 = '#^/(?:index\.php)?\?p=[a-z0-9_\-]+(?:[&=a-z0-9_\-%,]*)?$#i';
 
@@ -24,13 +24,13 @@ if (!preg_match($allow1, $next) && !preg_match($allow2, $next)) {
   $next = '?p=photobook';
 }
 
-// ---- Chuẩn hoá BASE_URL ----
+// ---- Normalize BASE_URL ----
 if (!defined('BASE_URL')) {
   $base = rtrim(dirname($_SERVER['SCRIPT_NAME'] ?? '/public/index.php'), '/\\') . '/';
   define('BASE_URL', $base === '//' ? '/' : $base);
 }
 
-// (Tùy chọn nhưng khuyến nghị) tránh cache cho trang đăng nhập
+// (Optional but recommended) avoid cache for login page
 header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
 header('Pragma: no-cache');
 header('Expires: 0');
@@ -59,28 +59,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($user && !empty($user['password_hash']) && password_verify($pass, $user['password_hash'])) {
-      // Đăng nhập thành công
-      // (Nếu login_user đã có regenerate_id thì có thể bỏ dòng dưới)
+      // Login successful
+      // (If login_user already has regenerate_id, can remove line below)
       if (session_status() !== PHP_SESSION_ACTIVE) session_start();
       session_regenerate_id(true);
 
       login_user($user);
 
-      // Ưu tiên quay về URL guard lưu; nếu không có dùng $next
+      // Priority return to URL saved by guard; if not available use $next
       $to = $_SESSION['return_to'] ?? $next;
       unset($_SESSION['return_to']);
 
-      // Chuẩn hoá URL đích để luôn là nội bộ
+      // Normalize destination URL to always be internal
       if (strpos($to, '?p=') === 0) {
         $to = BASE_URL . $to; // "?p=..."
       } elseif (stripos($to, 'index.php?p=') === 0) {
         $to = rtrim(BASE_URL, '/') . '/' . $to; // "index.php?p=..."
       } elseif (preg_match($allow2, $to)) {
-        // "/?p=..." hoặc "/index.php?p=..."
-        // Có thể giữ nguyên; nếu muốn ép về BASE_URL:
+        // "/?p=..." or "/index.php?p=..."
+        // Can keep as is; if want to force to BASE_URL:
         // $to = rtrim(BASE_URL, '/') . $to;
       } else {
-        // fallback an toàn
+        // safe fallback
         $to = BASE_URL . '?p=studio';
       }
 
@@ -96,8 +96,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
+  <link rel="icon" type="image/png" href="<?= asset('images/S.png') ?>">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Đăng nhập | PhotoBooth</title>
+  <title>Login | PhotoBooth</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="<?= asset('css/auth.css') ?>?v=<?= time() ?>">
 </head>
@@ -111,7 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="auth-left-inner px-4 px-lg-5">
           <form method="post" style="width:23rem" autocomplete="off">
             <input type="hidden" name="_csrf" value="<?= csrf_token() ?>">
-            <!-- Bảo toàn 'next' qua POST -->
+            <!-- Preserve 'next' through POST -->
             <input type="hidden" name="next" value="<?= htmlspecialchars($next, ENT_QUOTES) ?>">
 
             <h3 class="fw-normal mb-3 pb-1">Login</h3>

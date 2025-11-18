@@ -9,6 +9,7 @@ $userName = $isLoggedIn ? ($user['name'] ?? 'User') : '';
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <link rel="icon" type="image/png" href="<?= BASE_URL ?>images/S.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SPACE PHOTOBOOTH • Capture The Cosmos</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
@@ -16,8 +17,92 @@ $userName = $isLoggedIn ? ($user['name'] ?? 'User') : '';
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Mono:wght@300;400;500&family=Bebas+Neue&display=swap" rel="stylesheet">
+  <!-- GSAP Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <style>
+    /* Preloader Styles */
+    #preloader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #0a0a0a;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 30px;
+      z-index: 99999;
+      transition: opacity 0.8s ease, visibility 0.8s ease;
+    }
+    
+    #preloader.fade-out {
+      opacity: 0;
+      visibility: hidden;
+    }
+    
+    
+    #preloader-video {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+    }
+    
+    body.loading {
+      overflow: hidden;
+    }
+    
+    /* Animated Background Gradients */
+    @keyframes gradientShift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+    
+    .hero {
+      animation: gradientShift 15s ease infinite;
+    }
+    
+    /* Floating Animation */
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+    }
+    
+    @keyframes floatRotate {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-30px) rotate(10deg); }
+    }
+    
+    /* Pulse Glow */
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 20px rgba(193, 255, 114, 0.3); }
+      50% { box-shadow: 0 0 40px rgba(193, 255, 114, 0.6), 0 0 60px rgba(193, 255, 114, 0.3); }
+    }
+    
+    /* Rainbow Border */
+    @keyframes rainbowBorder {
+      0% { border-color: #ff6b9d; }
+      25% { border-color: #c1ff72; }
+      50% { border-color: #4facfe; }
+      75% { border-color: #feca57; }
+      100% { border-color: #ff6b9d; }
+    }
+    
+  </style>
 </head>
-<body>
+<body class="loading">
+
+<!-- Preloader -->
+<div id="preloader">
+  <video id="preloader-video" muted playsinline>
+    <source src="<?= BASE_URL ?>videos/preloader.mp4" type="video/mp4">
+  </video>
+</div>
 
 <!-- Navigation -->
 <nav class="main-nav">
@@ -603,8 +688,8 @@ $userName = $isLoggedIn ? ($user['name'] ?? 'User') : '';
     
     <div class="video-wrapper">
       <div class="video-container">
-        <!-- Thay VIDEO_ID bằng ID video YouTube của bạn -->
-        <!-- Ví dụ: https://www.youtube.com/watch?v=VIDEO_ID -->
+        <!-- Replace VIDEO_ID with your YouTube video ID -->
+        <!-- Example: https://www.youtube.com/watch?v=VIDEO_ID -->
         <iframe 
           id="youtube-video"
           src="https://www.youtube.com/embed/VIDEO_ID?rel=0" 
@@ -1929,6 +2014,205 @@ html {
       draggedElement = null;
     });
   });
+})();
+
+// First-time visitor detection for auth button
+(function() {
+  const authBtn = document.getElementById('authBtn');
+  if (!authBtn) return; // Only run if user is not logged in
+  
+  // Check if user has visited before
+  const hasVisited = localStorage.getItem('hasVisitedBefore');
+  
+  if (!hasVisited) {
+    // First-time visitor - show SIGN UP (already set in HTML)
+    authBtn.textContent = 'SIGN UP';
+    authBtn.href = '?p=register';
+    // Mark that user has visited after they see the page
+    localStorage.setItem('hasVisitedBefore', 'true');
+  } else {
+    // Returning visitor - show LOGIN
+    authBtn.textContent = 'LOGIN';
+    authBtn.href = '?p=login';
+  }
+})();
+
+// Video + GSAP Preloader
+(function() {
+  const preloader = document.getElementById('preloader');
+  const video = document.getElementById('preloader-video');
+  const body = document.body;
+  
+  // GSAP Timeline
+  const tl = gsap.timeline();
+  
+  // Fade in video
+  tl.to(video, {
+    opacity: 1,
+    duration: 0.3,
+    onComplete: function() {
+      video.playbackRate = 1.5; // Speed up video (1.5x faster)
+      video.play(); // Start video playback
+    }
+  });
+  
+  // Animate landing page entrance
+  function animateLandingPage() {
+    const tl = gsap.timeline();
+    
+    // Animate navigation
+    tl.to('.main-nav', {
+      opacity: 1,
+      y: 0,
+      duration: 0.6,
+      ease: 'power3.out'
+    })
+    // Animate hero badges
+    .to('.hero-badges .badge', {
+      opacity: 1,
+      y: 0,
+      duration: 0.5,
+      stagger: 0.1,
+      ease: 'back.out(1.5)'
+    }, '-=0.3')
+    // Animate hero title lines
+    .to('.hero-title .title-line', {
+      opacity: 1,
+      y: 0,
+      duration: 0.8,
+      stagger: 0.15,
+      ease: 'power4.out'
+    }, '-=0.2')
+    // Animate hero description
+    .to('.hero-desc', {
+      opacity: 1,
+      y: 0,
+      duration: 0.6,
+      ease: 'power3.out'
+    }, '-=0.3')
+    // Animate action buttons
+    .to('.hero-actions .btn', {
+      opacity: 1,
+      y: 0,
+      duration: 0.6,
+      stagger: 0.1,
+      ease: 'back.out(1.2)'
+    }, '-=0.2')
+    // Animate stats
+    .to('.hero-stats .stat', {
+      opacity: 1,
+      y: 0,
+      duration: 0.5,
+      stagger: 0.1,
+      ease: 'power3.out'
+    }, '-=0.3')
+    // Animate visual cards
+    .to('.hero-visual .visual-card', {
+      opacity: 1,
+      scale: 1,
+      rotation: 0,
+      duration: 0.8,
+      stagger: 0.15,
+      ease: 'back.out(1.2)',
+      onComplete: addColorfulEffects
+    }, '-=0.5');
+  }
+  
+  // Add colorful continuous motion effects
+  function addColorfulEffects() {
+    // Floating animation for badges
+    gsap.to('.hero-badges .badge', {
+      y: -10,
+      duration: 2,
+      ease: 'sine.inOut',
+      yoyo: true,
+      repeat: -1,
+      stagger: 0.3
+    });
+    
+    // Floating cards with rotation
+    gsap.to('.hero-visual .visual-card', {
+      y: -15,
+      rotation: 2,
+      duration: 3,
+      ease: 'sine.inOut',
+      yoyo: true,
+      repeat: -1,
+      stagger: 0.5
+    });
+    
+    // Pulse glow for primary button
+    gsap.to('.btn-primary', {
+      boxShadow: '0 0 30px rgba(193, 255, 114, 0.6), 0 0 50px rgba(193, 255, 114, 0.3)',
+      duration: 2,
+      ease: 'sine.inOut',
+      yoyo: true,
+      repeat: -1
+    });
+    
+    // Rainbow border animation for stats
+    const statElements = document.querySelectorAll('.hero-stats .stat');
+    statElements.forEach((stat, i) => {
+      gsap.to(stat, {
+        borderColor: ['#ff6b9d', '#c1ff72', '#4facfe', '#feca57', '#ff6b9d'],
+        duration: 4,
+        ease: 'none',
+        repeat: -1,
+        delay: i * 0.5
+      });
+    });
+    
+    // Scale pulse for title
+    gsap.to('.hero-title .gradient', {
+      scale: 1.05,
+      duration: 2,
+      ease: 'sine.inOut',
+      yoyo: true,
+      repeat: -1
+    });
+    
+    // Rotate arrow in button
+    gsap.to('.btn-arrow', {
+      x: 5,
+      rotation: 45,
+      duration: 1.5,
+      ease: 'sine.inOut',
+      yoyo: true,
+      repeat: -1
+    });
+  }
+  
+  // When video ends
+  video.addEventListener('ended', function() {
+    // Fade out preloader faster
+    gsap.to(preloader, {
+      opacity: 0,
+      duration: 0.5,
+      ease: 'power2.inOut',
+      onComplete: function() {
+        preloader.remove();
+        body.classList.remove('loading');
+        
+        // Animate landing page elements
+        animateLandingPage();
+      }
+    });
+  });
+  
+  // Fallback: If video fails to load, skip preloader after 5 seconds
+  setTimeout(function() {
+    if (preloader.parentNode) {
+      gsap.to(preloader, {
+        opacity: 0,
+        duration: 0.5,
+        onComplete: function() {
+          preloader.remove();
+          body.classList.remove('loading');
+          animateLandingPage();
+        }
+      });
+    }
+  }, 5000);
 })();
 </script>
 

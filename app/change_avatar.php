@@ -10,20 +10,20 @@ if (!$user) {
   redirect('?p=login');
 }
 
-// Đảm bảo có avatar_url (Gravatar nếu chưa có)
+// Ensure avatar_url exists (Gravatar if not available)
 if (empty($user['avatar_url']) && !empty($user['email'])) {
   $emailHash = md5(strtolower(trim($user['email'])));
   $user['avatar_url'] = "https://www.gravatar.com/avatar/{$emailHash}?d=identicon&s=200";
 }
 
-// Default avatars - bạn có thể thêm avatar vào thư mục public/images/avatars/
-// Tên file: avatar-1.png, avatar-2.png, avatar-3.png, ...
+// Default avatars - you can add avatars to public/images/avatars/ folder
+// File names: avatar-1.png, avatar-2.png, avatar-3.png, ...
 $avatarsDir = ROOT_PATH . '/public/images/avatars/';
 $defaultAvatars = [];
 
-// Kiểm tra thư mục avatars có tồn tại không
+// Check if avatars folder exists
 if (is_dir($avatarsDir)) {
-  // Lấy tất cả file avatar
+  // Get all avatar files
   $files = glob($avatarsDir . 'avatar-*.{png,jpg,jpeg,gif,webp}', GLOB_BRACE);
   sort($files);
   foreach ($files as $file) {
@@ -32,9 +32,9 @@ if (is_dir($avatarsDir)) {
   }
 }
 
-// Nếu chưa có avatar, tạo danh sách placeholder để bạn có thể thêm sau
+// If no avatars yet, create placeholder list for you to add later
 if (empty($defaultAvatars)) {
-  // Tạo 12 placeholder avatars với gradient colors
+  // Create 12 placeholder avatars with gradient colors
   $colors = [
     ['#667eea', '#764ba2'], // Purple
     ['#f093fb', '#f5576c'], // Pink
@@ -50,7 +50,7 @@ if (empty($defaultAvatars)) {
     ['#667eea', '#f093fb'], // Purple Pink
   ];
   
-  // Tạo data URLs cho placeholder (hoặc bạn có thể dùng emoji/icon)
+  // Create data URLs for placeholder (or you can use emoji/icon)
   foreach ($colors as $index => $color) {
     $defaultAvatars[] = 'data:image/svg+xml;base64,' . base64_encode(
       '<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
@@ -71,8 +71,9 @@ if (empty($defaultAvatars)) {
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <link rel="icon" type="image/png" href="<?= BASE_URL ?>images/S.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Change Avatar • SPACE PHOTOBOOTH</title>
+  <title>SPACE PHOTOBOOTH • Change Avatar</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
   <link href="<?= BASE_URL ?>css/landing.css" rel="stylesheet">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -376,7 +377,7 @@ if (empty($defaultAvatars)) {
       <div class="current-avatar-label">Current Avatar</div>
       <div class="current-avatar-display" id="currentAvatar">
         <?php
-        // Luôn đảm bảo có avatar URL (Gravatar nếu chưa có)
+        // Always ensure avatar URL (Gravatar if not available)
         $displayAvatarUrl = $user['avatar_url'] ?? null;
         if (empty($displayAvatarUrl) && !empty($user['email'])) {
           $emailHash = md5(strtolower(trim($user['email'])));

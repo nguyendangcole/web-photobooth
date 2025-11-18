@@ -4,7 +4,7 @@ require_once __DIR__ . '/../config.php';
 if (!isset($_GET['code'])) redirect('?p=login');
 
 $code = $_GET['code'];
-// 1) Lấy access token
+// 1) Get access token
 $resp = fetch('https://oauth2.googleapis.com/token', [
   'code' => $code,
   'client_id' => GOOGLE_CLIENT_ID,
@@ -16,7 +16,7 @@ $resp = fetch('https://oauth2.googleapis.com/token', [
 if (empty($resp['access_token'])) redirect('?p=login');
 
 $token = $resp['access_token'];
-// 2) Lấy userinfo
+// 2) Get userinfo
 $ch = curl_init('https://www.googleapis.com/oauth2/v2/userinfo');
 curl_setopt_array($ch, [
   CURLOPT_HTTPHEADER => ["Authorization: Bearer $token"],
@@ -36,7 +36,7 @@ if (!$email || !$pid) redirect('?p=login');
 $stmt=db()->prepare("SELECT * FROM users WHERE provider='google' AND provider_id=? LIMIT 1");
 $stmt->execute([$pid]); $u=$stmt->fetch();
 if (!$u){
-  // nếu chưa có theo provider_id, thử tìm theo email
+  // if not found by provider_id, try to find by email
   $stmt=db()->prepare("SELECT * FROM users WHERE email=? LIMIT 1");
   $stmt->execute([$email]); $u=$stmt->fetch();
   if ($u){

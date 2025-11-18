@@ -5,7 +5,7 @@ require_login_or_redirect();
 $me   = current_user_or_null();
 $meId = (int)($me['id'] ?? 0);
 
-// ===== Lấy danh sách lời mời & bạn bè =====
+// ===== Get list of invitations & friends =====
 $sqlPending = "SELECT u.id, u.name
                FROM friendships f
                JOIN users u ON u.id = f.requester_id
@@ -23,7 +23,7 @@ $st->execute([':me1' => $meId, ':me2' => $meId, ':me3' => $meId]);
 
 $friends = $st->fetchAll(PDO::FETCH_ASSOC);
 
-// ===== Lấy ảnh =====
+// ===== Get photos =====
 $sqlPhotos = "SELECT p.*, u.name
               FROM shared_photos p
               JOIN users u ON u.id = p.user_id
@@ -101,7 +101,7 @@ require __DIR__ . '/../header.php';
 
 
 
-<!-- Lightbox popup (vừa phải, kiểu Instagram) -->
+<!-- Lightbox popup (medium size, Instagram style) -->
 <div class="modal fade" id="photoLightbox" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" style="max-width: 700px;">
     <div class="modal-content bg-dark border-0 rounded-4 shadow-lg p-2 text-center">

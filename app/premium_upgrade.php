@@ -1,6 +1,6 @@
 <?php
 // app/premium_upgrade.php
-// Trang yêu cầu nâng cấp Premium
+// Premium upgrade request page
 
 $GUARD_PAGE = 'premium-upgrade';
 require __DIR__ . '/includes/auth_guard.php';
@@ -14,6 +14,7 @@ $userName = $isLoggedIn ? ($user['name'] ?? 'User') : '';
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <link rel="icon" type="image/png" href="<?= BASE_URL ?>images/S.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SPACE PHOTOBOOTH • Premium Upgrade</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
@@ -52,7 +53,7 @@ $userName = $isLoggedIn ? ($user['name'] ?? 'User') : '';
 </nav>
 
 <?php
-// Kiểm tra xem user đã là premium chưa
+// Check if user is already premium
 $isPremium = false;
 $premiumUntil = null;
 if (!empty($_SESSION['user']['id'])) {
@@ -64,18 +65,18 @@ if (!empty($_SESSION['user']['id'])) {
     $isPremium = true;
     $premiumUntil = $userInfo['premium_until'];
     
-    // Kiểm tra còn hạn không
+    // Check if still valid
     if ($premiumUntil) {
       $expiryDate = new DateTime($premiumUntil);
       $now = new DateTime();
       if ($now > $expiryDate) {
-        $isPremium = false; // hết hạn
+        $isPremium = false; // expired
       }
     }
   }
 }
 
-// Kiểm tra xem đã có request pending chưa
+// Check if already has pending request
 $hasPendingRequest = false;
 if (!empty($_SESSION['user']['id'])) {
   $stmt = db()->prepare("SELECT id FROM premium_requests WHERE user_id = ? AND status = 'pending' LIMIT 1");
@@ -139,7 +140,7 @@ if (!empty($_SESSION['user']['id'])) {
     <div class="premium-content" style="max-width: 900px; margin: 0 auto;">
       
       <?php if ($isPremium): ?>
-        <!-- User đã là Premium -->
+        <!-- User is already Premium -->
         <div class="card premium-card text-center py-5">
           <div class="card-body">
             <div class="mb-4">
@@ -148,19 +149,19 @@ if (!empty($_SESSION['user']['id'])) {
                 <polyline points="22 4 12 14.01 9 11.01"></polyline>
               </svg>
             </div>
-            <h2 class="premium-gradient mb-3">Bạn đã là Premium User!</h2>
+            <h2 class="premium-gradient mb-3">You are already a Premium User!</h2>
             <?php if ($premiumUntil): ?>
               <p class="text-muted mb-4">
-                Premium của bạn có hiệu lực đến: <strong><?= date('d/m/Y H:i', strtotime($premiumUntil)) ?></strong>
+                Your Premium is valid until: <strong><?= date('d/m/Y H:i', strtotime($premiumUntil)) ?></strong>
               </p>
             <?php else: ?>
-              <p class="text-muted mb-4">Premium của bạn không giới hạn thời gian!</p>
+              <p class="text-muted mb-4">Your Premium has no time limit!</p>
             <?php endif; ?>
-            <a href="?p=frame" class="btn btn-primary btn-lg">Sử dụng Premium Frames ngay</a>
+            <a href="?p=frame" class="btn btn-primary btn-lg">Use Premium Frames Now</a>
           </div>
         </div>
       <?php elseif ($hasPendingRequest): ?>
-        <!-- Đã có request pending -->
+        <!-- Already has pending request -->
         <div class="card border-warning text-center py-5">
           <div class="card-body">
             <div class="mb-4">
@@ -169,59 +170,59 @@ if (!empty($_SESSION['user']['id'])) {
                 <polyline points="12 6 12 12 16 14"></polyline>
               </svg>
             </div>
-            <h2 class="mb-3">Yêu cầu của bạn đang được xử lý</h2>
+            <h2 class="mb-3">Your request is being processed</h2>
             <p class="text-muted mb-4">
-              Chúng tôi đã nhận được yêu cầu nâng cấp Premium của bạn. 
-              Admin sẽ xem xét và phê duyệt trong thời gian sớm nhất.
+              We have received your Premium upgrade request. 
+              Admin will review and approve it as soon as possible.
             </p>
             <p class="text-muted">
-              Bạn sẽ nhận được thông báo khi yêu cầu được phê duyệt.
+              You will receive a notification when the request is approved.
             </p>
-            <a href="?p=studio" class="btn btn-outline-primary mt-3">Về Studio</a>
+            <a href="?p=studio" class="btn btn-outline-primary mt-3">Back to Studio</a>
           </div>
         </div>
       <?php else: ?>
-        <!-- Form request Premium -->
+        <!-- Premium request form -->
         <div class="card premium-card">
           <div class="card-body p-5">
             <div class="text-center mb-5">
-              <h1 class="premium-gradient mb-3">Nâng cấp lên Premium</h1>
-              <p class="lead text-muted">Mở khóa tất cả tính năng độc quyền</p>
+              <h1 class="premium-gradient mb-3">Upgrade to Premium</h1>
+              <p class="lead text-muted">Unlock all exclusive features</p>
             </div>
 
             <!-- Features -->
             <div class="mb-5">
-              <h4 class="mb-4">Tính năng Premium bao gồm:</h4>
+              <h4 class="mb-4">Premium features include:</h4>
               
               <div class="feature-item">
                 <div class="feature-icon">FR</div>
                 <div>
-                  <strong>Premium Frames độc quyền</strong>
-                  <p class="mb-0 text-muted small">Truy cập vào tất cả các frame premium đẹp mắt</p>
+                  <strong>Exclusive Premium Frames</strong>
+                  <p class="mb-0 text-muted small">Access to all beautiful premium frames</p>
                 </div>
               </div>
 
               <div class="feature-item">
                 <div class="feature-icon">SP</div>
                 <div>
-                  <strong>Ưu tiên hỗ trợ</strong>
-                  <p class="mb-0 text-muted small">Được hỗ trợ ưu tiên từ đội ngũ chăm sóc khách hàng</p>
+                  <strong>Priority Support</strong>
+                  <p class="mb-0 text-muted small">Get priority support from customer service team</p>
                 </div>
               </div>
 
               <div class="feature-item">
                 <div class="feature-icon">NEW</div>
                 <div>
-                  <strong>Tính năng mới sớm nhất</strong>
-                  <p class="mb-0 text-muted small">Trải nghiệm các tính năng mới trước mọi người</p>
+                  <strong>Early Access to New Features</strong>
+                  <p class="mb-0 text-muted small">Experience new features before everyone else</p>
                 </div>
               </div>
 
               <div class="feature-item">
                 <div class="feature-icon">∞</div>
                 <div>
-                  <strong>Không giới hạn</strong>
-                  <p class="mb-0 text-muted small">Sử dụng không giới hạn tất cả tính năng premium</p>
+                  <strong>Unlimited</strong>
+                  <p class="mb-0 text-muted small">Unlimited use of all premium features</p>
                 </div>
               </div>
             </div>
@@ -232,11 +233,11 @@ if (!empty($_SESSION['user']['id'])) {
                 <input type="hidden" name="action" value="request_premium">
                 <button type="submit" class="btn btn-warning btn-lg px-5 py-3" 
                         style="background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%); border: none; color: white; font-weight: 600; font-size: 1.2rem;">
-                  Gửi yêu cầu nâng cấp Premium
+                  Submit Premium Upgrade Request
                 </button>
               </form>
               <p class="text-muted mt-3 small">
-                Admin sẽ xem xét và phê duyệt yêu cầu của bạn trong thời gian sớm nhất.
+                Admin will review and approve your request as soon as possible.
               </p>
             </div>
           </div>
@@ -257,13 +258,13 @@ if (!empty($_SESSION['user']['id'])) {
             <polyline points="22 4 12 14.01 9 11.01"></polyline>
           </svg>
         </div>
-        <h4 class="mb-3">Yêu cầu đã được gửi thành công!</h4>
+        <h4 class="mb-3">Request submitted successfully!</h4>
         <p class="text-muted mb-4">
-          Chúng tôi đã nhận được yêu cầu nâng cấp Premium của bạn. 
-          Admin sẽ xem xét và phê duyệt trong thời gian sớm nhất.
+          We have received your Premium upgrade request. 
+          Admin will review and approve it as soon as possible.
         </p>
         <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="window.location.href='?p=studio'">
-          Về trang chủ
+          Back to Home
         </button>
       </div>
     </div>
@@ -277,7 +278,7 @@ document.getElementById('premiumRequestForm')?.addEventListener('submit', async 
   const btn = e.target.querySelector('button[type="submit"]');
   const originalText = btn.innerHTML;
   btn.disabled = true;
-  btn.innerHTML = 'Đang gửi...';
+  btn.innerHTML = 'Submitting...';
   
   try {
     const res = await fetch('../ajax/premium_request.php', {
@@ -292,13 +293,13 @@ document.getElementById('premiumRequestForm')?.addEventListener('submit', async 
       const modal = new bootstrap.Modal(document.getElementById('successModal'));
       modal.show();
     } else {
-      alert(json.error || 'Có lỗi xảy ra. Vui lòng thử lại.');
+      alert(json.error || 'An error occurred. Please try again.');
       btn.disabled = false;
       btn.innerHTML = originalText;
     }
   } catch (err) {
     console.error(err);
-    alert('Không thể kết nối server. Vui lòng thử lại.');
+    alert('Cannot connect to server. Please try again.');
     btn.disabled = false;
     btn.innerHTML = originalText;
   }

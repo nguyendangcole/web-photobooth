@@ -1,6 +1,6 @@
 <?php
 // admin/index.php
-// Dashboard - Trang chủ Admin Panel
+// Dashboard - Admin Panel Homepage
 
 require_once __DIR__ . '/includes/admin_guard.php';
 require_once __DIR__ . '/../config/db.php';
@@ -9,7 +9,7 @@ $pdo = db();
 $currentPage = 'dashboard';
 $pageTitle = 'Dashboard';
 
-// Thống kê
+// Statistics
 $stats = [];
 
 // Total users
@@ -64,7 +64,7 @@ require __DIR__ . '/includes/layout_header.php';
             <i class="bi bi-people-fill"></i>
           </div>
           <div class="ms-3 flex-grow-1">
-            <div class="text-muted small">Tổng Users</div>
+            <div class="text-muted small">TOTAL USERS</div>
             <div class="h4 mb-0"><?= number_format($stats['total_users']) ?></div>
           </div>
         </div>
@@ -80,7 +80,7 @@ require __DIR__ . '/includes/layout_header.php';
             <i class="bi bi-star-fill"></i>
           </div>
           <div class="ms-3 flex-grow-1">
-            <div class="text-muted small">Premium Users</div>
+            <div class="text-muted small">PREMIUM USERS</div>
             <div class="h4 mb-0"><?= number_format($stats['premium_users']) ?></div>
           </div>
         </div>
@@ -96,7 +96,7 @@ require __DIR__ . '/includes/layout_header.php';
             <i class="bi bi-inbox-fill"></i>
           </div>
           <div class="ms-3 flex-grow-1">
-            <div class="text-muted small">Pending Requests</div>
+            <div class="text-muted small">PENDING REQUESTS</div>
             <div class="h4 mb-0"><?= number_format($stats['pending_requests']) ?></div>
           </div>
         </div>
@@ -112,7 +112,7 @@ require __DIR__ . '/includes/layout_header.php';
             <i class="bi bi-images"></i>
           </div>
           <div class="ms-3 flex-grow-1">
-            <div class="text-muted small">Tổng Frames</div>
+            <div class="text-muted small">TOTAL FRAMES</div>
             <div class="h4 mb-0"><?= number_format($stats['total_frames']) ?></div>
             <small class="text-muted"><?= $stats['premium_frames'] ?> premium</small>
           </div>
@@ -129,15 +129,15 @@ require __DIR__ . '/includes/layout_header.php';
     <div class="card shadow-sm">
       <div class="card-header bg-white d-flex justify-content-between align-items-center">
         <h5 class="mb-0">
-          <i class="bi bi-inbox text-warning"></i> Premium Requests gần đây
+          <i class="bi bi-inbox text-warning"></i> Recent Premium Requests
         </h5>
-        <a href="premium_requests.php" class="btn btn-sm btn-outline-primary">Xem tất cả</a>
+        <a href="premium_requests.php" class="btn btn-sm btn-outline-primary">View All</a>
       </div>
       <div class="card-body p-0">
         <?php if (empty($recentRequests)): ?>
           <div class="p-4 text-center text-muted">
             <i class="bi bi-inbox display-4 d-block mb-2"></i>
-            Chưa có request nào
+            No requests yet
           </div>
         <?php else: ?>
           <div class="list-group list-group-flush">
@@ -170,15 +170,15 @@ require __DIR__ . '/includes/layout_header.php';
     <div class="card shadow-sm">
       <div class="card-header bg-white d-flex justify-content-between align-items-center">
         <h5 class="mb-0">
-          <i class="bi bi-person-plus text-primary"></i> Users mới đăng ký
+          <i class="bi bi-person-plus text-primary"></i> Recently Registered Users
         </h5>
-        <a href="users_list.php" class="btn btn-sm btn-outline-primary">Xem tất cả</a>
+        <a href="users_list.php" class="btn btn-sm btn-outline-primary">View All</a>
       </div>
       <div class="card-body p-0">
         <?php if (empty($recentUsers)): ?>
           <div class="p-4 text-center text-muted">
             <i class="bi bi-people display-4 d-block mb-2"></i>
-            Chưa có user nào
+            No users yet
           </div>
         <?php else: ?>
           <div class="list-group list-group-flush">
@@ -221,13 +221,13 @@ require __DIR__ . '/includes/layout_header.php';
           <div class="col-md-3">
             <a href="frames_add.php" class="btn btn-outline-primary w-100 py-3">
               <i class="bi bi-plus-circle fs-4 d-block mb-2"></i>
-              Thêm Frame mới
+              Add New Frame
             </a>
           </div>
           <div class="col-md-3">
             <a href="premium_requests.php?status=pending" class="btn btn-outline-warning w-100 py-3">
               <i class="bi bi-inbox fs-4 d-block mb-2"></i>
-              Xem Pending Requests
+              View Pending Requests
               <?php if ($stats['pending_requests'] > 0): ?>
                 <span class="badge bg-danger ms-1"><?= $stats['pending_requests'] ?></span>
               <?php endif; ?>
@@ -236,13 +236,13 @@ require __DIR__ . '/includes/layout_header.php';
           <div class="col-md-3">
             <a href="users_premium.php" class="btn btn-outline-success w-100 py-3">
               <i class="bi bi-star-fill fs-4 d-block mb-2"></i>
-              Quản lý Premium Users
+              Manage Premium Users
             </a>
           </div>
           <div class="col-md-3">
             <a href="users_list.php" class="btn btn-outline-info w-100 py-3">
               <i class="bi bi-people-fill fs-4 d-block mb-2"></i>
-              Xem tất cả Users
+              View All Users
             </a>
           </div>
         </div>
