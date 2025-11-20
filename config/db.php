@@ -14,9 +14,10 @@ if (!function_exists('db')) {
         $pdo = new PDO("mysql:host=$host;port=$port;dbname=$dbname;charset=utf8mb4", $username, $password);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
       } catch (PDOException $e) {
-        header('Content-Type: application/json');
-        echo json_encode(['success' => false, 'error' => $e->getMessage()]);
-        exit;
+        // Log error instead of outputting directly (let caller handle error response)
+        error_log('db() PDO Exception: ' . $e->getMessage());
+        // Throw exception so caller can handle it properly
+        throw $e;
       }
     }
 

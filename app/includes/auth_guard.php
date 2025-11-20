@@ -13,11 +13,27 @@ if (!empty($_SESSION['user']['id'])) {
 
 // Check if AJAX request
 $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
-$isJsonRequest = isset($_SERVER['CONTENT_TYPE']) && strpos($_SERVER['CONTENT_TYPE'], 'application/json') !== false;
+
+// Check Content-Type header - try multiple ways
+$contentType = '';
+if (isset($_SERVER['CONTENT_TYPE'])) {
+  $contentType = $_SERVER['CONTENT_TYPE'];
+} elseif (isset($_SERVER['HTTP_CONTENT_TYPE'])) {
+  $contentType = $_SERVER['HTTP_CONTENT_TYPE'];
+} elseif (function_exists('getallheaders')) {
+  $headers = getallheaders();
+  $contentType = $headers['Content-Type'] ?? $headers['content-type'] ?? '';
+}
+$isJsonRequest = strpos(strtolower($contentType), 'application/json') !== false;
+
 $isAjaxEndpoint = strpos($_SERVER['REQUEST_URI'] ?? '', '/ajax/') !== false;
 
 // If AJAX request or JSON request, return JSON error
 if ($isAjax || $isJsonRequest || $isAjaxEndpoint) {
+  // Clear any previous output before setting headers
+  if (ob_get_level() > 0) {
+    ob_clean();
+  }
   http_response_code(401);
   header('Content-Type: application/json; charset=utf-8');
   echo json_encode(['success' => false, 'error' => 'Unauthorized. Please login.']);

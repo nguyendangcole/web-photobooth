@@ -1,9 +1,14 @@
 <?php
 // app/main_menu.php
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/includes/seo_helper.php';
+
 $user = current_user();
 $isLoggedIn = !empty($user);
 $userName = $isLoggedIn ? ($user['name'] ?? 'User') : '';
+
+// SEO data
+$seoData = default_seo_data('studio');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -11,313 +16,13 @@ $userName = $isLoggedIn ? ($user['name'] ?? 'User') : '';
   <meta charset="UTF-8">
   <link rel="icon" type="image/png" href="<?= BASE_URL ?>images/S.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SPACE PHOTOBOOTH • Studio</title>
+  <?php render_seo_meta($seoData); ?>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-  <style>
-  /* Compact header - nhỏ gọn nhưng đầy đủ */
-  .main-nav {
-    padding: 6px 0 !important;
-    background: #0a0a0a !important;
-    border-bottom: 1px solid #c1ff72 !important;
-  }
-  .nav-wrapper {
-    padding: 0 15px !important;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    max-width: 1400px;
-    margin: 0 auto;
-    position: relative;
-  }
-  .logo {
-    font-size: 13px !important;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
-  .logo-icon {
-    font-size: 16px !important;
-    color: #c1ff72 !important;
-  }
-  .logo-text {
-    color: #ffffff !important;
-    font-weight: 600;
-  }
-  .logo-badge {
-    font-size: 8px !important;
-    padding: 1px 4px !important;
-    background: #c1ff72 !important;
-    color: #0a0a0a !important;
-    border-radius: 2px;
-    font-weight: 700;
-  }
-  .nav-menu {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    flex-wrap: wrap;
-  }
-  .nav-link {
-    font-size: 11px !important;
-    color: #ffffff !important;
-    text-decoration: none;
-    padding: 4px 8px;
-    border-radius: 4px;
-    transition: all 0.2s;
-  }
-  .nav-link:hover {
-    color: #c1ff72 !important;
-    background: rgba(193, 255, 114, 0.1);
-  }
-  .nav-link.active {
-    border-bottom: 2px solid #c1ff72 !important;
-    padding-bottom: 2px;
-  }
-  .nav-user {
-    display: flex;
-    align-items: center;
-    margin-left: 15px;
-  }
-  .nav-avatar {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 1.5px solid #c1ff72;
-  }
-  .nav-avatar-fallback,
-  .nav-avatar-guest {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #c1ff72;
-    color: #0a0a0a;
-    font-weight: 700;
-    font-size: 12px;
-    border: 1.5px solid #c1ff72;
-    text-decoration: none;
-  }
-  .nav-avatar-guest {
-    background: #999;
-    color: #ffffff;
-    border-color: #999;
-  }
-  .menu-toggle {
-    display: none;
-    flex-direction: column;
-    gap: 3px;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 4px;
-  }
-  .menu-toggle span {
-    width: 20px;
-    height: 2px;
-    background: #ffffff !important;
-    transition: all 0.3s ease;
-  }
-  .menu-toggle.active span:nth-child(1) {
-    transform: rotate(45deg) translate(4px, 4px);
-  }
-  .menu-toggle.active span:nth-child(2) {
-    opacity: 0;
-  }
-  @media (max-width: 768px) {
-    .menu-toggle {
-      display: flex;
-    }
-      .nav-menu {
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        background: #0a0a0a !important;
-        border-top: 1px solid #c1ff72 !important;
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 12px 15px;
-        gap: 0.5rem;
-        display: none;
-      }
-    .nav-menu.active {
-      display: flex;
-    }
-    .nav-user {
-      margin-left: 0;
-      margin-top: 8px;
-    }
-  }
-  
-  /* Compact footer - nhỏ gọn nhưng đầy đủ */
-  .footer {
-    background: #0a0a0a;
-    color: #ffffff;
-    padding: 6px 15px;
-    border-top: 1px solid #0a0a0a;
-    margin-top: auto;
-  }
-  .footer-content {
-    max-width: 1400px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 12px;
-  }
-  .footer-links {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    flex-wrap: wrap;
-  }
-  .footer-links a {
-    color: #ffffff;
-    text-decoration: none;
-    font-size: 9px;
-    font-weight: 500;
-    opacity: 0.8;
-    transition: opacity 0.2s, color 0.2s;
-  }
-  .footer-links a:hover {
-    opacity: 1;
-    color: #c1ff72;
-  }
-  .footer-copyright {
-    color: rgba(255, 255, 255, 0.6);
-    font-size: 8px;
-    margin: 0;
-  }
-  .footer-copyright strong {
-    color: #c1ff72;
-  }
-  @media (max-width: 768px) {
-    .footer-content {
-      flex-direction: column;
-      text-align: center;
-      gap: 6px;
-    }
-    .footer-links {
-      justify-content: center;
-      gap: 0.75rem;
-    }
-    .footer {
-      padding: 8px 15px;
-    }
-  }
-  </style>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Mono:wght@300;400;500&family=Bebas+Neue&display=swap" rel="stylesheet">
-</head>
-<body>
-
-<!-- Navigation -->
-<nav class="main-nav">
-  <div class="nav-wrapper">
-    <div class="logo">
-      <span class="logo-icon">✦</span>
-      <span class="logo-text">SPACE PHOTOBOOTH</span>
-      <span class="logo-badge">2025</span>
-    </div>
-    <div class="nav-menu">
-      <a href="?p=landing" class="nav-link">HOME</a>
-      <a href="?p=studio" class="nav-link active">STUDIO</a>
-      <a href="?p=photobook" class="nav-link">GALLERY</a>
-      <a href="?p=photobooth" class="nav-link">PHOTOBOOTH</a>
-      <a href="?p=frame" class="nav-link">FRAME</a>
-    </div>
-    <div class="nav-user">
-      <?php $u = current_user(); ?>
-      <?php if ($u): ?>
-        <div class="dropdown">
-          <button class="btn p-0 border-0 bg-transparent" data-bs-toggle="dropdown" aria-expanded="false"
-                  title="<?= htmlspecialchars($u['name'] ?? 'User') ?>">
-            <?php
-            // Luôn đảm bảo có avatar URL (Gravatar nếu chưa có)
-            $avatarUrl = $u['avatar_url'] ?? null;
-            if (empty($avatarUrl) && !empty($u['email'])) {
-              $emailHash = md5(strtolower(trim($u['email'])));
-              $avatarUrl = "https://www.gravatar.com/avatar/{$emailHash}?d=identicon&s=200";
-            }
-            
-            if (!empty($avatarUrl)):
-            ?>
-              <img src="<?= htmlspecialchars($avatarUrl) ?>" alt="avatar" class="nav-avatar" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-              <span class="nav-avatar nav-avatar-fallback" style="display:none;">
-                <?= strtoupper(substr($u['name'] ?: $u['email'], 0, 1)) ?>
-              </span>
-            <?php else: ?>
-              <span class="nav-avatar nav-avatar-fallback">
-                <?= strtoupper(substr($u['name'] ?: $u['email'], 0, 1)) ?>
-              </span>
-            <?php endif; ?>
-          </button>
-          <ul class="dropdown-menu dropdown-menu-end">
-            <li class="px-3 py-2 small text-muted">
-              <div class="fw-semibold"><?= htmlspecialchars($u['name']) ?></div>
-              <div><?= htmlspecialchars($u['email']) ?></div>
-              <?php
-              // Kiểm tra premium status
-              if (!empty($u['id'])) {
-                try {
-                  $stmt = db()->prepare("SELECT is_premium, premium_until FROM users WHERE id = ?");
-                  $stmt->execute([$u['id']]);
-                  $premiumInfo = $stmt->fetch(PDO::FETCH_ASSOC);
-                  if ($premiumInfo && $premiumInfo['is_premium']) {
-                    $premiumUntil = $premiumInfo['premium_until'];
-                    $isActive = true;
-                    if ($premiumUntil) {
-                      $expiry = new DateTime($premiumUntil);
-                      $now = new DateTime();
-                      $isActive = $now <= $expiry;
-                    }
-                    if ($isActive) {
-                      echo '<div class="mt-2"><span style="background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%); color: white; padding: 3px 10px; border-radius: 12px; font-size: 10px; font-weight: 700;">⭐ PREMIUM</span></div>';
-                      if ($premiumUntil) {
-                        echo '<div style="font-size: 10px; margin-top: 4px;">Hết hạn: ' . date('d/m/Y', strtotime($premiumUntil)) . '</div>';
-                      }
-                    }
-                  }
-                } catch (Exception $e) {
-                  // Silent fail
-                }
-              }
-              ?>
-            </li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="?p=change-avatar"><i class="bi bi-person-circle me-2"></i> Change Avatar</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="?p=logout">Logout</a></li>
-          </ul>
-        </div>
-      <?php else: ?>
-        <!-- Guest -->
-        <div class="dropdown">
-          <button class="btn p-0 border-0 bg-transparent" data-bs-toggle="dropdown" aria-expanded="false" title="Login">
-            <span class="nav-avatar nav-avatar-guest">?</span>
-          </button>
-          <ul class="dropdown-menu dropdown-menu-end">
-            <li><a class="dropdown-item" href="?p=login">Login</a></li>
-            <li><a class="dropdown-item" href="?p=register">Register</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="?p=oauth-google">Login with Google</a></li>
-            <li><a class="dropdown-item" href="?p=oauth-facebook">Login with Facebook</a></li>
-          </ul>
-        </div>
-      <?php endif; ?>
-    </div>
-    <button class="menu-toggle" id="menuToggle">
-      <span></span>
-      <span></span>
-    </button>
-  </div>
-</nav>
-
+  <style>
+  /* Page-specific styles */
 <?php
 $imgCamera  = BASE_URL . 'images/camera.png';
 $imgFrame   = BASE_URL . 'images/frame.png';
@@ -326,8 +31,6 @@ $imgBook    = BASE_URL . 'images/gallery.png'; // ← THÊM: ảnh dẫn tới t
 $bgDesktop  = BASE_URL . 'images/55.png';
 $bgMobile   = BASE_URL . 'images/56.png';
 ?>
-
-<style>
 :root { --hover-accent: #c1ff72; }
 
 html, body { 
@@ -432,7 +135,86 @@ body::after{
   transition: transform .18s ease, opacity .18s ease;
 }
 .modal.modal-mini.show .modal-dialog{ transform: translateY(0) scale(1); }
-</style>
+  </style>
+</head>
+<body>
+
+<?php
+// Include common header (dark theme, studio page active)
+$theme = 'dark';
+$activePage = 'studio';
+
+// Custom dropdown for studio page (with premium status)
+// Use $user from config.php
+if ($user) {
+  $customDropdownContent = '<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">';
+  $customDropdownContent .= '<li class="px-3 py-2 small text-muted">';
+  $customDropdownContent .= '<div class="fw-semibold">' . htmlspecialchars($user['name']) . '</div>';
+  $customDropdownContent .= '<div>' . htmlspecialchars($user['email']) . '</div>';
+  
+  // Premium status check
+  $isAdmin = false;
+  if (!empty($user['id'])) {
+    try {
+      $stmt = db()->prepare("SELECT is_premium, premium_until, is_admin FROM users WHERE id = ?");
+      $stmt->execute([$user['id']]);
+      $userInfo = $stmt->fetch(PDO::FETCH_ASSOC);
+      
+      if ($userInfo) {
+        $isAdmin = !empty($userInfo['is_admin']);
+        
+        if ($userInfo['is_premium']) {
+          $premiumUntil = $userInfo['premium_until'];
+          $isActive = true;
+          if ($premiumUntil) {
+            $expiry = new DateTime($premiumUntil);
+            $now = new DateTime();
+            $isActive = $now <= $expiry;
+          }
+          if ($isActive) {
+            $customDropdownContent .= '<div class="mt-2"><span style="background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%); color: white; padding: 3px 10px; border-radius: 12px; font-size: 10px; font-weight: 700;">⭐ PREMIUM</span></div>';
+            if ($premiumUntil) {
+              $customDropdownContent .= '<div style="font-size: 10px; margin-top: 4px;">Hết hạn: ' . date('d/m/Y', strtotime($premiumUntil)) . '</div>';
+            }
+          }
+        }
+      }
+    } catch (Exception $e) {
+      // Silent fail
+    }
+  }
+  
+  $customDropdownContent .= '</li>';
+  $customDropdownContent .= '<li><hr class="dropdown-divider"></li>';
+  
+  // Admin Dashboard link (only for admins)
+  if ($isAdmin) {
+    $customDropdownContent .= '<li><a class="dropdown-item" href="../admin/index.php"><i class="bi bi-shield-check me-2"></i> Admin Dashboard</a></li>';
+    $customDropdownContent .= '<li><hr class="dropdown-divider"></li>';
+  }
+  
+  $customDropdownContent .= '<li><a class="dropdown-item" href="?p=change-avatar"><i class="bi bi-person-circle me-2"></i> Change Avatar</a></li>';
+  $customDropdownContent .= '<li><hr class="dropdown-divider"></li>';
+  $customDropdownContent .= '<li><a class="dropdown-item" href="?p=logout">Logout</a></li>';
+  $customDropdownContent .= '</ul>';
+} else {
+  // Custom guest dropdown for studio
+  $customGuestDropdown = '<div class="dropdown">';
+  $customGuestDropdown .= '<button class="btn p-0 border-0 bg-transparent" data-bs-toggle="dropdown" aria-expanded="false" title="Login">';
+  $customGuestDropdown .= '<span class="nav-avatar nav-avatar-guest">?</span>';
+  $customGuestDropdown .= '</button>';
+  $customGuestDropdown .= '<ul class="dropdown-menu dropdown-menu-end">';
+  $customGuestDropdown .= '<li><a class="dropdown-item" href="?p=login">Login</a></li>';
+  $customGuestDropdown .= '<li><a class="dropdown-item" href="?p=register">Register</a></li>';
+  $customGuestDropdown .= '<li><hr class="dropdown-divider"></li>';
+  $customGuestDropdown .= '<li><a class="dropdown-item" href="?p=oauth-google">Login with Google</a></li>';
+  $customGuestDropdown .= '<li><a class="dropdown-item" href="?p=oauth-facebook">Login with Facebook</a></li>';
+  $customGuestDropdown .= '</ul>';
+  $customGuestDropdown .= '</div>';
+}
+
+include __DIR__ . '/includes/page_header.php';
+?>
 
 <!-- Popup thông báo -->
 <div class="modal fade modal-mini" id="goModal" tabindex="-1" aria-hidden="true"
@@ -447,23 +229,23 @@ body::after{
   </div>
 </div>
 
-<div class="page-hero" id="hero" style="margin-top: 80px; flex: 1;">
+<div class="page-hero" id="hero" style="margin-top: 80px; flex: 1;" data-animate="fade-up">
   <!-- Photobooth -->
-  <a class="link-img nav-pop"
+  <a class="link-img nav-pop" data-animate-item="zoom-in" data-animate-on-load
      href="<?= BASE_URL ?>?p=photobooth"
      data-label="Đang mở Photobooth…">
     <img src="<?= htmlspecialchars($imgCamera) ?>" alt="Photobooth">
   </a>
 
   <!-- Frame composer -->
-  <a class="link-img nav-pop"
+  <a class="link-img nav-pop" data-animate-item="zoom-in" data-animate-on-load
      href="<?= BASE_URL ?>?p=frame"
      data-label="Đang mở trang Frame…">
     <img src="<?= htmlspecialchars($imgFrame) ?>" alt="Upload Your Photos">
   </a>
 
   <!-- Photobook (MỚI) -->
-  <a class="link-img nav-pop"
+  <a class="link-img nav-pop" data-animate-item="zoom-in" data-animate-on-load
      href="<?= BASE_URL ?>?p=photobook"
      data-label="Đang mở Photobook…">
     <img src="<?= htmlspecialchars($imgBook) ?>" alt="Photobook">
@@ -500,29 +282,12 @@ body::after{
   });
 })();
 
-// Mobile menu toggle
-document.getElementById('menuToggle')?.addEventListener('click', function() {
-  document.querySelector('.nav-menu').classList.toggle('active');
-  this.classList.toggle('active');
-});
 </script>
 
-<!-- Footer -->
-<footer class="footer">
-  <div class="footer-content">
-    <div class="footer-links">
-      <a href="?p=studio">Studio</a>
-      <a href="?p=info">Info</a>
-      <a href="?p=service">Service</a>
-      <a href="?p=qa">Q&A</a>
-      <a href="?p=contact">Contact</a>
-    </div>
-    <p class="footer-copyright">© <?= date('Y') ?> <strong>Space Photobooth</strong> | Show your style</p>
-  </div>
-</footer>
-
-<!-- Bootstrap Bundle from CDN -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<?php
+// Include common footer (dark theme)
+include __DIR__ . '/includes/page_footer.php';
+?>
 
 </body>
 </html>

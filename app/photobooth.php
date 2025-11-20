@@ -1,10 +1,15 @@
 <?php
 // app/photobooth.php
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/includes/seo_helper.php';
+
 $user = current_user();
 $isLoggedIn = !empty($user);
 $userName = $isLoggedIn ? ($user['name'] ?? 'User') : '';
 $uid = $isLoggedIn ? (int)$user['id'] : 0;
+
+// SEO data
+$seoData = default_seo_data('photobooth');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -12,217 +17,13 @@ $uid = $isLoggedIn ? (int)$user['id'] : 0;
   <meta charset="UTF-8">
   <link rel="icon" type="image/png" href="<?= BASE_URL ?>images/S.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SPACE PHOTOBOOTH • Photobooth</title>
+  <?php render_seo_meta($seoData); ?>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
   <link rel="stylesheet" href="<?= asset('css/photobooth.css') ?>?v=<?= time() ?>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Mono:wght@300;400;500&family=Bebas+Neue&display=swap" rel="stylesheet">
   <style>
-  /* Compact header - Light theme - compact but complete */
-  .main-nav {
-    padding: 6px 0 !important;
-    background: #ffffff !important;
-    border-bottom: 1px solid #e0e0e0 !important;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  }
-  .nav-wrapper {
-    padding: 0 15px !important;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    max-width: 1400px;
-    margin: 0 auto;
-    position: relative;
-  }
-  .logo {
-    font-size: 13px !important;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
-  .logo-icon {
-    font-size: 16px !important;
-    color: #c1ff72 !important;
-  }
-  .logo-text {
-    color: #0a0a0a !important;
-    font-weight: 700;
-  }
-  .logo-badge {
-    font-size: 8px !important;
-    padding: 1px 4px !important;
-    background: #c1ff72 !important;
-    color: #0a0a0a !important;
-    border-radius: 2px;
-    font-weight: 700;
-  }
-  .nav-menu {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    flex-wrap: wrap;
-  }
-  .nav-link {
-    font-size: 11px !important;
-    font-weight: 700 !important;
-    color: #333333 !important;
-    text-decoration: none;
-    padding: 4px 8px;
-    border-radius: 4px;
-    transition: all 0.2s;
-    text-transform: uppercase;
-  }
-  .nav-link:hover {
-    color: #c1ff72 !important;
-    background: rgba(193, 255, 114, 0.15);
-  }
-  .nav-link.active {
-    border-bottom: 2px solid #c1ff72 !important;
-    padding-bottom: 2px;
-  }
-  .nav-user {
-    display: flex;
-    align-items: center;
-    margin-left: 15px;
-  }
-  .nav-avatar {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 1.5px solid #c1ff72;
-  }
-  .nav-avatar-fallback,
-  .nav-avatar-guest {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #c1ff72;
-    color: #0a0a0a;
-    font-weight: 700;
-    font-size: 12px;
-    border: 1.5px solid #c1ff72;
-    text-decoration: none;
-  }
-  .nav-avatar-guest {
-    background: #999;
-    color: #ffffff;
-    border-color: #999;
-  }
-  .menu-toggle {
-    display: none;
-    flex-direction: column;
-    gap: 3px;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 4px;
-  }
-  .menu-toggle span {
-    width: 20px;
-    height: 2px;
-    background: #333333 !important;
-    transition: all 0.3s ease;
-  }
-  .menu-toggle.active span:nth-child(1) {
-    transform: rotate(45deg) translate(4px, 4px);
-  }
-  .menu-toggle.active span:nth-child(2) {
-    opacity: 0;
-  }
-  @media (max-width: 768px) {
-    .menu-toggle {
-      display: flex;
-    }
-    .nav-menu {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
-      background: #ffffff !important;
-      border-top: 1px solid #e0e0e0 !important;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      flex-direction: column;
-      align-items: flex-start;
-      padding: 12px 15px;
-      gap: 0.5rem;
-      display: none;
-    }
-    .nav-menu.active {
-      display: flex;
-    }
-    .nav-user {
-      margin-left: 0;
-      margin-top: 8px;
-    }
-  }
-  
-  /* Compact footer - Light theme - compact but complete */
-  .footer {
-    background: #ffffff;
-    color: #333333;
-    padding: 6px 15px;
-    border-top: 1px solid #e0e0e0;
-    margin-top: auto;
-    box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.05);
-  }
-  .footer-content {
-    max-width: 1400px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 12px;
-  }
-  .footer-links {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    flex-wrap: wrap;
-  }
-  .footer-links a {
-    color: #666666;
-    text-decoration: none;
-    font-size: 9px;
-    font-weight: 700;
-    opacity: 0.8;
-    transition: opacity 0.2s, color 0.2s;
-    text-transform: uppercase;
-  }
-  .footer-links a:hover {
-    opacity: 1;
-    color: #c1ff72;
-  }
-  .footer-copyright {
-    color: #999999;
-    font-size: 8px;
-    font-weight: 700;
-    margin: 0;
-  }
-  .footer-copyright strong {
-    color: #333333;
-    font-weight: 700;
-  }
-  @media (max-width: 768px) {
-    .footer-content {
-      flex-direction: column;
-      text-align: center;
-      gap: 6px;
-    }
-    .footer-links {
-      justify-content: center;
-      gap: 0.75rem;
-    }
-    .footer {
-      padding: 8px 15px;
-    }
-  }
-  
   /* Adjust page content for compact header */
   body {
     display: flex;
@@ -354,6 +155,12 @@ $uid = $isLoggedIn ? (int)$user['id'] : 0;
   .music-btn {
     background: #ffd4e9 !important;
     order: 1 !important;
+  }
+  
+  .music-btn .btn-icon {
+    display: flex !important;
+    align-items: center !important;
+    margin-top: -2px !important;
   }
   
   /* Timer button */
@@ -743,59 +550,12 @@ $uid = $isLoggedIn ? (int)$user['id'] : 0;
 </head>
 <body>
 
-<!-- Navigation -->
-<nav class="main-nav">
-  <div class="nav-wrapper">
-    <div class="logo">
-      <span class="logo-icon">✦</span>
-      <span class="logo-text">SPACE PHOTOBOOTH</span>
-      <span class="logo-badge">2025</span>
-    </div>
-    <div class="nav-menu">
-      <a href="?p=landing" class="nav-link">HOME</a>
-      <a href="?p=studio" class="nav-link">STUDIO</a>
-      <a href="?p=photobook" class="nav-link">GALLERY</a>
-      <a href="?p=photobooth" class="nav-link active">PHOTOBOOTH</a>
-      <a href="?p=frame" class="nav-link">FRAME</a>
-    </div>
-    <div class="nav-user">
-      <?php if ($isLoggedIn): ?>
-        <div class="dropdown">
-          <button class="btn btn-link p-0" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-            <?php
-            // Always ensure avatar URL (Gravatar if not available)
-            $avatarUrl = $user['avatar_url'] ?? null;
-            if (empty($avatarUrl) && !empty($user['email'])) {
-              $emailHash = md5(strtolower(trim($user['email'])));
-              $avatarUrl = "https://www.gravatar.com/avatar/{$emailHash}?d=identicon&s=200";
-            }
-            
-            if (!empty($avatarUrl)):
-            ?>
-              <img src="<?= htmlspecialchars($avatarUrl) ?>" alt="Avatar" class="nav-avatar" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-              <div class="nav-avatar-fallback" style="display:none;"><?= strtoupper(substr($userName, 0, 1)) ?></div>
-            <?php else: ?>
-              <div class="nav-avatar-fallback"><?= strtoupper(substr($userName, 0, 1)) ?></div>
-            <?php endif; ?>
-          </button>
-          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-            <li><a class="dropdown-item" href="?p=studio">Studio</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="?p=change-avatar">Change Avatar</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="?p=logout">Logout</a></li>
-          </ul>
-        </div>
-      <?php else: ?>
-        <a href="?p=login" class="nav-avatar-guest">?</a>
-      <?php endif; ?>
-    </div>
-    <button class="menu-toggle" id="menuToggle">
-      <span></span>
-      <span></span>
-    </button>
-  </div>
-</nav>
+<?php
+// Include common header (light theme, photobooth page active)
+$theme = 'light';
+$activePage = 'photobooth';
+include __DIR__ . '/includes/page_header.php';
+?>
 
 <!-- GEN Z PHOTOBOOTH STUDIO -->
 <div class="photobooth-studio">
@@ -804,7 +564,7 @@ $uid = $isLoggedIn ? (int)$user['id'] : 0;
   <div class="studio-grid">
     
     <!-- Filters Section (LEFT) -->
-    <div class="filters-card">
+    <div class="filters-card" data-animate="slide-left" data-animate-on-load>
       <div class="card-label">◆ FILTERS</div>
       
       <div class="filter-selector-wrap">
@@ -902,7 +662,7 @@ $uid = $isLoggedIn ? (int)$user['id'] : 0;
     </div>
 
     <!-- Camera Section (CENTER) -->
-    <div class="camera-card" id="cameraCard">
+    <div class="camera-card" id="cameraCard" data-animate="zoom-in" data-animate-on-load>
       <div class="camera-wrapper" id="cameraWrapper">
         <video id="video" autoplay playsinline></video>
         <div id="countdown"></div>
@@ -915,7 +675,7 @@ $uid = $isLoggedIn ? (int)$user['id'] : 0;
     </div>
 
     <!-- Controls Section (RIGHT) -->
-    <div class="controls-card">
+    <div class="controls-card" data-animate="slide-right" data-animate-on-load>
       <div class="card-label">CONTROLS</div>
       
       <div class="control-btns">
@@ -958,7 +718,7 @@ $uid = $isLoggedIn ? (int)$user['id'] : 0;
     </div>
 
     <!-- Gallery Section (Hidden) -->
-    <div class="gallery-card">
+    <div class="gallery-card" data-animate="fade-up">
       <div class="card-label">YOUR SHOTS</div>
       <div id="captured-images" class="gallery-grid"></div>
     </div>
@@ -1460,6 +1220,7 @@ document.addEventListener('click', (e) => {
   window.addFloatingPhoto = function(imageSrc) {
     const photoEl = document.createElement('div');
     photoEl.className = 'floating-photo new-photo';
+    photoEl.setAttribute('data-animate-item', 'zoom-in');
     
     const img = document.createElement('img');
     img.src = imageSrc;
@@ -1479,7 +1240,8 @@ document.addEventListener('click', (e) => {
     
     photoEl.style.left = pos.x + 'px';
     photoEl.style.top = pos.y + 'px';
-    photoEl.style.transform = `scale(${scale})`; // No rotation
+    // Store scale for use after animation
+    photoEl.dataset.scale = scale;
     photoEl.style.zIndex = zIndex;
     
     // Store position
@@ -1498,6 +1260,16 @@ document.addEventListener('click', (e) => {
     
     floatingGallery.appendChild(photoEl);
     capturedImages.push(photoEl);
+    
+    // Trigger animation, then apply scale
+    setTimeout(() => {
+      photoEl.classList.add('animate-visible');
+      // Apply scale after animation completes
+      setTimeout(() => {
+        const savedScale = photoEl.dataset.scale || scale;
+        photoEl.style.transform = `scale(${savedScale})`;
+      }, 500);
+    }, 100);
   };
   
   function startDrag(e) {
@@ -1667,7 +1439,7 @@ if (originalCapturedImages) {
   /** Music play queue (already shuffled) */
   let queue = shuffle([...tracks]);
   let qidx  = 0;                                // pointer in queue
-  let enabled = (localStorage.getItem('pb_music_enabled') === '1');
+  let enabled = false; // Default to OFF
   let userInteracted = false;
 
   function setIcon(on){
@@ -1782,35 +1554,10 @@ function showInlineHint(message) {
 }
 </script>
 
-<!-- Footer -->
-<footer class="footer">
-  <div class="footer-content">
-    <div class="footer-links">
-      <a href="?p=studio">Studio</a>
-      <a href="?p=info">Info</a>
-      <a href="?p=service">Service</a>
-      <a href="?p=qa">Q&A</a>
-      <a href="?p=contact">Contact</a>
-    </div>
-    <p class="footer-copyright">© <?= date('Y') ?> <strong>Space Photobooth</strong> | Show your style</p>
-  </div>
-</footer>
-
-<!-- Bootstrap Bundle from CDN -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-
-<!-- Mobile Menu Toggle -->
-<script>
-const menuToggle = document.getElementById('menuToggle');
-const navMenu = document.querySelector('.nav-menu');
-
-if (menuToggle) {
-  menuToggle.addEventListener('click', () => {
-    menuToggle.classList.toggle('active');
-    navMenu.classList.toggle('active');
-  });
-}
-</script>
+<?php
+// Include common footer (light theme)
+include __DIR__ . '/includes/page_footer.php';
+?>
 
 <script>
 // Sticker Sidebar Toggle

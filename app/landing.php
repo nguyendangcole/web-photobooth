@@ -20,43 +20,6 @@ $userName = $isLoggedIn ? ($user['name'] ?? 'User') : '';
   <!-- GSAP Library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <style>
-    /* Preloader Styles */
-    #preloader {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: #0a0a0a;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      gap: 30px;
-      z-index: 99999;
-      transition: opacity 0.8s ease, visibility 0.8s ease;
-    }
-    
-    #preloader.fade-out {
-      opacity: 0;
-      visibility: hidden;
-    }
-    
-    
-    #preloader-video {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      opacity: 0;
-    }
-    
-    body.loading {
-      overflow: hidden;
-    }
-    
     /* Animated Background Gradients */
     @keyframes gradientShift {
       0%, 100% { background-position: 0% 50%; }
@@ -95,14 +58,7 @@ $userName = $isLoggedIn ? ($user['name'] ?? 'User') : '';
     
   </style>
 </head>
-<body class="loading">
-
-<!-- Preloader -->
-<div id="preloader">
-  <video id="preloader-video" muted playsinline>
-    <source src="<?= BASE_URL ?>videos/preloader.mp4" type="video/mp4">
-  </video>
-</div>
+<body>
 
 <!-- Navigation -->
 <nav class="main-nav">
@@ -1147,37 +1103,55 @@ $userName = $isLoggedIn ? ($user['name'] ?? 'User') : '';
       </div>
       
       <div class="tip-card tc-1">
-        <div class="tip-emoji">◉</div>
+        <div class="tip-image-wrapper">
+          <img src="<?= BASE_URL ?>images/tip-lighting.jpg" alt="Lighting tip" class="tip-image" onerror="this.style.display='none'">
+          <div class="tip-emoji"></div>
+        </div>
         <h3>LIGHTING</h3>
         <p>Natural or soft LED lights work best</p>
       </div>
       
       <div class="tip-card tc-2">
-        <div class="tip-emoji">■</div>
+        <div class="tip-image-wrapper">
+          <img src="<?= BASE_URL ?>images/tip-colormatch.jpg" alt="Color match tip" class="tip-image" onerror="this.style.display='none'">
+          <div class="tip-emoji"></div>
+        </div>
         <h3>COLOR MATCH</h3>
         <p>Coordinate outfit with frame themes</p>
       </div>
       
       <div class="tip-card tc-3">
-        <div class="tip-emoji">◆</div>
+        <div class="tip-image-wrapper">
+          <img src="<?= BASE_URL ?>images/tip-composition.jpg" alt="Composition tip" class="tip-image" onerror="this.style.display='none'">
+          <div class="tip-emoji"></div>
+        </div>
         <h3>COMPOSITION</h3>
         <p>Center or use rule of thirds</p>
       </div>
       
       <div class="tip-card tc-4">
-        <div class="tip-emoji">✦</div>
+        <div class="tip-image-wrapper">
+          <img src="<?= BASE_URL ?>images/tip-experiment.jpg" alt="Experiment tip" class="tip-image" onerror="this.style.display='none'">
+          <div class="tip-emoji"></div>
+        </div>
         <h3>EXPERIMENT</h3>
         <p>Try unexpected combinations!</p>
       </div>
       
       <div class="tip-card tc-5">
-        <div class="tip-emoji">▲</div>
+        <div class="tip-image-wrapper">
+          <img src="<?= BASE_URL ?>images/tip-multiple.jpg" alt="Multiple shots tip" class="tip-image" onerror="this.style.display='none'">
+          <div class="tip-emoji"></div>
+        </div>
         <h3>MULTIPLE</h3>
         <p>Take several shots to choose from</p>
       </div>
       
       <a href="?p=premium-upgrade" class="tip-card tc-6" style="text-decoration: none; color: inherit; display: block;">
-        <div class="tip-emoji">★</div>
+        <div class="tip-image-wrapper">
+          <img src="<?= BASE_URL ?>images/tip-premium.jpg" alt="Premium tip" class="tip-image" onerror="this.style.display='none'">
+          <div class="tip-emoji">★</div>
+        </div>
         <h3>PREMIUM</h3>
         <p>Unlock exclusive frames & features</p>
       </a>
@@ -2037,25 +2011,8 @@ html {
   }
 })();
 
-// Video + GSAP Preloader
+// Animate landing page on load
 (function() {
-  const preloader = document.getElementById('preloader');
-  const video = document.getElementById('preloader-video');
-  const body = document.body;
-  
-  // GSAP Timeline
-  const tl = gsap.timeline();
-  
-  // Fade in video
-  tl.to(video, {
-    opacity: 1,
-    duration: 0.3,
-    onComplete: function() {
-      video.playbackRate = 1.5; // Speed up video (1.5x faster)
-      video.play(); // Start video playback
-    }
-  });
-  
   // Animate landing page entrance
   function animateLandingPage() {
     const tl = gsap.timeline();
@@ -2182,37 +2139,10 @@ html {
     });
   }
   
-  // When video ends
-  video.addEventListener('ended', function() {
-    // Fade out preloader faster
-    gsap.to(preloader, {
-      opacity: 0,
-      duration: 0.5,
-      ease: 'power2.inOut',
-      onComplete: function() {
-        preloader.remove();
-        body.classList.remove('loading');
-        
-        // Animate landing page elements
-        animateLandingPage();
-      }
-    });
+  // Animate landing page on page load
+  document.addEventListener('DOMContentLoaded', function() {
+    animateLandingPage();
   });
-  
-  // Fallback: If video fails to load, skip preloader after 5 seconds
-  setTimeout(function() {
-    if (preloader.parentNode) {
-      gsap.to(preloader, {
-        opacity: 0,
-        duration: 0.5,
-        onComplete: function() {
-          preloader.remove();
-          body.classList.remove('loading');
-          animateLandingPage();
-        }
-      });
-    }
-  }, 5000);
 })();
 </script>
 

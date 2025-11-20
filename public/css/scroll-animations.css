@@ -1,0 +1,158 @@
+/**
+ * Scroll Animations CSS
+ * Reusable animations for studio, frame, photobooth, photobook pages
+ */
+
+/* Base animation styles */
+[data-animate] {
+  transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-animate-item] {
+  transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Initial states for different animation types */
+[data-animate="fade-in"] {
+  opacity: 0;
+}
+
+[data-animate="fade-up"] {
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+[data-animate="fade-down"] {
+  opacity: 0;
+  transform: translateY(-30px);
+}
+
+[data-animate="slide-left"] {
+  opacity: 0;
+  transform: translateX(50px);
+}
+
+[data-animate="slide-right"] {
+  opacity: 0;
+  transform: translateX(-50px);
+}
+
+[data-animate="zoom-in"] {
+  opacity: 0;
+  transform: scale(0.9);
+}
+
+[data-animate="zoom-out"] {
+  opacity: 0;
+  transform: scale(1.1);
+}
+
+/* Item animations */
+[data-animate-item="fade-up"] {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+[data-animate-item="fade-in"] {
+  opacity: 0;
+}
+
+[data-animate-item="slide-left"] {
+  opacity: 0;
+  transform: translateX(30px);
+}
+
+[data-animate-item="slide-right"] {
+  opacity: 0;
+  transform: translateX(-30px);
+}
+
+[data-animate-item="zoom-in"] {
+  opacity: 0;
+  transform: scale(0.95);
+}
+
+/* Visible state - removes initial transform */
+.animate-visible {
+  opacity: 1 !important;
+  transform: translateY(0) translateX(0) scale(1) !important;
+}
+
+/* Special handling for photobook sheets - preserve 3D transforms */
+.sheet.animate-visible {
+  opacity: 1 !important;
+  /* Don't override transform - preserve rotateY for 3D flip effect */
+  transform: none !important;
+}
+
+/* Sheet with zoom-in animation - only animate opacity */
+.sheet[data-animate-item="zoom-in"] {
+  opacity: 0;
+  /* Don't use scale transform - it conflicts with 3D flip */
+  transform: none;
+}
+
+/* Special handling for elements with existing transform (like centered toolbar) */
+[style*="transform: translateX(-50%)"].animate-visible,
+.frame-toolbar.animate-visible {
+  transform: translateX(-50%) !important;
+}
+
+[style*="transform: translateX(-50%)"][data-animate="fade-down"],
+.frame-toolbar[data-animate="fade-down"] {
+  transform: translateX(-50%) translateY(-30px);
+}
+
+[style*="transform: translateX(-50%)"][data-animate="fade-up"],
+.frame-toolbar[data-animate="fade-up"] {
+  transform: translateX(-50%) translateY(30px);
+}
+
+/* Page load animations */
+[data-animate-on-load] {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+[data-animate-on-load].animate-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Preserve translateX(-50%) for centered elements during page load animation */
+.frame-toolbar[data-animate-on-load] {
+  transform: translateX(-50%) translateY(20px);
+}
+
+.frame-toolbar[data-animate-on-load].animate-visible {
+  transform: translateX(-50%) !important;
+}
+
+/* Stagger delay for children */
+[data-animate] [data-animate-item]:nth-child(1) { transition-delay: 0ms; }
+[data-animate] [data-animate-item]:nth-child(2) { transition-delay: 100ms; }
+[data-animate] [data-animate-item]:nth-child(3) { transition-delay: 200ms; }
+[data-animate] [data-animate-item]:nth-child(4) { transition-delay: 300ms; }
+[data-animate] [data-animate-item]:nth-child(5) { transition-delay: 400ms; }
+[data-animate] [data-animate-item]:nth-child(6) { transition-delay: 500ms; }
+[data-animate] [data-animate-item]:nth-child(n+7) { transition-delay: 600ms; }
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  [data-animate],
+  [data-animate-item],
+  [data-animate-on-load] {
+    transition: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  
+  .animate-visible {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+

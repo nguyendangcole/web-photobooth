@@ -1,17 +1,22 @@
 <?php
 // app/frame.php
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/includes/seo_helper.php';
+
 $user = current_user();
 $isLoggedIn = !empty($user);
 $userName = $isLoggedIn ? ($user['name'] ?? 'User') : '';
 $uid = $isLoggedIn ? (int)$user['id'] : 0;
+
+// SEO data
+$seoData = default_seo_data('frame');
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SPACE PHOTOBOOTH • Frame Composer</title>
+  <?php render_seo_meta($seoData); ?>
   <link rel="icon" type="image/png" href="<?= BASE_URL ?>images/S.png">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
   <link href="<?= BASE_URL ?>css/landing.css" rel="stylesheet">
@@ -19,210 +24,6 @@ $uid = $isLoggedIn ? (int)$user['id'] : 0;
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Mono:wght@300;400;500&family=Bebas+Neue&display=swap" rel="stylesheet">
   <style>
-  /* Compact header - Light theme - compact but complete */
-  .main-nav {
-    padding: 6px 0 !important;
-    background: #ffffff !important;
-    border-bottom: 1px solid #e0e0e0 !important;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  }
-  .nav-wrapper {
-    padding: 0 15px !important;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    max-width: 1400px;
-    margin: 0 auto;
-    position: relative;
-  }
-  .logo {
-    font-size: 13px !important;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
-  .logo-icon {
-    font-size: 16px !important;
-    color: #c1ff72 !important;
-  }
-  .logo-text {
-    color: #0a0a0a !important;
-    font-weight: 700;
-  }
-  .logo-badge {
-    font-size: 8px !important;
-    padding: 1px 4px !important;
-    background: #c1ff72 !important;
-    color: #0a0a0a !important;
-    border-radius: 2px;
-    font-weight: 700;
-  }
-  .nav-menu {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    flex-wrap: wrap;
-  }
-  .nav-link {
-    font-size: 11px !important;
-    font-weight: 700 !important;
-    color: #333333 !important;
-    text-decoration: none;
-    padding: 4px 8px;
-    border-radius: 4px;
-    transition: all 0.2s;
-    text-transform: uppercase;
-  }
-  .nav-link:hover {
-    color: #c1ff72 !important;
-    background: rgba(193, 255, 114, 0.15);
-  }
-  .nav-link.active {
-    border-bottom: 2px solid #c1ff72 !important;
-    padding-bottom: 2px;
-  }
-  .nav-user {
-    display: flex;
-    align-items: center;
-    margin-left: 15px;
-  }
-  .nav-avatar {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 1.5px solid #c1ff72;
-  }
-  .nav-avatar-fallback,
-  .nav-avatar-guest {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #c1ff72;
-    color: #0a0a0a;
-    font-weight: 700;
-    font-size: 12px;
-    border: 1.5px solid #c1ff72;
-    text-decoration: none;
-  }
-  .nav-avatar-guest {
-    background: #999;
-    color: #ffffff;
-    border-color: #999;
-  }
-  .menu-toggle {
-    display: none;
-    flex-direction: column;
-    gap: 3px;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 4px;
-  }
-  .menu-toggle span {
-    width: 20px;
-    height: 2px;
-    background: #333333 !important;
-    transition: all 0.3s ease;
-  }
-  .menu-toggle.active span:nth-child(1) {
-    transform: rotate(45deg) translate(4px, 4px);
-  }
-  .menu-toggle.active span:nth-child(2) {
-    opacity: 0;
-  }
-  @media (max-width: 768px) {
-    .menu-toggle {
-      display: flex;
-    }
-    .nav-menu {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
-      background: #ffffff !important;
-      border-top: 1px solid #e0e0e0 !important;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      flex-direction: column;
-      align-items: flex-start;
-      padding: 12px 15px;
-      gap: 0.5rem;
-      display: none;
-    }
-    .nav-menu.active {
-      display: flex;
-    }
-    .nav-user {
-      margin-left: 0;
-      margin-top: 8px;
-    }
-  }
-  
-  /* Compact footer - Light theme - compact but complete */
-  .footer {
-    background: #ffffff !important;
-    color: #333333 !important;
-    padding: 6px 15px !important;
-    border-top: 1px solid #e0e0e0 !important;
-    margin-top: auto !important;
-    box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.05) !important;
-  }
-  .footer-content {
-    max-width: 1400px !important;
-    margin: 0 auto !important;
-    display: flex !important;
-    justify-content: space-between !important;
-    align-items: center !important;
-    flex-wrap: wrap !important;
-    gap: 12px !important;
-  }
-  .footer-links {
-    display: flex !important;
-    align-items: center !important;
-    gap: 1rem !important;
-    flex-wrap: wrap !important;
-  }
-  .footer-links a {
-    color: #666666 !important;
-    text-decoration: none !important;
-    font-size: 9px !important;
-    font-weight: 700 !important;
-    opacity: 0.8 !important;
-    transition: opacity 0.2s, color 0.2s !important;
-    text-transform: uppercase;
-  }
-  .footer-links a:hover {
-    opacity: 1 !important;
-    color: #c1ff72 !important;
-  }
-  .footer-copyright {
-    color: #999999 !important;
-    font-size: 8px !important;
-    font-weight: 700 !important;
-    margin: 0 !important;
-  }
-  .footer-copyright strong {
-    color: #333333 !important;
-    font-weight: 700 !important;
-  }
-  @media (max-width: 768px) {
-    .footer-content {
-      flex-direction: column !important;
-      text-align: center !important;
-      gap: 6px !important;
-    }
-    .footer-links {
-      justify-content: center !important;
-      gap: 0.75rem !important;
-    }
-    .footer {
-      padding: 8px 15px !important;
-    }
-  }
-  
   /* Adjust page content for compact header */
   body {
     display: flex;
@@ -241,71 +42,274 @@ $uid = $isLoggedIn ? (int)$user['id'] : 0;
     overflow-y: auto;
     overflow-x: hidden;
     transition: left 0.3s ease;
+    display: flex;
+    flex-direction: column;
   }
   
   /* Container inside wrapper */
   .main-content-wrapper .container {
-    padding-top: 1.5rem;
-    padding-bottom: 1.5rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    overflow: visible;
+  }
+  
+  /* Frame Toolbar - Y2K Style */
+  .frame-toolbar {
+    background: linear-gradient(135deg, #fff 0%, #f8f9ff 100%);
+    border: 3px solid #000;
+    border-radius: 12px;
+    padding: 8px 16px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: nowrap;
+    box-shadow: 4px 4px 0px #000, 0 4px 20px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    width: fit-content;
+    max-width: calc(100% - 20px);
+    overflow-x: auto;
+    overflow-y: visible;
+    min-height: 52px;
+  }
+  
+  .toolbar-group {
+    overflow: visible;
+    position: relative;
+  }
+  
+  .toolbar-dropdown {
+    overflow: visible;
+  }
+  
+  .frame-toolbar::-webkit-scrollbar {
+    height: 6px;
+  }
+  
+  .frame-toolbar::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+  }
+  
+  .frame-toolbar::-webkit-scrollbar-thumb {
+    background: #ff6bcd;
+    border-radius: 3px;
+  }
+  
+  .toolbar-separator {
+    width: 2px;
+    height: 24px;
+    background: linear-gradient(180deg, #ff6bcd 0%, #00d4ff 50%, #ffde59 100%);
+    margin: 0 5px;
+    flex-shrink: 0;
+    border-radius: 2px;
+  }
+  
+  .toolbar-group {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    flex-shrink: 0;
+  }
+  
+  .toolbar-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 6px 12px;
+    border: 2px solid #000;
+    background: #fff;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #000;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+    font-family: 'Space Grotesk', sans-serif;
+    height: 34px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 2px 2px 0px #000;
+  }
+  
+  .toolbar-btn:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 4px 4px 0px #000;
+  }
+  
+  .toolbar-btn.active {
+    background: linear-gradient(135deg, #ffde59 0%, #ffd700 100%);
+    border-color: #000;
+    color: #000;
+    box-shadow: 3px 3px 0px #000;
+  }
+  
+  .toolbar-btn-primary {
+    background: linear-gradient(135deg, #c1ff72 0%, #a8ff5e 100%);
+    color: #000;
+    border-color: #000;
+  }
+  
+  .toolbar-btn-primary:hover {
+    background: linear-gradient(135deg, #d4ff8f 0%, #c1ff72 100%);
+    transform: translate(-2px, -2px);
+    box-shadow: 4px 4px 0px #000;
+  }
+  
+  .toolbar-btn-success {
+    background: linear-gradient(135deg, #c1ff72 0%, #a8ff5e 100%);
+    color: #000;
+    border-color: #000;
+    font-weight: 700;
+  }
+  
+  .toolbar-btn-success:hover {
+    background: linear-gradient(135deg, #d4ff8f 0%, #c1ff72 100%);
+    transform: translate(-2px, -2px);
+    box-shadow: 4px 4px 0px #000;
+  }
+  
+  .toolbar-btn-danger {
+    background: linear-gradient(135deg, #ff6bcd 0%, #ff4db8 100%);
+    color: #000;
+    border-color: #000;
+    font-weight: 700;
+  }
+  
+  .toolbar-btn-danger:hover {
+    background: linear-gradient(135deg, #ff8fdb 0%, #ff6bcd 100%);
+    transform: translate(-2px, -2px);
+    box-shadow: 4px 4px 0px #000;
+  }
+  
+  .toolbar-btn-warning {
+    background: linear-gradient(135deg, #ffde59 0%, #ffd700 100%);
+    color: #000;
+    border-color: #000;
+    font-weight: 700;
+  }
+  
+  .toolbar-btn-warning:hover {
+    background: linear-gradient(135deg, #ffe97a 0%, #ffde59 100%);
+    transform: translate(-2px, -2px);
+    box-shadow: 4px 4px 0px #000;
+  }
+  
+  
+  .toolbar-btn-group {
+    display: inline-flex;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.05);
+    height: 30px;
+  }
+  
+  .toolbar-btn-group .toolbar-btn {
+    border: none;
+    border-radius: 0;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    height: 100%;
+    background: transparent;
+  }
+  
+  .toolbar-btn-group .toolbar-btn:last-child {
+    border-right: none;
+  }
+  
+  .toolbar-btn-group .toolbar-btn.active {
+    background: linear-gradient(135deg, #c1ff72 0%, #a8e063 100%) !important;
+    color: #0a0a0f !important;
+    border-color: transparent !important;
+    font-weight: 700;
+    box-shadow: 0 0 15px rgba(193, 255, 114, 0.4);
+  }
+  
+  .toolbar-btn-group .layout-btn-square.active,
+  .toolbar-btn-group .layout-btn-vertical.active {
+    background: linear-gradient(135deg, #c1ff72 0%, #a8e063 100%) !important;
+    color: #0a0a0f !important;
+  }
+  
+  .toolbar-dropdown {
+    position: relative;
+    z-index: 1;
+  }
+  
+  .toolbar-dropdown-menu {
+    position: fixed;
+    background: #fff;
+    border: 3px solid #000;
+    border-radius: 10px;
+    box-shadow: 4px 4px 0px #000;
+    padding: 6px;
+    min-width: 160px;
+    z-index: 10000;
+    display: none;
+  }
+  
+  .toolbar-dropdown.show .toolbar-dropdown-menu {
+    display: block;
+  }
+  
+  .toolbar-dropdown-item {
+    display: block;
+    width: 100%;
+    padding: 8px 10px;
+    border: 2px solid transparent;
+    background: #fff;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    color: #000;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.15s ease;
+    font-family: 'Space Grotesk', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin-bottom: 3px;
+  }
+  
+  .toolbar-dropdown-item:last-child {
+    margin-bottom: 0;
+  }
+  
+  .toolbar-dropdown-item:hover {
+    background: linear-gradient(135deg, #00d4ff 0%, #00c4f0 100%);
+    border-color: #000;
+    color: #000;
+    box-shadow: 2px 2px 0px #000;
+    transform: translate(-1px, -1px);
+  }
+  
+  /* Canvas area - keep original style */
+  .canvas-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    padding-bottom: 6rem;
+    overflow: auto;
   }
   
   </style>
 </head>
 <body>
 
-<!-- Navigation -->
-<nav class="main-nav">
-  <div class="nav-wrapper">
-    <div class="logo">
-      <span class="logo-icon">✦</span>
-      <span class="logo-text">SPACE PHOTOBOOTH</span>
-      <span class="logo-badge">2025</span>
-    </div>
-    <div class="nav-menu">
-      <a href="?p=landing" class="nav-link">HOME</a>
-      <a href="?p=studio" class="nav-link">STUDIO</a>
-      <a href="?p=photobook" class="nav-link">GALLERY</a>
-      <a href="?p=photobooth" class="nav-link">PHOTOBOOTH</a>
-      <a href="?p=frame" class="nav-link active">FRAME</a>
-    </div>
-    <div class="nav-user">
-      <?php if ($isLoggedIn): ?>
-        <div class="dropdown">
-          <button class="btn btn-link p-0" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-            <?php
-            // Always ensure avatar URL (Gravatar if not available)
-            $avatarUrl = $user['avatar_url'] ?? null;
-            if (empty($avatarUrl) && !empty($user['email'])) {
-              $emailHash = md5(strtolower(trim($user['email'])));
-              $avatarUrl = "https://www.gravatar.com/avatar/{$emailHash}?d=identicon&s=200";
-            }
-            
-            if (!empty($avatarUrl)):
-            ?>
-              <img src="<?= htmlspecialchars($avatarUrl) ?>" alt="Avatar" class="nav-avatar" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-              <div class="nav-avatar-fallback" style="display:none;"><?= strtoupper(substr($userName, 0, 1)) ?></div>
-            <?php else: ?>
-              <div class="nav-avatar-fallback"><?= strtoupper(substr($userName, 0, 1)) ?></div>
-            <?php endif; ?>
-          </button>
-          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-            <li><a class="dropdown-item" href="?p=studio">Studio</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="?p=change-avatar">Change Avatar</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="?p=logout">Logout</a></li>
-          </ul>
-        </div>
-      <?php else: ?>
-        <a href="?p=login" class="nav-avatar-guest">?</a>
-      <?php endif; ?>
-    </div>
-    <button class="menu-toggle" id="menuToggle">
-      <span></span>
-      <span></span>
-    </button>
-  </div>
-</nav>
+<?php
+// Include common header (light theme, frame page active)
+$theme = 'light';
+$activePage = 'frame';
+include __DIR__ . '/includes/page_header.php';
+?>
 <script>
 // ==== Auth flags & localStorage namespace (per-user) ====
 const IS_LOGGED_IN = <?= $isLoggedIn ? 'true' : 'false' ?>;
@@ -346,91 +350,100 @@ if (!IS_LOGGED_IN) {
   </div>
 </div>
 
+<!-- Confirmation Dialog -->
+<div class="modal fade" id="confirmDialog" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirmDialogTitle">Confirm</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="confirmDialogMessage"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-danger" id="confirmDialogBtn">Confirm</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Main Content -->
 <div class="main-content-wrapper">
-<div class="container mt-0">
-  <div class="row justify-content-center align-items-start">
+<div class="container">
 
-    <!-- Controls -->
-    <div id="leftControls" class="col-12 col-md-3 mb-3 mb-md-0">
-      <!-- Button wrapper container -->
-      <div class="controls-box border rounded p-3 shadow-sm d-grid gap-2 floaty-ctrl controls-reveal">
-        <div class="controls-header">
-          <h3 class="controls-title">✦ CONTROLS</h3>
-          <p class="controls-subtitle">Craft your frame</p>
-        </div>
-
-        <!-- GROUP: FRAME -->
-        <div class="controls-top d-grid gap-2">
-          <div class="section-label">FRAME OPTIONS</div>
-          <button class="btn btn-success btn-sm w-100"
-                  style="--bg:#E9B3FB; --hover:#4d0e62; --bd:black"
-                  onclick="if(typeof openFrameSidebar === 'function') { openFrameSidebar(); } else { const sidebar = document.getElementById('frameSidebar'); sidebar.classList.add('open'); document.body.classList.add('sidebar-open'); }">
-            Choose Frame
+  <!-- Frame Toolbar -->
+  <div class="frame-toolbar" data-animate="fade-in" data-animate-on-load>
+    <!-- Frame Options -->
+    <div class="toolbar-group">
+      <button class="toolbar-btn toolbar-btn-success"
+              onclick="if(typeof openFrameSidebar === 'function') { openFrameSidebar(); } else { const sidebar = document.getElementById('frameSidebar'); sidebar.classList.add('open'); document.body.classList.add('sidebar-open'); }">
+        Frame
           </button>
-
-          <button id="clearFrameBtn" class="btn btn-outline-secondary btn-sm w-100"
-                  style="--bg:#E9B3FB; --hover:#4d0e62; --bd:black">
-            Remove frame
+      <button id="clearFrameBtn" class="toolbar-btn">
+        Remove
           </button>
+    </div>
 
-          <div class="btn-group w-100">
-            <!-- Call setFrameLayout to sync with sidebar -->
-            <button class="btn btn-primary btn-sm w-50 layout-btn-square"
-                    style="--bg:#ffde59; --hover:#f4c60c; --bd:black"
+    <div class="toolbar-separator"></div>
+
+    <!-- Layout Options -->
+    <div class="toolbar-group">
+      <div class="toolbar-btn-group">
+        <button class="toolbar-btn layout-btn-square"
                     onclick="setFrameLayout('square')">
-              2×2 Grid
+          2×2
             </button>
-            <button class="btn btn-secondary btn-sm w-50 layout-btn-vertical"
-                    style="--bg:#FF2DF1; --hover:#A5158C; --bd:black"
+        <button class="toolbar-btn layout-btn-vertical"
                     onclick="setFrameLayout('vertical')">
-              1×4 Strip
+          1x4
             </button>
           </div>
         </div>
 
-        <hr class="divider-strong my-2">
+    <div class="toolbar-separator"></div>
 
-        <!-- GROUP: PHOTOS -->
-        <div class="controls-bottom d-grid gap-2">
-          <div class="section-label">PHOTO ACTIONS</div>
-          <button id="uploadBtn" class="btn btn-primary btn-sm w-100"
-                  style="--bg:#6F00FF; --hover:#260452; --bd:black">
-            Upload pics
+    <!-- Photo Actions -->
+    <div class="toolbar-group">
+      <button id="uploadBtn" class="toolbar-btn toolbar-btn-primary">
+        Upload
           </button>
           <input id="uploadInput" type="file" accept="image/*" class="d-none" multiple>
-
-          <button id="clearAllBtn" class="btn btn-outline-secondary btn-sm w-100"
-                  style="--bg:#00FFDE; --hover:#00CAFF; --txt:#fff; --txt-hover:#ffffff; --bd:black">
-            Delete all
+      <button id="clearAllBtn" class="toolbar-btn">
+        Clear
           </button>
+    </div>
 
-          <button id="saveBtn" class="btn btn-outline-danger btn-sm w-100"
-                  style="--bg:#FF0B55; --hover:#e18585; --txt:#fff; --txt-hover:#ffffff; --bd:black">
-            SAVE
+    <div class="toolbar-separator"></div>
+
+    <!-- Save Button -->
+    <div class="toolbar-group">
+      <button id="saveBtn" class="toolbar-btn toolbar-btn-danger">
+        Save
           </button>
         </div>
 
-        <!-- Photobook -->
-        <hr class="my-2">
-        <div class="text-center mt-1 d-grid gap-2">
-          <div class="section-label">PHOTOBOOK</div>
-          <button id="pbAddBtn" class="btn btn-warning">
-            Add to Photobook
-          </button>
-          <a href="?p=photobook" class="btn btn-outline-dark">
-            Open Photobook
-          </a>
-        </div>
+    <div class="toolbar-separator"></div>
 
-        <!-- increment version if just edited JS file to bust cache -->
-        <script src="<?= asset('js/frame-share.js') ?>?v=4"></script>
-        <script src="<?= asset('js/locket-autoshare.js') ?>?v=1"></script>
+    <!-- Photobook Dropdown -->
+    <div class="toolbar-group">
+      <div class="toolbar-dropdown" id="photobookDropdown">
+        <button class="toolbar-btn toolbar-btn-warning" type="button">
+          Gallery ▼
+          </button>
+        <div class="toolbar-dropdown-menu">
+          <button id="pbAddBtn" class="toolbar-dropdown-item">
+            Add to gallery
+          </button>
+          <button id="pbOpenBtn" class="toolbar-dropdown-item">
+            Open gallery
+          </button>
+        </div>
+      </div>
       </div>
     </div>
 
-    <!-- Preview -->
-    <div class="col-12 col-md-6 text-center">
+  <!-- Canvas Area -->
+  <div class="canvas-container" data-animate="zoom-in" data-animate-on-load>
       <div class="canvas-wrapper">
         <div class="canvas-header">
           <h3 class="canvas-title">YOUR CANVAS</h3>
@@ -439,7 +452,7 @@ if (!IS_LOGGED_IN) {
         <div id="frame-preview"
              class="border p-2 bg-white shadow position-relative mx-auto floaty preview-reveal"
              style="max-width:100%;">
-          <!-- images of 4 cells will be rendered by JS -->
+        <!-- images of 4 cells will be rendered by JS -->
           <img id="overlayImg" alt=""
                style="position:absolute; inset:0; width:100%; height:100%; pointer-events:none; display:none;">
         </div>
@@ -447,8 +460,9 @@ if (!IS_LOGGED_IN) {
       </div>
     </div>
 
+  <!-- increment version if just edited JS file to bust cache -->
+  <!-- frame-share.js removed - file does not exist -->
   </div>
-</div>
 </div>
 
 <?php include 'frame_sidebar.php'; ?>
@@ -457,6 +471,18 @@ if (!IS_LOGGED_IN) {
 // ====== LAYOUT BRIDGE (Control block ↔ Sidebar) ======
 function setFrameLayout(layout) {
   window.currentFrameLayout = layout; // 'vertical' | 'square'
+  
+  // Update active state for toolbar layout buttons
+  document.querySelectorAll('.layout-btn-square, .layout-btn-vertical').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  
+  if (layout === 'square') {
+    document.querySelector('.layout-btn-square')?.classList.add('active');
+  } else if (layout === 'vertical') {
+    document.querySelector('.layout-btn-vertical')?.classList.add('active');
+  }
+  
   if (typeof renderGrid === 'function') renderGrid(layout);
   window.dispatchEvent(new CustomEvent('frame-layout-change', { detail: { layout } }));
 }
@@ -465,8 +491,68 @@ function setFrameLayout(layout) {
 document.addEventListener('DOMContentLoaded', () => {
   const pv = document.getElementById('frame-preview');
   if (pv) requestAnimationFrame(() => pv.classList.add('show'));
-  const cbox = document.querySelector('#leftControls .controls-box');
-  if (cbox) requestAnimationFrame(() => cbox.classList.add('show'));
+});
+
+// Photobook dropdown positioning - append to body when open
+const photobookDropdown = document.getElementById('photobookDropdown');
+const photobookDropdownBtn = photobookDropdown?.querySelector('button');
+const photobookDropdownMenu = photobookDropdown?.querySelector('.toolbar-dropdown-menu');
+
+// Photobook dropdown positioning function
+function updatePhotobookDropdownPosition() {
+  if (!photobookDropdown || !photobookDropdown.classList.contains('show')) return;
+  if (!photobookDropdownBtn || !photobookDropdownMenu) return;
+  
+  const rect = photobookDropdownBtn.getBoundingClientRect();
+  const menu = photobookDropdownMenu;
+  
+  // Append to body if not already
+  if (menu.parentElement !== document.body) {
+    document.body.appendChild(menu);
+  }
+  
+  menu.style.position = 'fixed';
+  menu.style.top = (rect.bottom + 6) + 'px';
+  menu.style.right = (window.innerWidth - rect.right) + 'px';
+  menu.style.left = 'auto';
+  menu.style.display = 'block';
+}
+
+if (photobookDropdownBtn && photobookDropdownMenu) {
+  photobookDropdownBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isOpen = photobookDropdown.classList.contains('show');
+    
+    if (!isOpen) {
+      photobookDropdown.classList.add('show');
+      updatePhotobookDropdownPosition();
+    } else {
+      photobookDropdown.classList.remove('show');
+      photobookDropdownMenu.style.display = 'none';
+      // Return menu to original parent
+      if (photobookDropdownMenu.parentElement === document.body) {
+        photobookDropdown.appendChild(photobookDropdownMenu);
+      }
+    }
+  });
+  
+  // Update position on scroll and resize
+  window.addEventListener('scroll', updatePhotobookDropdownPosition, true);
+  window.addEventListener('resize', updatePhotobookDropdownPosition);
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', (e) => {
+  if (photobookDropdown && !photobookDropdown.contains(e.target) && !photobookDropdownMenu?.contains(e.target)) {
+    photobookDropdown.classList.remove('show');
+    if (photobookDropdownMenu) {
+      photobookDropdownMenu.style.display = 'none';
+      // Return menu to original parent
+      if (photobookDropdownMenu.parentElement === document.body) {
+        photobookDropdown.appendChild(photobookDropdownMenu);
+      }
+    }
+  }
 });
 
 // =================== STATE ===================
@@ -547,6 +633,40 @@ function showDialog(message) {
   }
 }
 
+function showConfirmDialog(title, message, onConfirm) {
+  const titleEl = document.getElementById('confirmDialogTitle');
+  const messageEl = document.getElementById('confirmDialogMessage');
+  const btnEl = document.getElementById('confirmDialogBtn');
+  const modalEl = document.getElementById('confirmDialog');
+  
+  if (titleEl) titleEl.textContent = title || 'Confirm';
+  if (messageEl) messageEl.textContent = message || 'Are you sure?';
+  
+  // Remove previous event listeners by cloning
+  const newBtn = btnEl.cloneNode(true);
+  btnEl.parentNode.replaceChild(newBtn, btnEl);
+  
+  // Add new event listener
+  newBtn.addEventListener('click', () => {
+    if (window.bootstrap && modalEl) {
+      bootstrap.Modal.getInstance(modalEl)?.hide();
+    }
+    if (onConfirm && typeof onConfirm === 'function') {
+      onConfirm();
+    }
+  });
+  
+  if (modalEl && window.bootstrap) {
+    bootstrap.Modal.getOrCreateInstance(modalEl).show();
+  } else {
+    if (confirm(message || 'Are you sure?')) {
+      if (onConfirm && typeof onConfirm === 'function') {
+        onConfirm();
+      }
+    }
+  }
+}
+
 // =================== HELPERS ===================
 function persistPhotos() {
   // Only persist if logged in
@@ -570,6 +690,17 @@ function filterTemplatesFor(layout) {
 function renderGrid(type) {
   currentLayout = type;
   window.currentFrameLayout = type;
+  
+  // Update active state for toolbar layout buttons
+  document.querySelectorAll('.layout-btn-square, .layout-btn-vertical').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  
+  if (type === 'square') {
+    document.querySelector('.layout-btn-square')?.classList.add('active');
+  } else if (type === 'vertical') {
+    document.querySelector('.layout-btn-vertical')?.classList.add('active');
+  }
 
   if (currentFrameSrc && currentFrameLayout && currentFrameLayout !== type) {
     currentFrameSrc = null;
@@ -612,6 +743,27 @@ function renderGrid(type) {
       img.style.height = "100%";
       img.style.objectFit = "cover";
       wrap.appendChild(img);
+      
+      // Add delete button for this photo
+      const deleteBtn = document.createElement("button");
+      deleteBtn.className = "photo-delete-btn";
+      deleteBtn.innerHTML = "×";
+      deleteBtn.title = "Remove this photo";
+      deleteBtn.dataset.index = i;
+      deleteBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const idx = parseInt(deleteBtn.dataset.index);
+        showConfirmDialog(
+          "Remove Photo",
+          `Remove photo ${idx + 1}?`,
+          () => {
+            photos.splice(idx, 1);
+            persistPhotos();
+            renderGrid(currentLayout);
+          }
+        );
+      });
+      wrap.appendChild(deleteBtn);
     } else {
       const ph = document.createElement("div");
       ph.style.width = "100%";
@@ -652,10 +804,16 @@ window.renderGrid = renderGrid;
 
 // Clear frame
 clearFrameBtn.addEventListener("click", () => {
-  currentFrameSrc = null;
-  currentFrameLayout = null;
-  overlayImgEl.removeAttribute("src");
-  overlayImgEl.style.display = "none";
+  showConfirmDialog(
+    "Remove Frame",
+    "Are you sure you want to remove the current frame?",
+    () => {
+      currentFrameSrc = null;
+      currentFrameLayout = null;
+      overlayImgEl.removeAttribute("src");
+      overlayImgEl.style.display = "none";
+    }
+  );
 });
 
 // =================== UPLOAD FLOW ===================
@@ -772,8 +930,9 @@ async function composeCurrentFrame() {
   }
 
   let cols, rows, w, h, gap;
-  if (currentLayout === "square") { cols = 2; rows = 2; w = 2000; h = 2000; gap = 40; }
-  else                            { cols = 1; rows = 4; w = 1000; h = 3600; gap = 40; }
+  // Reduce canvas size to decrease file size (from 2000x2000 to 1200x1200)
+  if (currentLayout === "square") { cols = 2; rows = 2; w = 1200; h = 1200; gap = 24; }
+  else                            { cols = 1; rows = 4; w = 600; h = 2160; gap = 24; }
 
   const canvas = document.createElement("canvas");
   canvas.width = w; canvas.height = h;
@@ -824,44 +983,164 @@ async function composeCurrentFrame() {
     if (overlay) ctx.drawImage(overlay, 0, 0, w, h);
   }
 
-  return canvas.toDataURL("image/png");
+  // Use JPEG with quality 0.85 instead of PNG to reduce file size significantly
+  return canvas.toDataURL("image/jpeg", 0.85);
 }
 
 // ===== Photobook: upload to server & open correct page
 const PB_ADD_URL = '../ajax/photobook_add.php';
 
-document.getElementById('pbAddBtn')?.addEventListener('click', async () => {
+// Add to Book - Add current frame to photobook without redirecting
+document.getElementById('pbAddBtn')?.addEventListener('click', async (e) => {
+  e.stopPropagation();
+  
   try {
+    // Close dropdown
+    if (photobookDropdown) {
+      photobookDropdown.classList.remove('show');
+      if (photobookDropdownMenu) {
+        photobookDropdownMenu.style.display = 'none';
+        // Return menu to original parent
+        if (photobookDropdownMenu.parentElement === document.body) {
+          photobookDropdown.appendChild(photobookDropdownMenu);
+        }
+      }
+    }
+    
     if (!IS_LOGGED_IN) {
       showDialog('Please login to add to Photobook.');
       return;
     }
+    
+    // Get layout: 'square' or 'vertical' (map 'vertical' from UI to 'vertical' for server)
+    const uiLayout = currentLayout || window.currentFrameLayout || 'square';
+    const layout = uiLayout === 'vertical' ? 'vertical' : 'square';
+    
+    console.log('Adding to photobook - Layout:', layout, 'UI Layout:', uiLayout);
+    
     const dataURL = await composeCurrentFrame();
-    const layout  = (window.currentFrameLayout || window.currentLayout || 'square');
+    console.log('Composed frame dataURL length:', dataURL ? dataURL.length : 0);
+    
+    if (!dataURL || typeof dataURL !== 'string' || dataURL.length === 0) {
+      throw new Error('Failed to compose frame. Please try again.');
+    }
+    
+    // Validate dataURL format
+    if (!dataURL.match(/^data:image\/(png|jpeg|jpg);base64,/)) {
+      console.error('Invalid dataURL format:', dataURL.substring(0, 50));
+      throw new Error('Invalid image format. Please try again.');
+    }
 
+    console.log('Sending request to:', PB_ADD_URL);
+    console.log('Image data length:', dataURL.length);
+    console.log('Layout:', layout);
+    
     const res = await fetch(PB_ADD_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest'
+      },
+      credentials: 'same-origin', // Ensure cookies (session) are sent
       body: JSON.stringify({ image: dataURL, layout })
     });
     
-    // Check if response is JSON
+    console.log('Response status:', res.status, res.statusText);
+    
+    // Get response text first
     const text = await res.text();
+    console.log('Response text length:', text.length);
+    console.log('Response text (first 1000 chars):', text.substring(0, 1000));
+    
+    // Check if response is OK
+    if (!res.ok) {
+      console.error('HTTP Error:', res.status, res.statusText);
+      console.error('Error response:', text);
+      
+      // Try to parse as JSON for error details
+      try {
+        const errorJson = JSON.parse(text);
+        if (errorJson.error) {
+          throw new Error(errorJson.error);
+        }
+      } catch (e) {
+        // Not JSON or parse failed
+        if (res.status === 401 || res.status === 403) {
+          throw new Error('Session expired. Please login again.');
+        }
+        if (res.status === 500) {
+          throw new Error('Server error. Please check server logs.');
+        }
+        throw new Error(`Server error (${res.status}): ${res.statusText}`);
+      }
+    }
+    
+    // Parse JSON response
     let json;
     try {
       json = JSON.parse(text);
+      console.log('Parsed JSON:', json);
     } catch (e) {
-      console.error('Invalid JSON response:', text);
-      throw new Error('Server returned invalid response. Please check if you are logged in.');
+      console.error('JSON parse error:', e);
+      console.error('Response text:', text);
+      throw new Error('Server returned invalid JSON. Please try again.');
     }
     
-    if (!json.success) throw new Error(json.error || 'Upload failed');
+    // Check if success
+    if (!json || !json.success) {
+      const errorMsg = json?.error || 'Upload failed';
+      console.error('Upload failed:', errorMsg);
+      throw new Error(errorMsg);
+    }
 
-    window.location.href = '?p=photobook&openId=' + encodeURIComponent(json.id);
+    // Success! Redirect to photobook page
+    console.log('✅ Photobook add success!', json);
+    
+    // Navigate to photobook page with the newly added image ID
+    const currentUrl = window.location.href;
+    const baseUrl = currentUrl.split('?')[0]; // Get base URL without query
+    const photobookUrl = baseUrl + '?p=photobook' + (json.id ? '&openId=' + json.id : '');
+    
+    console.log('Navigating to photobook:', photobookUrl);
+    window.location.href = photobookUrl;
   } catch (err) {
-    console.error(err);
-    showDialog(err.message || 'Cannot add to Photobook.');
+    console.error('Photobook add error:', err);
+    const errorMsg = err.message || 'Cannot add to Photobook. Please try again.';
+    showDialog(errorMsg);
+    
+    // If it's a "need more photos" error, make it more user-friendly
+    if (errorMsg.includes('need') && errorMsg.includes('photo')) {
+      console.error('User needs to add more photos before exporting.');
+    }
   }
+});
+
+// Open Book - Navigate to photobook page
+document.getElementById('pbOpenBtn')?.addEventListener('click', (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  
+  console.log('Opening photobook page...');
+  
+  // Close dropdown immediately
+  if (photobookDropdown) {
+    photobookDropdown.classList.remove('show');
+    if (photobookDropdownMenu) {
+      photobookDropdownMenu.style.display = 'none';
+      // Return menu to original parent
+      if (photobookDropdownMenu.parentElement === document.body) {
+        photobookDropdown.appendChild(photobookDropdownMenu);
+      }
+    }
+  }
+  
+  // Navigate to photobook page
+  const currentUrl = window.location.href;
+  const baseUrl = currentUrl.split('?')[0]; // Get base URL without query
+  const photobookUrl = baseUrl + '?p=photobook';
+  
+  console.log('Navigating to:', photobookUrl);
+  window.location.href = photobookUrl;
 });
 
 // =================== INIT ===================
@@ -1087,10 +1366,209 @@ if (photos.length && photos.length !== MAX_PHOTOS) {
   transform:none; 
 }
 
+/* Photo Delete Button */
+.photo-delete-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 28px;
+  height: 28px;
+  background: #ff4757;
+  color: white;
+  border: 2px solid #000;
+  border-radius: 50%;
+  font-size: 20px;
+  line-height: 1;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: scale(0.8);
+  transition: all 0.2s ease;
+  box-shadow: 2px 2px 0px #000;
+  z-index: 10;
+  padding: 0;
+}
+.cell-wrap:hover .photo-delete-btn {
+  opacity: 1;
+  transform: scale(1);
+}
+.photo-delete-btn:hover {
+  background: #ff6b7a;
+  transform: scale(1.1) rotate(90deg);
+  box-shadow: 3px 3px 0px #000;
+}
+.photo-delete-btn:active {
+  transform: scale(0.95) rotate(90deg);
+  box-shadow: 1px 1px 0px #000;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
+  /* Adjust main content wrapper for mobile */
+  .main-content-wrapper {
+    top: 200px; /* Much more space for wrapped toolbar */
+    bottom: 50px;
+  }
+  
+  /* Frame Toolbar - Mobile optimized */
+  .frame-toolbar {
+    position: fixed;
+    padding: 6px 8px;
+    gap: 5px;
+    top: 60px; /* Below header */
+    left: 8px;
+    right: 8px;
+    max-width: calc(100% - 16px);
+    min-height: auto;
+    flex-wrap: wrap;
+    justify-content: center;
+    transform: none;
+    box-shadow: 3px 3px 0px #000, 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
+  
+  .toolbar-separator {
+    display: none; /* Hide separators on mobile to save space */
+  }
+  
+  .toolbar-btn {
+    padding: 6px 10px;
+    font-size: 10px;
+    height: 30px;
+    gap: 4px;
+    box-shadow: 1px 1px 0px #000;
+  }
+  
+  .toolbar-btn:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 2px 2px 0px #000;
+  }
+  
+  .toolbar-group {
+    gap: 4px;
+  }
+  
+  .toolbar-btn-group {
+    height: 30px;
+  }
+  
+  .toolbar-btn-group .toolbar-btn {
+    padding: 4px 8px;
+    font-size: 9px;
+  }
+  
+  /* Canvas area - mobile optimized */
+  .canvas-container {
+    padding: 1rem 0.5rem;
+    padding-bottom: 2rem;
+    padding-top: 0.5rem;
+  }
+  
+  .canvas-header {
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+  
   .canvas-title {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
+  }
+  
+  .canvas-badge {
+    font-size: 0.65rem;
+    padding: 3px 8px;
+  }
+  
+  .canvas-hint {
+    font-size: 0.75rem;
+    text-align: center;
+    margin-top: 0.5rem;
+  }
+  
+  /* Frame preview - scale down for mobile */
+  #frame-preview {
+    transform: scale(0.45);
+    transform-origin: top center;
+    margin-bottom: -150px; /* Compensate for scale */
+    max-width: 500px !important;
+  }
+  
+  /* Also scale down vertical layout */
+  #frame-preview[style*="width: 220px"] {
+    transform: scale(0.55);
+    margin-bottom: -280px;
+  }
+  
+  /* Dropdown menu positioning for mobile */
+  .toolbar-dropdown-menu {
+    min-width: 130px;
+    padding: 4px;
+  }
+  
+  .toolbar-dropdown-item {
+    padding: 6px 8px;
+    font-size: 9px;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Extra small screens */
+  .main-content-wrapper {
+    top: 220px; /* Even more space for wrapped toolbar */
+  }
+  
+  .frame-toolbar {
+    top: 60px;
+    padding: 5px 6px;
+  }
+  
+  .frame-toolbar {
+    padding: 6px;
+    gap: 4px;
+  }
+  
+  .toolbar-btn {
+    padding: 5px 8px;
+    font-size: 9px;
+    height: 28px;
+  }
+  
+  .toolbar-btn-group .toolbar-btn {
+    padding: 3px 6px;
+    font-size: 8px;
+  }
+  
+  .canvas-title {
+    font-size: 1rem;
+  }
+  
+  .canvas-badge {
+    font-size: 0.6rem;
+    padding: 2px 6px;
+  }
+  
+  /* Scale down preview even more on very small screens */
+  #frame-preview {
+    transform: scale(0.35);
+    margin-bottom: -200px; /* Compensate for scale */
+  }
+  
+  /* Also scale down vertical layout even more */
+  #frame-preview[style*="width: 220px"] {
+    transform: scale(0.42);
+    margin-bottom: -380px;
+  }
+  
+  .canvas-container {
+    padding: 0.5rem 0.25rem;
+    padding-bottom: 1.5rem;
+    padding-top: 0.25rem;
+  }
+  
+  .canvas-hint {
+    font-size: 0.7rem;
   }
 }
 
@@ -1100,35 +1578,10 @@ if (photos.length && photos.length !== MAX_PHOTOS) {
 }
 </style>
 
-<!-- Footer -->
-<footer class="footer">
-  <div class="footer-content">
-    <div class="footer-links">
-      <a href="?p=studio">Studio</a>
-      <a href="?p=info">Info</a>
-      <a href="?p=service">Service</a>
-      <a href="?p=qa">Q&A</a>
-      <a href="?p=contact">Contact</a>
-    </div>
-    <p class="footer-copyright">© <?= date('Y') ?> <strong>Space Photobooth</strong> | Show your style</p>
-  </div>
-</footer>
-
-<!-- Bootstrap Bundle from CDN -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-
-<!-- Mobile Menu Toggle -->
-<script>
-const menuToggle = document.getElementById('menuToggle');
-const navMenu = document.querySelector('.nav-menu');
-
-if (menuToggle) {
-  menuToggle.addEventListener('click', () => {
-    menuToggle.classList.toggle('active');
-    navMenu.classList.toggle('active');
-  });
-}
-</script>
+<?php
+// Include common footer (light theme)
+include __DIR__ . '/includes/page_footer.php';
+?>
 
 </body>
 </html>

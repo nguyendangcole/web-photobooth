@@ -211,7 +211,7 @@ body.sidebar-open .frame-sidebar-toggle svg {
   </div>
 
   <!-- List -->
-  <div class="frame-sidebar-body">
+  <div class="frame-sidebar-body" data-animate="fade-in">
     <div id="frame-list" class="d-flex flex-wrap justify-content-center gap-3">
       <p class="text-muted">Loading frame list...</p>
     </div>
@@ -285,6 +285,7 @@ body.sidebar-open .frame-sidebar-toggle svg {
       <div class="template border p-2 text-center mx-auto position-relative"
            data-layout="${f.layout}"
            data-frame-id="${f.id}"
+           data-animate-item="zoom-in"
            ${dataAttrs}
            onclick="handleFrameClick('${imgUrl}','${f.layout}', ${isPremium ? 'true' : 'false'})"
            style="width: 180px; ${borderStyle}">
@@ -336,6 +337,16 @@ body.sidebar-open .frame-sidebar-toggle svg {
           return;
         }
         list.innerHTML = data.map(buildItemHTML).join('');
+        
+        // Trigger animation for newly rendered items
+        setTimeout(() => {
+          const newItems = list.querySelectorAll('[data-animate-item]');
+          newItems.forEach((item, index) => {
+            setTimeout(() => {
+              item.classList.add('animate-visible');
+            }, index * 50);
+          });
+        }, 50);
       })
       .catch(err => {
         list.innerHTML = '<p class="text-danger">Cannot connect to server.</p>';
