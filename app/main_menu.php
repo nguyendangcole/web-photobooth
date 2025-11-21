@@ -234,21 +234,21 @@ include __DIR__ . '/includes/page_header.php';
   <a class="link-img nav-pop" data-animate-item="zoom-in" data-animate-on-load
      href="<?= BASE_URL ?>?p=photobooth"
      data-label="Đang mở Photobooth…">
-    <img src="<?= htmlspecialchars($imgCamera) ?>" alt="Photobooth">
+    <img src="<?= htmlspecialchars($imgCamera) ?>" alt="Photobooth" loading="lazy">
   </a>
 
   <!-- Frame composer -->
   <a class="link-img nav-pop" data-animate-item="zoom-in" data-animate-on-load
      href="<?= BASE_URL ?>?p=frame"
      data-label="Đang mở trang Frame…">
-    <img src="<?= htmlspecialchars($imgFrame) ?>" alt="Upload Your Photos">
+    <img src="<?= htmlspecialchars($imgFrame) ?>" alt="Upload Your Photos" loading="lazy">
   </a>
 
   <!-- Photobook (MỚI) -->
   <a class="link-img nav-pop" data-animate-item="zoom-in" data-animate-on-load
      href="<?= BASE_URL ?>?p=photobook"
      data-label="Đang mở Photobook…">
-    <img src="<?= htmlspecialchars($imgBook) ?>" alt="Photobook">
+    <img src="<?= htmlspecialchars($imgBook) ?>" alt="Photobook" loading="lazy">
   </a>
 </div>
 

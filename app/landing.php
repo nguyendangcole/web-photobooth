@@ -343,7 +343,7 @@ try {
       <div class="frame-product">
         <div class="frame-badge frame-badge-yellow">Classic layout</div>
         <div class="frame-box">
-          <img src="<?= BASE_URL ?>images/tip-1.jpg" alt="1x4 Frame Preview" class="frame-preview-img frame-preview-contain">
+          <img src="<?= BASE_URL ?>images/tip-1.jpg" alt="1x4 Frame Preview" class="frame-preview-img frame-preview-contain" loading="lazy">
         </div>
         <div class="frame-details">
           <h3 class="frame-name">1×4 Frame</h3>
@@ -366,7 +366,7 @@ try {
       <div class="frame-product">
         <div class="frame-badge frame-badge-pink">Grid layout</div>
         <div class="frame-box">
-          <img src="<?= BASE_URL ?>images/tip-2.jpg" alt="2x2 Frame Preview" class="frame-preview-img">
+          <img src="<?= BASE_URL ?>images/tip-2.jpg" alt="2x2 Frame Preview" class="frame-preview-img" loading="lazy">
         </div>
         <div class="frame-details">
           <h3 class="frame-name">2×2 Frame</h3>
@@ -568,40 +568,40 @@ try {
     <div class="chaos-collage" id="collageContainer">
       <!-- Users can add images here - these are placeholders -->
       <div class="collage-img img-pos-1" data-id="1">
-        <img src="<?= BASE_URL ?>images/collage-1.jpg" alt="Creative shot" onerror="this.parentElement.style.background='linear-gradient(135deg, #667eea 0%, #764ba2 100%)'">
+        <img src="<?= BASE_URL ?>images/collage-1.jpg" alt="Creative shot" loading="lazy" onerror="this.parentElement.style.background='linear-gradient(135deg, #667eea 0%, #764ba2 100%)'">
       </div>
       <div class="collage-img img-pos-2" data-id="2">
-        <img src="<?= BASE_URL ?>images/collage-2.jpg" alt="Creative shot" onerror="this.parentElement.style.background='linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'">
+        <img src="<?= BASE_URL ?>images/collage-2.jpg" alt="Creative shot" loading="lazy" onerror="this.parentElement.style.background='linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'">
       </div>
       <div class="collage-img img-pos-3" data-id="3">
-        <img src="<?= BASE_URL ?>images/collage-3.jpg" alt="Creative shot" onerror="this.parentElement.style.background='linear-gradient(135deg, #fa709a 0%, #fee140 100%)'">
+        <img src="<?= BASE_URL ?>images/collage-3.jpg" alt="Creative shot" loading="lazy" onerror="this.parentElement.style.background='linear-gradient(135deg, #fa709a 0%, #fee140 100%)'">
       </div>
       <div class="collage-img img-pos-4" data-id="4">
-        <img src="<?= BASE_URL ?>images/collage-4.jpg" alt="Creative shot" onerror="this.parentElement.style.background='linear-gradient(135deg, #30cfd0 0%, #330867 100%)'">
+        <img src="<?= BASE_URL ?>images/collage-4.jpg" alt="Creative shot" loading="lazy" onerror="this.parentElement.style.background='linear-gradient(135deg, #30cfd0 0%, #330867 100%)'">
       </div>
       <div class="collage-img img-pos-5" data-id="5">
-        <img src="<?= BASE_URL ?>images/collage-5.jpg" alt="Creative shot" onerror="this.parentElement.style.background='linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)'">
+        <img src="<?= BASE_URL ?>images/collage-5.jpg" alt="Creative shot" loading="lazy" onerror="this.parentElement.style.background='linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)'">
       </div>
       <div class="collage-img img-pos-6" data-id="6">
-        <img src="<?= BASE_URL ?>images/collage-6.jpg" alt="Creative shot" onerror="this.parentElement.style.background='linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)'">
+        <img src="<?= BASE_URL ?>images/collage-6.jpg" alt="Creative shot" loading="lazy" onerror="this.parentElement.style.background='linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)'">
       </div>
       <div class="collage-img img-pos-7" data-id="7">
-        <img src="<?= BASE_URL ?>images/collage-7.jpg" alt="Creative shot" onerror="this.parentElement.style.background='linear-gradient(135deg, #667eea 0%, #764ba2 100%)'">
+        <img src="<?= BASE_URL ?>images/collage-7.jpg" alt="Creative shot" loading="lazy" onerror="this.parentElement.style.background='linear-gradient(135deg, #667eea 0%, #764ba2 100%)'">
       </div>
       <div class="collage-img img-pos-8" data-id="8">
-        <img src="<?= BASE_URL ?>images/collage-8.jpg" alt="Creative shot" onerror="this.parentElement.style.background='linear-gradient(135deg, #ff6b6b 0%, #feca57 100%)'">
+        <img src="<?= BASE_URL ?>images/collage-8.jpg" alt="Creative shot" loading="lazy" onerror="this.parentElement.style.background='linear-gradient(135deg, #ff6b6b 0%, #feca57 100%)'">
       </div>
       <div class="collage-img img-pos-9" data-id="9">
-        <img src="<?= BASE_URL ?>images/collage-9.jpg" alt="Creative shot" onerror="this.parentElement.style.background='linear-gradient(135deg, #48dbfb 0%, #0abde3 100%)'">
+        <img src="<?= BASE_URL ?>images/collage-9.jpg" alt="Creative shot" loading="lazy" onerror="this.parentElement.style.background='linear-gradient(135deg, #48dbfb 0%, #0abde3 100%)'">
       </div>
       <div class="collage-img img-pos-10" data-id="10">
-        <img src="<?= BASE_URL ?>images/collage-10.jpg" alt="Creative shot" onerror="this.parentElement.style.background='linear-gradient(135deg, #ee5a6f 0%, #f29263 100%)'">
+        <img src="<?= BASE_URL ?>images/collage-10.jpg" alt="Creative shot" loading="lazy" onerror="this.parentElement.style.background='linear-gradient(135deg, #ee5a6f 0%, #f29263 100%)'">
       </div>
       <div class="collage-img img-pos-11" data-id="11">
-        <img src="<?= BASE_URL ?>images/collage-11.jpg" alt="Creative shot" onerror="this.parentElement.style.background='linear-gradient(135deg, #5f27cd 0%, #341f97 100%)'">
+        <img src="<?= BASE_URL ?>images/collage-11.jpg" alt="Creative shot" loading="lazy" onerror="this.parentElement.style.background='linear-gradient(135deg, #5f27cd 0%, #341f97 100%)'">
       </div>
       <div class="collage-img img-pos-12" data-id="12">
-        <img src="<?= BASE_URL ?>images/collage-12.jpg" alt="Creative shot" onerror="this.parentElement.style.background='linear-gradient(135deg, #00d2d3 0%, #54a0ff 100%)'">
+        <img src="<?= BASE_URL ?>images/collage-12.jpg" alt="Creative shot" loading="lazy" onerror="this.parentElement.style.background='linear-gradient(135deg, #00d2d3 0%, #54a0ff 100%)'">
       </div>
     </div>
   </div>
@@ -618,37 +618,37 @@ try {
     <div class="gallery-grid">
       <div class="gal-item gi-1">
         <div class="gal-img" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-          <img src="<?= BASE_URL ?>images/gallery-1.jpg" alt="Alien theme" onerror="this.style.display='none'">
+          <img src="<?= BASE_URL ?>images/gallery-1.jpg" alt="Alien theme" loading="lazy" onerror="this.style.display='none'">
         </div>
         <div class="gal-tag">#ALIEN</div>
       </div>
       <div class="gal-item gi-2">
         <div class="gal-img" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
-          <img src="<?= BASE_URL ?>images/gallery-2.jpg" alt="Y2K theme" onerror="this.style.display='none'">
+          <img src="<?= BASE_URL ?>images/gallery-2.jpg" alt="Y2K theme" loading="lazy" onerror="this.style.display='none'">
         </div>
         <div class="gal-tag">#Y2K</div>
       </div>
       <div class="gal-item gi-3">
         <div class="gal-img" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
-          <img src="<?= BASE_URL ?>images/gallery-3.jpg" alt="Neon theme" onerror="this.style.display='none'">
+          <img src="<?= BASE_URL ?>images/gallery-3.jpg" alt="Neon theme" loading="lazy" onerror="this.style.display='none'">
         </div>
         <div class="gal-tag">#NEON</div>
       </div>
       <div class="gal-item gi-4">
         <div class="gal-img" style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);">
-          <img src="<?= BASE_URL ?>images/gallery-4.jpg" alt="Cyber theme" onerror="this.style.display='none'">
+          <img src="<?= BASE_URL ?>images/gallery-4.jpg" alt="Cyber theme" loading="lazy" onerror="this.style.display='none'">
         </div>
         <div class="gal-tag">#CYBER</div>
       </div>
       <div class="gal-item gi-5">
         <div class="gal-img" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">
-          <img src="<?= BASE_URL ?>images/gallery-5.jpg" alt="Retro theme" onerror="this.style.display='none'">
+          <img src="<?= BASE_URL ?>images/gallery-5.jpg" alt="Retro theme" loading="lazy" onerror="this.style.display='none'">
         </div>
         <div class="gal-tag">#RETRO</div>
       </div>
       <div class="gal-item gi-6">
         <div class="gal-img" style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);">
-          <img src="<?= BASE_URL ?>images/gallery-6.jpg" alt="Fashion theme" onerror="this.style.display='none'">
+          <img src="<?= BASE_URL ?>images/gallery-6.jpg" alt="Fashion theme" loading="lazy" onerror="this.style.display='none'">
         </div>
         <div class="gal-tag">#FASHION</div>
       </div>
@@ -744,7 +744,7 @@ try {
         <?php foreach ($frames as $frame): ?>
         <div class="frame-sample-card">
           <div class="frame-sample-image">
-            <img src="<?= BASE_URL . htmlspecialchars($frame['display_image'] ?? $frame['src']) ?>" alt="<?= htmlspecialchars($frame['name']) ?>" onerror="this.src='<?= BASE_URL ?>images/1.png'">
+            <img src="<?= BASE_URL . htmlspecialchars($frame['display_image'] ?? $frame['src']) ?>" alt="<?= htmlspecialchars($frame['name']) ?>" loading="lazy" onerror="this.src='<?= BASE_URL ?>images/1.png'">
             <?php if ($frame['is_premium']): ?>
               <span class="frame-premium-badge">PREMIUM</span>
             <?php endif; ?>
@@ -763,7 +763,7 @@ try {
         <?php foreach ($frames as $frame): ?>
         <div class="frame-sample-card" aria-hidden="true">
           <div class="frame-sample-image">
-            <img src="<?= BASE_URL . htmlspecialchars($frame['display_image'] ?? $frame['src']) ?>" alt="<?= htmlspecialchars($frame['name']) ?>" onerror="this.src='<?= BASE_URL ?>images/1.png'">
+            <img src="<?= BASE_URL . htmlspecialchars($frame['display_image'] ?? $frame['src']) ?>" alt="<?= htmlspecialchars($frame['name']) ?>" loading="lazy" onerror="this.src='<?= BASE_URL ?>images/1.png'">
             <?php if ($frame['is_premium']): ?>
               <span class="frame-premium-badge">PREMIUM</span>
             <?php endif; ?>
@@ -1387,7 +1387,7 @@ try {
       
       <div class="tip-card tc-1">
         <div class="tip-image-wrapper">
-          <img src="<?= BASE_URL ?>images/tip-lighting.jpg" alt="Lighting tip" class="tip-image" onerror="this.style.display='none'">
+          <img src="<?= BASE_URL ?>images/tip-lighting.jpg" alt="Lighting tip" class="tip-image" loading="lazy" onerror="this.style.display='none'">
           <div class="tip-emoji"></div>
         </div>
         <h3>LIGHTING</h3>
@@ -1396,7 +1396,7 @@ try {
       
       <div class="tip-card tc-2">
         <div class="tip-image-wrapper">
-          <img src="<?= BASE_URL ?>images/tip-colormatch.jpg" alt="Color match tip" class="tip-image" onerror="this.style.display='none'">
+          <img src="<?= BASE_URL ?>images/tip-colormatch.jpg" alt="Color match tip" class="tip-image" loading="lazy" onerror="this.style.display='none'">
           <div class="tip-emoji"></div>
         </div>
         <h3>COLOR MATCH</h3>
@@ -1405,7 +1405,7 @@ try {
       
       <div class="tip-card tc-3">
         <div class="tip-image-wrapper">
-          <img src="<?= BASE_URL ?>images/tip-composition.jpg" alt="Composition tip" class="tip-image" onerror="this.style.display='none'">
+          <img src="<?= BASE_URL ?>images/tip-composition.jpg" alt="Composition tip" class="tip-image" loading="lazy" onerror="this.style.display='none'">
           <div class="tip-emoji"></div>
         </div>
         <h3>COMPOSITION</h3>
@@ -1414,7 +1414,7 @@ try {
       
       <div class="tip-card tc-4">
         <div class="tip-image-wrapper">
-          <img src="<?= BASE_URL ?>images/tip-experiment.jpg" alt="Experiment tip" class="tip-image" onerror="this.style.display='none'">
+          <img src="<?= BASE_URL ?>images/tip-experiment.jpg" alt="Experiment tip" class="tip-image" loading="lazy" onerror="this.style.display='none'">
           <div class="tip-emoji"></div>
         </div>
         <h3>EXPERIMENT</h3>
@@ -1423,7 +1423,7 @@ try {
       
       <div class="tip-card tc-5">
         <div class="tip-image-wrapper">
-          <img src="<?= BASE_URL ?>images/tip-multiple.jpg" alt="Multiple shots tip" class="tip-image" onerror="this.style.display='none'">
+          <img src="<?= BASE_URL ?>images/tip-multiple.jpg" alt="Multiple shots tip" class="tip-image" loading="lazy" onerror="this.style.display='none'">
           <div class="tip-emoji"></div>
         </div>
         <h3>MULTIPLE</h3>
@@ -1432,7 +1432,7 @@ try {
       
       <a href="?p=premium-upgrade" class="tip-card tc-6" style="text-decoration: none; color: inherit; display: block;">
         <div class="tip-image-wrapper">
-          <img src="<?= BASE_URL ?>images/tip-premium.jpg" alt="Premium tip" class="tip-image" onerror="this.style.display='none'">
+          <img src="<?= BASE_URL ?>images/tip-premium.jpg" alt="Premium tip" class="tip-image" loading="lazy" onerror="this.style.display='none'">
           <div class="tip-emoji">★</div>
         </div>
         <h3>PREMIUM</h3>

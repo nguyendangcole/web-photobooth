@@ -739,22 +739,22 @@ include __DIR__ . '/includes/page_header.php';
     <div class="sticker-grid">
       <!-- Placeholder stickers - you can add your own images later -->
       <div class="sticker-item" draggable="true" data-sticker="star">
-        <img src="<?= asset('images/stickers/star.png') ?>" alt="Star" onerror="this.src='data:image/svg+xml,<svg width=&quot;100&quot; height=&quot;100&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;><text x=&quot;50&quot; y=&quot;50&quot; font-size=&quot;60&quot; text-anchor=&quot;middle&quot; dominant-baseline=&quot;middle&quot;>⭐</text></svg>'">
+        <img src="<?= asset('images/stickers/star.png') ?>" alt="Star" loading="lazy" onerror="this.src='data:image/svg+xml,<svg width=&quot;100&quot; height=&quot;100&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;><text x=&quot;50&quot; y=&quot;50&quot; font-size=&quot;60&quot; text-anchor=&quot;middle&quot; dominant-baseline=&quot;middle&quot;>⭐</text></svg>'">
       </div>
       <div class="sticker-item" draggable="true" data-sticker="heart">
-        <img src="<?= asset('images/stickers/heart.png') ?>" alt="Heart" onerror="this.src='data:image/svg+xml,<svg width=&quot;100&quot; height=&quot;100&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;><text x=&quot;50&quot; y=&quot;50&quot; font-size=&quot;60&quot; text-anchor=&quot;middle&quot; dominant-baseline=&quot;middle&quot;>❤️</text></svg>'">
+        <img src="<?= asset('images/stickers/heart.png') ?>" alt="Heart" loading="lazy" onerror="this.src='data:image/svg+xml,<svg width=&quot;100&quot; height=&quot;100&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;><text x=&quot;50&quot; y=&quot;50&quot; font-size=&quot;60&quot; text-anchor=&quot;middle&quot; dominant-baseline=&quot;middle&quot;>❤️</text></svg>'">
       </div>
       <div class="sticker-item" draggable="true" data-sticker="sparkle">
-        <img src="<?= asset('images/stickers/sparkle.png') ?>" alt="Sparkle" onerror="this.src='data:image/svg+xml,<svg width=&quot;100&quot; height=&quot;100&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;><text x=&quot;50&quot; y=&quot;50&quot; font-size=&quot;60&quot; text-anchor=&quot;middle&quot; dominant-baseline=&quot;middle&quot;>✨</text></svg>'">
+        <img src="<?= asset('images/stickers/sparkle.png') ?>" alt="Sparkle" loading="lazy" onerror="this.src='data:image/svg+xml,<svg width=&quot;100&quot; height=&quot;100&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;><text x=&quot;50&quot; y=&quot;50&quot; font-size=&quot;60&quot; text-anchor=&quot;middle&quot; dominant-baseline=&quot;middle&quot;>✨</text></svg>'">
       </div>
       <div class="sticker-item" draggable="true" data-sticker="smile">
-        <img src="<?= asset('images/stickers/smile.png') ?>" alt="Smile" onerror="this.src='data:image/svg+xml,<svg width=&quot;100&quot; height=&quot;100&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;><text x=&quot;50&quot; y=&quot;50&quot; font-size=&quot;60&quot; text-anchor=&quot;middle&quot; dominant-baseline=&quot;middle&quot;>😊</text></svg>'">
+        <img src="<?= asset('images/stickers/smile.png') ?>" alt="Smile" loading="lazy" onerror="this.src='data:image/svg+xml,<svg width=&quot;100&quot; height=&quot;100&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;><text x=&quot;50&quot; y=&quot;50&quot; font-size=&quot;60&quot; text-anchor=&quot;middle&quot; dominant-baseline=&quot;middle&quot;>😊</text></svg>'">
       </div>
       <div class="sticker-item" draggable="true" data-sticker="cool">
-        <img src="<?= asset('images/stickers/cool.png') ?>" alt="Cool" onerror="this.src='data:image/svg+xml,<svg width=&quot;100&quot; height=&quot;100&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;><text x=&quot;50&quot; y=&quot;50&quot; font-size=&quot;60&quot; text-anchor=&quot;middle&quot; dominant-baseline=&quot;middle&quot;>😎</text></svg>'">
+        <img src="<?= asset('images/stickers/cool.png') ?>" alt="Cool" loading="lazy" onerror="this.src='data:image/svg+xml,<svg width=&quot;100&quot; height=&quot;100&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;><text x=&quot;50&quot; y=&quot;50&quot; font-size=&quot;60&quot; text-anchor=&quot;middle&quot; dominant-baseline=&quot;middle&quot;>😎</text></svg>'">
       </div>
       <div class="sticker-item" draggable="true" data-sticker="fire">
-        <img src="<?= asset('images/stickers/fire.png') ?>" alt="Fire" onerror="this.src='data:image/svg+xml,<svg width=&quot;100&quot; height=&quot;100&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;><text x=&quot;50&quot; y=&quot;50&quot; font-size=&quot;60&quot; text-anchor=&quot;middle&quot; dominant-baseline=&quot;middle&quot;>🔥</text></svg>'">
+        <img src="<?= asset('images/stickers/fire.png') ?>" alt="Fire" loading="lazy" onerror="this.src='data:image/svg+xml,<svg width=&quot;100&quot; height=&quot;100&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;><text x=&quot;50&quot; y=&quot;50&quot; font-size=&quot;60&quot; text-anchor=&quot;middle&quot; dominant-baseline=&quot;middle&quot;>🔥</text></svg>'">
       </div>
     </div>
   </div>
