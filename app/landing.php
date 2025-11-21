@@ -1,9 +1,38 @@
 <?php
 // app/landing.php
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/../config/db.php';
 $user = current_user();
 $isLoggedIn = !empty($user);
 $userName = $isLoggedIn ? ($user['name'] ?? 'User') : '';
+
+// Get frames from database
+try {
+  $pdo = db();
+  // Try to get sample_image if column exists, otherwise use src
+  try {
+    $stmt = $pdo->query("SELECT id, name, src, layout, is_premium, sample_image FROM frames ORDER BY is_premium DESC, id ASC");
+  } catch (Exception $e) {
+    // If sample_image column doesn't exist, use src only
+    $stmt = $pdo->query("SELECT id, name, src, layout, is_premium FROM frames ORDER BY is_premium DESC, id ASC");
+  }
+  $frames = $stmt->fetchAll(PDO::FETCH_ASSOC);
+  
+  // For each frame, use sample_image if available, otherwise use src
+  // Also fix the path: remove 'public/' prefix if exists since BASE_URL already points to public/
+  foreach ($frames as &$frame) {
+    if (isset($frame['sample_image']) && !empty($frame['sample_image'])) {
+      $frame['display_image'] = $frame['sample_image'];
+    } else {
+      $frame['display_image'] = $frame['src'];
+    }
+    // Remove 'public/' prefix from path if it exists
+    $frame['display_image'] = preg_replace('#^public/#', '', $frame['display_image']);
+  }
+  unset($frame);
+} catch (Exception $e) {
+  $frames = [];
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -701,6 +730,61 @@ $userName = $isLoggedIn ? ($user['name'] ?? 'User') : '';
 }
 </style>
 
+<!-- Available Frames Section -->
+<?php if (!empty($frames)): ?>
+<section class="frames-showcase-section scrolly-section" data-scrolly="slide-right">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">AVAILABLE <span class="gradient">FRAMES</span></h2>
+      <p class="section-sub">Browse our frame collection</p>
+    </div>
+    
+    <div class="frames-marquee">
+      <div class="frames-track">
+        <?php foreach ($frames as $frame): ?>
+        <div class="frame-sample-card">
+          <div class="frame-sample-image">
+            <img src="<?= BASE_URL . htmlspecialchars($frame['display_image'] ?? $frame['src']) ?>" alt="<?= htmlspecialchars($frame['name']) ?>" onerror="this.src='<?= BASE_URL ?>images/1.png'">
+            <?php if ($frame['is_premium']): ?>
+              <span class="frame-premium-badge">PREMIUM</span>
+            <?php endif; ?>
+          </div>
+          <div class="frame-sample-info">
+            <h3 class="frame-sample-name"><?= htmlspecialchars($frame['name']) ?></h3>
+            <div class="frame-sample-layout">
+              <span class="layout-badge layout-<?= htmlspecialchars($frame['layout']) ?>">
+                <?= strtoupper(htmlspecialchars($frame['layout'])) ?>
+              </span>
+            </div>
+          </div>
+        </div>
+        <?php endforeach; ?>
+        <!-- Duplicate for seamless loop -->
+        <?php foreach ($frames as $frame): ?>
+        <div class="frame-sample-card" aria-hidden="true">
+          <div class="frame-sample-image">
+            <img src="<?= BASE_URL . htmlspecialchars($frame['display_image'] ?? $frame['src']) ?>" alt="<?= htmlspecialchars($frame['name']) ?>" onerror="this.src='<?= BASE_URL ?>images/1.png'">
+            <?php if ($frame['is_premium']): ?>
+              <span class="frame-premium-badge">PREMIUM</span>
+            <?php endif; ?>
+          </div>
+          <div class="frame-sample-info">
+            <h3 class="frame-sample-name"><?= htmlspecialchars($frame['name']) ?></h3>
+            <div class="frame-sample-layout">
+              <span class="layout-badge layout-<?= htmlspecialchars($frame['layout']) ?>">
+                <?= strtoupper(htmlspecialchars($frame['layout'])) ?>
+              </span>
+            </div>
+          </div>
+        </div>
+        <?php endforeach; ?>
+      </div>
+    </div>
+    <p class="frames-caption">Hover to pause or swipe on mobile to browse manually. 🎨</p>
+  </div>
+</section>
+<?php endif; ?>
+
 <!-- User Reviews Section -->
 <section class="reviews-section scrolly-section" data-scrolly="slide-left">
   <div class="container">
@@ -914,6 +998,205 @@ $userName = $isLoggedIn ? ($user['name'] ?? 'User') : '';
 </section>
 
 <style>
+/* Frames Showcase Section */
+.frames-showcase-section {
+  padding: 5rem 0;
+  background: linear-gradient(135deg, rgba(193, 255, 114, 0.03) 0%, rgba(140, 82, 255, 0.03) 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.frames-showcase-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 30%, rgba(193, 255, 114, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(140, 82, 255, 0.05) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.frames-showcase-section .container {
+  position: relative;
+  z-index: 1;
+}
+
+.frames-marquee {
+  margin-top: 3rem;
+  overflow: hidden;
+  padding: 0.5rem 0;
+  mask-image: linear-gradient(90deg, transparent, rgba(0,0,0,0.85) 10%, rgba(0,0,0,0.85) 90%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, rgba(0,0,0,0.85) 10%, rgba(0,0,0,0.85) 90%, transparent);
+}
+
+.frames-track {
+  display: flex;
+  gap: 1.5rem;
+  width: max-content;
+  animation: frames-loop 35s linear infinite;
+}
+
+.frames-track:hover {
+  animation-play-state: paused;
+}
+
+@keyframes frames-loop {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* Ensure single row layout */
+.frames-marquee {
+  display: flex;
+  flex-direction: column;
+}
+
+.frame-sample-card {
+  background: var(--white);
+  border: 2px solid var(--black);
+  border-radius: 16px;
+  padding: 1rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  min-width: 220px;
+  max-width: 260px;
+  display: flex;
+  flex-direction: column;
+}
+
+.frame-sample-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #c1ff72 0%, #8c52ff 50%, #ff6b9d 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.frame-sample-card:hover {
+  transform: translateY(-8px) rotate(-0.5deg);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+.frame-sample-card:hover::before {
+  opacity: 1;
+}
+
+.frame-sample-image {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4/5;
+  background: #f8f9fa;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.frame-sample-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+.frame-sample-card:hover .frame-sample-image img {
+  transform: scale(1.05);
+}
+
+.frame-premium-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+  color: var(--black);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--black);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.frame-sample-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.frame-sample-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--black);
+  margin: 0;
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+.frame-sample-layout {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.layout-badge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--black);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-family: 'DM Mono', monospace;
+}
+
+.layout-badge.layout-vertical {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: var(--white);
+}
+
+.layout-badge.layout-horizontal {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: var(--white);
+}
+
+.layout-badge.layout-square {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  color: var(--white);
+}
+
+.frames-caption {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.875rem;
+  color: var(--gray-mid);
+  font-style: italic;
+}
+
+@media (max-width: 768px) {
+  .frames-showcase-section {
+    padding: 3rem 0;
+  }
+  
+  .frame-sample-card {
+    min-width: 200px;
+    max-width: 240px;
+  }
+}
+
+/* Reviews Section */
 .reviews-section {
   padding: 5rem 0;
   background: linear-gradient(135deg, rgba(102, 126, 234, 0.03) 0%, rgba(118, 75, 162, 0.03) 100%);
@@ -1237,6 +1520,30 @@ $userName = $isLoggedIn ? ($user['name'] ?? 'User') : '';
         </form>
       </div>
       
+    </div>
+    
+    <!-- Store Location Map -->
+    <div class="footer-map-section">
+      <h4 class="map-title">📍 STORE LOCATION</h4>
+      <div class="footer-map-wrapper">
+        <iframe 
+          id="storeMap"
+          src="" 
+          width="100%" 
+          height="300" 
+          style="border:0; border-radius: 12px;" 
+          allowfullscreen="" 
+          loading="lazy" 
+          referrerpolicy="no-referrer-when-downgrade"
+          class="footer-map">
+        </iframe>
+        <div class="map-link-wrapper">
+          <a href="https://maps.app.goo.gl/qosKrwj5p4HGiWvf6" target="_blank" rel="noopener noreferrer" class="map-link">
+            <span>View on Google Maps</span>
+            <span>→</span>
+          </a>
+        </div>
+      </div>
     </div>
     
     <div class="footer-bottom">
@@ -2143,6 +2450,15 @@ html {
   document.addEventListener('DOMContentLoaded', function() {
     animateLandingPage();
   });
+})();
+
+// Load Google Maps embed
+(function() {
+  const mapIframe = document.getElementById('storeMap');
+  if (!mapIframe) return;
+  
+  // Google Maps embed URL from store location
+  mapIframe.src = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.497030260064!2d106.65454717456957!3d10.77319281793749!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752ec3c161a3fb%3A0xef77cd47a1cc691e!2zVHLGsOG7nW5nIMSQ4bqhaSBo4buNYyBCw6FjaCBraG9hIC0gxJDhuqFpIGjhu41jIFF14buRYyBnaWEgVFAuSENN!5e0!3m2!1svi!2s!4v1763749407484!5m2!1svi!2s';
 })();
 </script>
 

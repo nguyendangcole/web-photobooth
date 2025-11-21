@@ -135,6 +135,16 @@ $userName = $isLoggedIn ? ($user['name'] ?? 'User') : '';
           <p>Yes! Space Photobooth is fully responsive and works on mobile devices. You can access all features including camera capture, frame creation, and photobook management from your phone or tablet.</p>
         </div>
       </div>
+
+      <div class="qa-item">
+        <button class="qa-question" type="button">
+          <span>How can I print the photos?</span>
+          <span class="qa-icon">+</span>
+        </button>
+        <div class="qa-answer">
+          <p>You can print your photos at our store location or visit any nearby printing shops. Our store is located at <strong>Trường Đại học Bách khoa - Đại học Quốc gia TP.HCM</strong>. After downloading your photos from the Photobook or Frame Composer, you can bring the image files to our store or any local printing service to have them printed. You can find our exact location and directions using our <a href="?p=landing#map" style="color: var(--8c52ff); text-decoration: underline;">Google Maps link</a>.</p>
+        </div>
+      </div>
     </div>
   </div>
 </section>
