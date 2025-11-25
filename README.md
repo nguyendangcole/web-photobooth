@@ -73,41 +73,8 @@ Or import via phpMyAdmin:
 - Choose `config/database_complete.sql`
 - Click Go
 
-### 4. Configuration
-1. Copy `.env.example` to `.env` (if available) or create a new `.env` file:
-```env
-# Database Configuration
-DB_HOST=127.0.0.1
-DB_NAME=photobooth_db
-DB_USER=root
-DB_PASS=your_password
-DB_PORT=3306
-DB_CHARSET=utf8mb4
 
-# Application Configuration
-BASE_URL=http://localhost:8888/WEB-PHOTOBOOTH/public/
-APP_ENV=dev
-APP_TZ=Asia/Ho_Chi_Minh
 
-# OAuth Configuration (Optional)
-GOOGLE_CLIENT_ID=your_google_client_id
-GOOGLE_CLIENT_SECRET=your_google_client_secret
-GOOGLE_REDIRECT_URI=http://localhost:8888/WEB-PHOTOBOOTH/public/index.php?p=oauth-google-callback
-
-FB_APP_ID=your_facebook_app_id
-FB_APP_SECRET=your_facebook_app_secret
-FB_REDIRECT_URI=http://localhost:8888/WEB-PHOTOBOOTH/public/index.php?p=oauth-facebook-callback
-
-# Email Configuration (Optional - for password reset)
-SMTP_ENABLED=false
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=587
-SMTP_SECURE=tls
-SMTP_USER=your_email@gmail.com
-SMTP_PASS=your_app_password
-SMTP_FROM=no-reply@photobooth.com
-SMTP_FROM_NAME=Space Photobooth
-```
 
 2. Update database credentials in `config/db.php` if not using `.env`:
 ```php
