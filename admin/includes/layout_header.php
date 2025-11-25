@@ -505,7 +505,7 @@ $currentUser = $_SESSION['user'] ?? null;
         </li>
       </ul>
       
-      <div class="nav-section-title">Hệ thống</div>
+      <div class="nav-section-title">System</div>
       <ul class="list-unstyled">
         <li class="nav-item">
           <a href="admin_users.php" class="nav-link <?= ($currentPage ?? '') === 'admin_users' ? 'active' : '' ?>">
@@ -515,7 +515,7 @@ $currentUser = $_SESSION['user'] ?? null;
         </li>
       </ul>
       
-      <div class="nav-section-title">Khác</div>
+      <div class="nav-section-title">Other</div>
       <ul class="list-unstyled">
         <li class="nav-item">
           <a href="../public/?p=studio" class="nav-link">

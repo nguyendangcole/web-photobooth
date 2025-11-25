@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Script để chạy NGROK cho MAMP
-# Usage: ./start_ngrok.sh
+# Usage: ./start_ngrok.sh [port]
 
 echo "🚀 Starting NGROK for MAMP..."
 echo ""
@@ -15,9 +15,17 @@ if ! command -v ngrok &> /dev/null; then
     exit 1
 fi
 
+# Port mặc định của MAMP
+PORT=80
+
+# Kiểm tra có custom port không
+if [ ! -z "$1" ]; then
+    PORT=$1
+fi
+
 # Kiểm tra MAMP đang chạy chưa
-if ! lsof -Pi :8888 -sTCP:LISTEN -t >/dev/null 2>&1 ; then
-    echo "⚠️  MAMP có vẻ chưa chạy trên port 8888"
+if ! lsof -Pi :$PORT -sTCP:LISTEN -t >/dev/null 2>&1 ; then
+    echo "⚠️  MAMP có vẻ chưa chạy trên port $PORT"
     echo "💡 Vui lòng start MAMP trước!"
     echo ""
     read -p "Bạn có muốn tiếp tục không? (y/n) " -n 1 -r
@@ -27,26 +35,34 @@ if ! lsof -Pi :8888 -sTCP:LISTEN -t >/dev/null 2>&1 ; then
     fi
 fi
 
-# Port mặc định của MAMP
-PORT=8888
-
-# Kiểm tra có custom port không
-if [ ! -z "$1" ]; then
-    PORT=$1
-fi
-
 echo "📡 Starting NGROK tunnel..."
 echo "   Local: http://localhost:$PORT"
-echo "   Public: https://xxxx.ngrok-free.app"
 echo ""
-echo "💡 Tips:"
-echo "   - Nhấn Ctrl+C để dừng NGROK"
-echo "   - Xem dashboard tại: http://localhost:4040"
-echo "   - Copy URL từ terminal và share cho người khác"
+echo "💡 Sau khi NGROK khởi động, chạy lệnh sau để lấy URL đầy đủ:"
+echo "   ./get_ngrok_url.sh"
+echo ""
+echo "💡 Hoặc xem tại: http://localhost:4040"
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 
-# Chạy NGROK
-ngrok http $PORT
+# Chạy NGROK ở background và lấy URL sau 3 giây
+ngrok http $PORT > /tmp/ngrok.log 2>&1 &
+NGROK_PID=$!
+
+# Đợi NGROK khởi động
+sleep 3
+
+# Lấy URL đầy đủ
+if [ -f "./get_ngrok_url.sh" ]; then
+    ./get_ngrok_url.sh
+fi
+
+echo ""
+echo "📝 NGROK đang chạy (PID: $NGROK_PID)"
+echo "🛑 Nhấn Ctrl+C để dừng NGROK"
+echo ""
+
+# Đợi NGROK chạy
+wait $NGROK_PID
 

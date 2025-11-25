@@ -152,8 +152,8 @@ function default_seo_data(string $page): array {
  */
 function render_seo_meta(array $seoData = []): void {
   if (empty($seoData)) {
-    $currentPage = $_GET['p'] ?? 'studio';
-    $seoData = default_seo_data($currentPage);
+  $currentPage = $_GET['p'] ?? 'studio';
+  $seoData = default_seo_data($currentPage);
   }
   
   $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';

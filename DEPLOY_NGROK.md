@@ -2,7 +2,7 @@
 
 ## 📋 Yêu cầu
 - MAMP đã cài đặt và chạy
-- Web đang chạy trên localhost (thường là port 8888)
+- Web đang chạy trên localhost (port 80 hoặc 8888)
 - Tài khoản NGROK (free) - đăng ký tại: https://ngrok.com/
 
 ---
@@ -47,11 +47,12 @@ ngrok version
 
 ### Cách 1: Chạy thủ công
 ```bash
-# Mở terminal và chạy:
+# Nếu MAMP chạy trên port 80:
+ngrok http 80
+
+# Nếu MAMP chạy trên port 8888:
 ngrok http 8888
 ```
-
-**Lưu ý:** Port 8888 là port mặc định của MAMP. Nếu bạn dùng port khác, thay đổi số port.
 
 ### Cách 2: Dùng script tự động (Khuyến nghị)
 Chạy script `start_ngrok.sh` trong thư mục project:
@@ -63,30 +64,58 @@ chmod +x start_ngrok.sh
 
 ---
 
-## 📱 Bước 4: Lấy URL công khai
+## 📱 Bước 4: Truy cập Web qua NGROK
 
 Sau khi chạy NGROK, bạn sẽ thấy:
 
 ```
-Forwarding    https://xxxx-xx-xx-xx-xx.ngrok-free.app -> http://localhost:8888
+Forwarding    https://xxxx-xx-xx-xx-xx.ngrok-free.app -> http://localhost:80
 ```
 
-**URL công khai:** `https://xxxx-xx-xx-xx-xx.ngrok-free.app`
+### ⚠️ QUAN TRỌNG: URL đúng phải có path đầy đủ!
 
-Bạn có thể:
-- Copy URL này và gửi cho người khác
-- Họ có thể truy cập web của bạn từ bất kỳ đâu
-- URL sẽ thay đổi mỗi lần restart NGROK (trừ khi dùng plan có trả phí)
+**URL SAI:**
+```
+https://abasic-coreen-slopingly.ngrok-free.dev
+```
+→ Sẽ hiển thị trang welcome của MAMP
+
+**URL ĐÚNG:**
+```
+https://abasic-coreen-slopingly.ngrok-free.dev/web-photobooth/public/
+```
+hoặc
+```
+https://abasic-coreen-slopingly.ngrok-free.dev/WEB-PHOTOBOOTH/public/
+```
+
+**Lưu ý:** Tên thư mục có thể là `web-photobooth` hoặc `WEB-PHOTOBOOTH` tùy vào cách bạn đặt tên.
+
+### Kiểm tra tên thư mục:
+```bash
+ls /Applications/MAMP/htdocs/ | grep -i photobooth
+```
+
+---
+
+## 🎯 URL đầy đủ để truy cập các trang:
+
+- **Trang chủ:** `https://your-ngrok-url.ngrok-free.dev/web-photobooth/public/`
+- **Login:** `https://your-ngrok-url.ngrok-free.dev/web-photobooth/public/?p=login`
+- **Register:** `https://your-ngrok-url.ngrok-free.dev/web-photobooth/public/?p=register`
+- **Photobook:** `https://your-ngrok-url.ngrok-free.dev/web-photobooth/public/?p=photobook`
 
 ---
 
 ## ⚙️ Bước 5: Cấu hình Web (Quan trọng!)
 
-### 5.1. Cập nhật BASE_URL trong .env
-Tạo hoặc cập nhật file `.env`:
+### 5.1. Cập nhật BASE_URL trong .env (Tùy chọn)
+Nếu bạn muốn BASE_URL tự động, có thể tạo file `.env`:
 ```env
-BASE_URL=https://your-ngrok-url.ngrok-free.app/WEB-PHOTOBOOTH/public/
+BASE_URL=https://your-ngrok-url.ngrok-free.dev/web-photobooth/public/
 ```
+
+**Lưu ý:** Web sẽ tự động detect BASE_URL từ URL hiện tại, nên không bắt buộc phải set trong .env.
 
 ### 5.2. Cập nhật OAuth Redirect URIs
 Nếu bạn dùng OAuth (Google/Facebook), cần cập nhật redirect URI:
@@ -95,7 +124,7 @@ Nếu bạn dùng OAuth (Google/Facebook), cần cập nhật redirect URI:
 
 Thêm URL NGROK vào allowed redirect URIs:
 ```
-https://your-ngrok-url.ngrok-free.app/WEB-PHOTOBOOTH/public/index.php?p=oauth-google-callback
+https://your-ngrok-url.ngrok-free.dev/web-photobooth/public/index.php?p=oauth-google-callback
 ```
 
 ---
@@ -105,12 +134,12 @@ https://your-ngrok-url.ngrok-free.app/WEB-PHOTOBOOTH/public/index.php?p=oauth-go
 ### 1. Dùng domain tĩnh (Free plan)
 NGROK free plan cho phép dùng domain tĩnh:
 ```bash
-ngrok http 8888 --domain=your-custom-name.ngrok-free.app
+ngrok http 80 --domain=your-custom-name.ngrok-free.app
 ```
 
 ### 2. Chạy NGROK ở background
 ```bash
-nohup ngrok http 8888 > ngrok.log 2>&1 &
+nohup ngrok http 80 > ngrok.log 2>&1 &
 ```
 
 ### 3. Xem NGROK dashboard
@@ -118,6 +147,26 @@ Truy cập: http://localhost:4040 để xem:
 - Request logs
 - Traffic inspector
 - Web interface
+
+### 4. Forward trực tiếp đến thư mục web (Nâng cao)
+Nếu muốn truy cập trực tiếp `https://your-url.ngrok-free.dev` mà không cần path, có thể dùng NGROK config file:
+
+Tạo file `~/.ngrok2/ngrok.yml`:
+```yaml
+tunnels:
+  photobooth:
+    addr: 80
+    proto: http
+    host_header: rewrite
+    inspect: true
+```
+
+Sau đó chạy:
+```bash
+ngrok start photobooth
+```
+
+**Lưu ý:** Cách này phức tạp hơn và cần cấu hình Apache virtual host.
 
 ---
 
@@ -127,6 +176,7 @@ Truy cập: http://localhost:4040 để xem:
    - URL thay đổi mỗi lần restart (trừ khi dùng domain tĩnh)
    - Giới hạn số lượng connections
    - Có thể bị rate limit
+   - Có warning page khi truy cập lần đầu (click "Visit Site")
 
 2. **Bảo mật:**
    - NGROK free plan có warning page khi truy cập lần đầu
@@ -139,7 +189,11 @@ Truy cập: http://localhost:4040 để xem:
 
 4. **MAMP phải đang chạy:**
    - Đảm bảo MAMP đã start Apache và MySQL
-   - Web phải truy cập được trên localhost:8888
+   - Web phải truy cập được trên localhost:80 hoặc localhost:8888
+
+5. **URL Path:**
+   - **QUAN TRỌNG:** Luôn nhớ thêm `/web-photobooth/public/` vào cuối URL NGROK
+   - Nếu không có path, sẽ thấy trang welcome của MAMP
 
 ---
 
@@ -152,33 +206,39 @@ Truy cập: http://localhost:4040 để xem:
 **Giải pháp:** Chạy `ngrok config add-authtoken YOUR_TOKEN`
 
 ### Lỗi: "port already in use"
-**Giải pháp:** Kiểm tra port 8888 có đang được dùng không, hoặc dùng port khác
+**Giải pháp:** Kiểm tra port 80 hoặc 8888 có đang được dùng không
 
-### Web không load được
+### Web không load được / Thấy trang welcome MAMP
 **Giải pháp:**
-- Kiểm tra MAMP đã start chưa
-- Kiểm tra URL đúng chưa (có /WEB-PHOTOBOOTH/public/ chưa)
-- Kiểm tra firewall không chặn
+- ✅ Đảm bảo URL có path đầy đủ: `/web-photobooth/public/`
+- ✅ Kiểm tra tên thư mục đúng (có thể là `WEB-PHOTOBOOTH` hoặc `web-photobooth`)
+- ✅ Kiểm tra MAMP đã start chưa
+- ✅ Kiểm tra firewall không chặn
+
+### Lỗi 404 Not Found
+**Giải pháp:**
+- Kiểm tra path trong URL có đúng không
+- Kiểm tra file `public/index.php` có tồn tại không
+- Kiểm tra quyền truy cập file
 
 ---
 
-## 📞 Hỗ trợ
+## 📝 Tóm tắt nhanh
 
-Nếu gặp vấn đề:
-1. Kiểm tra MAMP đang chạy
-2. Kiểm tra NGROK đã authenticated
-3. Xem logs tại http://localhost:4040
-4. Kiểm tra file `.env` có BASE_URL đúng chưa
+1. **Cài NGROK:** `brew install ngrok/ngrok/ngrok`
+2. **Auth:** `ngrok config add-authtoken YOUR_TOKEN`
+3. **Chạy:** `ngrok http 80` (hoặc port 8888)
+4. **Truy cập:** `https://your-url.ngrok-free.dev/web-photobooth/public/`
+5. **Share:** Copy URL đầy đủ cho người khác
 
 ---
 
 ## 🎉 Hoàn thành!
 
 Sau khi setup xong, bạn có thể:
-- ✅ Share URL NGROK cho người khác
+- ✅ Share URL NGROK cho người khác (nhớ có path `/web-photobooth/public/`)
 - ✅ Test web trên mobile/tablet
 - ✅ Demo web cho client
 - ✅ Test OAuth, email, và các tính năng cần public URL
 
 **Lưu ý:** URL NGROK sẽ thay đổi mỗi lần restart. Nếu cần URL cố định, cân nhắc upgrade plan hoặc dùng domain tĩnh.
-
