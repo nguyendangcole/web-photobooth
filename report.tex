@@ -1,0 +1,329 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage{enumitem}
+\usepackage{titlesec}
+
+\geometry{margin=1in}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+}
+
+% Code listing style
+\lstset{
+    basicstyle=\ttfamily\small,
+    breaklines=true,
+    frame=single,
+    backgroundcolor=\color{gray!10}
+}
+
+% Title formatting
+\titleformat{\section}
+{\Large\bfseries}
+{}
+{0em}
+{}[\titlerule]
+
+\titleformat{\subsection}
+{\large\bfseries}
+{}
+{0em}
+{}
+
+\title{Space Photobooth: Web Programming Project Report}
+\author{Your Name}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+
+\subsection{Project Overview}
+Space Photobooth is a modern web application designed for creating, editing, and organizing digital photos. The platform provides users with interactive photobooth functionality, frame composition tools, and a photobook gallery system. Built using HTML5, CSS3, JavaScript, PHP, and MySQL, the application demonstrates proficiency in full-stack web development with emphasis on responsive design, user authentication, and real-time interactivity.
+
+\subsection{Project Purpose}
+The primary goal of this project is to create a comprehensive web application that showcases:
+\begin{itemize}
+    \item Responsive design across multiple devices
+    \item Secure user authentication with OAuth integration
+    \item Real-time photo capture and editing capabilities
+    \item Database-driven content management
+    \item SEO optimization and accessibility features
+    \item AJAX-powered search and dynamic content loading
+\end{itemize}
+
+\subsection{Target Audience}
+The application targets individuals and event organizers who need quick, accessible photo editing tools for parties, events, and personal use. The platform is designed to be user-friendly for both technical and non-technical users.
+
+% Placeholder for screenshot: Landing page or homepage
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{screenshots/landing.png}
+    \caption{Landing Page - Main entry point of the application}
+    \label{fig:landing}
+\end{figure}
+
+\section{Design \& Layout}
+
+\subsection{Layout Structure}
+The website follows a consistent layout structure across all pages:
+\begin{itemize}
+    \item \textbf{Header}: Contains logo on the left and navigation menu
+    \item \textbf{Navigation Bar}: Includes Home, Products/Items (Studio), Search, and Contact links
+    \item \textbf{Body}: Main content area with responsive width (max-width: 1200px, centered)
+    \item \textbf{Footer}: Consistent footer with links and copyright information
+\end{itemize}
+
+\subsection{Responsive Design}
+The application is fully responsive and tested across three device categories:
+\begin{itemize}
+    \item \textbf{Desktop}: Full-width layout with multi-column grids
+    \item \textbf{Tablet}: Adjusted grid layouts and optimized touch interactions
+    \item \textbf{Mobile}: Single-column layout with hamburger menu navigation
+\end{itemize}
+
+Media queries are implemented using CSS3 with breakpoints at 768px (tablet) and 480px (mobile). The navigation menu transforms into a collapsible hamburger menu on smaller screens.
+
+% Placeholder for screenshot: Responsive design demonstration
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{screenshots/responsive.png}
+    \caption{Responsive Design - Mobile, Tablet, and Desktop views}
+    \label{fig:responsive}
+\end{figure}
+
+\subsection{Color Scheme \& Typography}
+The design uses a dark theme with neon accents (\#c1ff72) to create a modern, futuristic aesthetic. Typography combines:
+\begin{itemize}
+    \item \textbf{Headings}: Space Grotesk and Bebas Neue fonts
+    \item \textbf{Body}: DM Mono for monospace elements
+    \item \textbf{Color Palette}: Dark backgrounds (\#141414) with bright accent colors
+\end{itemize}
+
+\section{Key Features \& Functionality}
+
+\subsection{User Authentication System}
+The application implements a comprehensive authentication system with multiple login methods:
+
+\subsubsection{Local Authentication}
+The local authentication system provides a complete user registration and login workflow. During registration, the system validates user input including email format verification using PHP's \texttt{filter\_var()} function, password strength requirements (minimum 8 characters with uppercase, lowercase, numbers, and special characters), and duplicate email checking against the database. Passwords are securely hashed using PHP's \texttt{password\_hash()} function with the default bcrypt algorithm, ensuring that plain text passwords are never stored in the database.
+
+The login process implements secure session management with custom session names (\texttt{PHOTOBOOTH\_SESSION}) to avoid conflicts with other applications, HttpOnly cookies to prevent XSS attacks, and session regeneration after successful login to prevent session fixation attacks. User sessions store minimal data including user ID, name, email, avatar URL, and authentication provider.
+
+For password recovery, the system implements an OTP (One-Time Password) based mechanism. When a user requests a password reset, a 6-digit OTP code is generated using \texttt{rand(100000, 999999)} and stored in the \texttt{reset\_token} field with a 15-minute expiration time. The OTP is sent to the user's email via the \texttt{send\_mail()} function, which supports both SMTP (using PHPMailer) and fallback PHP \texttt{mail()} function. Users must verify the OTP code on the verification page before being allowed to set a new password, ensuring that only the legitimate email owner can reset the account password.
+
+\subsubsection{OAuth Integration}
+The application supports social authentication through Google and Facebook OAuth 2.0 protocols. The OAuth implementation follows a standard authorization code flow: users click the respective social login button, are redirected to the OAuth provider's authorization page, and upon approval, are redirected back to the application's callback URL with an authorization code. The callback handler exchanges this code for an access token, which is then used to fetch user profile information from the provider's API.
+
+For Google OAuth, the system retrieves user data including name, email, and profile picture URL from the Google People API. Similarly, Facebook OAuth fetches user information from the Facebook Graph API. The retrieved data is automatically synchronized with the local database, creating a new user record if the email doesn't exist, or updating the existing record with the latest profile information. The system stores the OAuth provider name (\texttt{google} or \texttt{facebook}) and provider-specific user ID in the database, allowing users to link multiple authentication methods to a single account. Avatar URLs from OAuth providers are prioritized over Gravatar-generated avatars, providing users with their actual profile pictures.
+
+% Placeholder for screenshot: Login/Register page
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{screenshots/auth.png}
+    \caption{Authentication Page - Login and Registration with OAuth options}
+    \label{fig:auth}
+\end{figure}
+
+\subsection{Photobooth Feature}
+The photobooth feature provides an interactive photo capture experience directly in the web browser. The implementation leverages the HTML5 MediaDevices API to access the user's webcam through \texttt{navigator.mediaDevices.getUserMedia()}, which requests camera permissions and provides a video stream. This stream is displayed in a \texttt{<video>} element for real-time preview.
+
+When users click the capture button, a countdown timer (configurable from 3 to 10 seconds) provides visual feedback before the photo is taken. The capture process uses the HTML5 Canvas API to draw the current video frame onto a canvas element, allowing for real-time image manipulation. The canvas can apply various filters and effects before finalizing the image. Multiple photos can be captured in a single session, with each image displayed in a preview gallery below the camera view.
+
+Captured images are converted to base64-encoded data URLs and sent to the server via AJAX POST request to \texttt{ajax/photobook\_add.php}. The server validates the image data, generates a unique filename using timestamp and random hash (format: \texttt{pb\_YYYYMMDD\_HHMMSS\_[hash].jpg}), and saves the image to the \texttt{public/photobook/YYYY/MM/} directory structure organized by year and month. The image metadata, including file path and layout type, is stored in the \texttt{photobook\_pages} table linked to the user's account. Users can download their captured photos in high resolution directly from the interface.
+
+% Placeholder for screenshot: Photobooth interface
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{screenshots/photobooth.png}
+    \caption{Photobooth Interface - Real-time photo capture with effects}
+    \label{fig:photobooth}
+\end{figure}
+
+\subsection{Frame Composer}
+The frame composer is a sophisticated tool that allows users to create custom photo compositions by combining uploaded images with pre-designed frame templates. Users can upload multiple photos through a drag-and-drop interface or file input, with support for common image formats (JPEG, PNG). The uploaded images are processed client-side using the FileReader API to generate previews before being sent to the server.
+
+The application includes over 100 pre-designed frame templates stored in the \texttt{frames} database table, each with metadata including frame name, image source path, layout type (vertical or square), and premium status flag. Frames are categorized by layout to match different photo aspect ratios, ensuring proper composition. Premium frames are visually distinguished with special badges and borders, and access control is enforced both on the frontend (preventing clicks) and backend (validating premium status).
+
+The frame application process uses HTML5 Canvas API to composite the user's uploaded photo with the selected frame template. The canvas draws the frame as a background layer, then overlays the user's photo at the appropriate position and size based on the frame's layout specifications. The final composed image can be previewed in real-time before being saved, and users can download the result as a high-quality JPEG or PNG file.
+
+\subsubsection{AJAX Search Implementation}
+The frame search functionality provides real-time filtering of available frames without requiring a page reload. The implementation uses a debounced input handler to optimize performance and reduce server load. When a user types in the search input field, JavaScript waits 300 milliseconds after the last keystroke before triggering the search request, preventing excessive API calls during rapid typing.
+
+The search process begins with an event listener attached to the search input that clears any existing timeout and sets a new one. When the timeout expires, the JavaScript code constructs a URL with query parameters including the search term and current layout filter, then sends an AJAX GET request to \texttt{ajax/frames\_list.php} using the Fetch API. The server-side PHP script receives the query parameter, sanitizes it to prevent SQL injection, and constructs a SQL query with a \texttt{LIKE} clause to search frame names: \texttt{WHERE name LIKE :q} with the parameter \texttt{:q} set to \texttt{\%search\_term\%} for partial matching.
+
+The server returns a JSON response containing an array of matching frames with their metadata (ID, name, image source, layout, premium status) and the user's premium status. The frontend JavaScript parses this JSON response and dynamically rebuilds the frame list HTML using a template function that generates the appropriate markup for each frame, including premium badges and click handlers. The updated list is inserted into the DOM, replacing the previous results, and animation classes are applied to newly rendered items for smooth visual transitions. This approach provides an instant, responsive search experience similar to modern web applications.
+
+% Placeholder for screenshot: Frame composer with search
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{screenshots/frame.png}
+    \caption{Frame Composer - Frame selection with AJAX search functionality}
+    \label{fig:frame}
+\end{figure}
+
+\subsection{Photobook Gallery}
+The photobook gallery serves as a personal photo management system where users can view, organize, and manage all their captured and composed images. The gallery implements a masonry-style grid layout that automatically arranges photos in an optimal visual pattern, similar to Pinterest's layout algorithm. Each photo item is positioned absolutely within a container, with JavaScript calculating optimal positions based on image dimensions and available space.
+
+The gallery supports pagination through AJAX to handle large photo collections efficiently. When the page loads or when users scroll to the bottom, JavaScript sends a request to \texttt{ajax/photobook\_list.php} with pagination parameters (page number and limit, defaulting to 50 items per page). The server queries the \texttt{photobook\_pages} table with \texttt{LIMIT} and \texttt{OFFSET} clauses, validates that image files actually exist on disk before including them in results, and returns JSON data with photo metadata including image paths, creation dates, and layout types.
+
+Photos are organized in a hierarchical folder structure (\texttt{public/photobook/YYYY/MM/}) based on their creation date, making it easy to locate files and manage storage. The gallery interface provides hover effects that scale and elevate photos, download buttons for individual images, and delete functionality that removes both the database record and physical file. The layout supports filtering by frame type (square or vertical) through URL parameters, and the entire interface is responsive, adapting to different screen sizes while maintaining the visual appeal of the grid layout.
+
+% Placeholder for screenshot: Photobook gallery
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{screenshots/photobook.png}
+    \caption{Photobook Gallery - Organized photo collection with pagination}
+    \label{fig:photobook}
+\end{figure}
+
+\subsection{Premium Membership System}
+The application includes a premium membership tier:
+\begin{itemize}
+    \item Premium users can access exclusive frames
+    \item Free users see premium frames but cannot use them
+    \item Premium status stored in database with expiration dates
+    \item Upgrade prompts displayed for premium features
+\end{itemize}
+
+\section{Technical Implementation}
+
+\subsection{Database Schema}
+The MySQL database is designed with a normalized structure to ensure data integrity and efficient querying. The database consists of seven main tables, each serving a specific purpose in the application's functionality.
+
+The \texttt{users} table is the central table storing all user account information. It includes fields for authentication (email, password\_hash), OAuth integration (provider, provider\_id, avatar\_url), account status (email\_verified, is\_premium, premium\_until), password recovery (reset\_token, reset\_expires\_at), and location data (country\_id, state\_id, city\_name). The table uses a unique constraint on the email field and includes indexes on provider fields and premium status for fast lookups.
+
+The \texttt{frames} table stores all available photo frame templates with columns for name, image source path, layout type (enum: 'square', 'vertical'), and premium status flag. Indexes are created on \texttt{is\_premium} and a composite index on \texttt{(layout, is\_premium)} to optimize queries that filter frames by layout and premium status simultaneously.
+
+The \texttt{photobook\_pages} table links individual photos to albums, storing the image file path, layout type, and creation timestamp. It includes a foreign key relationship to \texttt{photobook\_albums} with CASCADE delete, ensuring that when an album is deleted, all associated photos are also removed. The \texttt{premium\_requests} table tracks user requests for premium membership upgrades, storing request status (pending, approved, rejected), timestamps, and admin notes.
+
+Additionally, the database includes \texttt{countries}, \texttt{states}, and \texttt{cities} tables for location data, supporting user profile completion and potential location-based features. All tables use the InnoDB storage engine with UTF8MB4 character set to support international characters and emojis. Foreign key constraints ensure referential integrity, and strategic indexes on frequently queried columns optimize query performance.
+
+% Placeholder for ERD diagram
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{screenshots/erd_diagram.png}
+    \caption{Entity Relationship Diagram - Database schema showing relationships between tables}
+    \label{fig:erd}
+\end{figure}
+
+\subsection{Backend Architecture}
+The PHP backend is organized using a modular architecture that separates concerns and promotes code reusability. The routing system, implemented in \texttt{app/router.php}, uses a simple but effective approach: it maintains an associative array mapping URL parameters (from \texttt{\$\_GET['p']}) to corresponding PHP file paths. When a request arrives, the router checks if the requested page exists in the route map, and if found, includes the appropriate file. If the route doesn't exist, it returns a 404 error with a fallback error page. This approach provides clean URLs like \texttt{index.php?p=photobooth} while maintaining a logical file structure.
+
+Configuration management is centralized in \texttt{app/config.php}, which loads environment variables from a \texttt{.env} file using a custom parser (with fallback to phpdotenv if available). The configuration file establishes database connections using PDO (PHP Data Objects) with error handling set to exception mode, ensuring that database errors are properly caught and handled. The PDO connection uses prepared statements exclusively, which automatically prevents SQL injection attacks by separating SQL logic from data.
+
+Session management is carefully implemented to avoid conflicts with other applications running on the same server. The system uses a custom session name (\texttt{PHOTOBOOTH\_SESSION}) and configures cookie paths to be scoped to the application directory. Session cookies are set with HttpOnly flag to prevent JavaScript access, and secure flag is enabled when HTTPS is detected. CSRF protection is implemented through token generation and validation: each form includes a hidden \texttt{\_csrf} field containing a token generated from session data, and server-side validation ensures the submitted token matches the session token before processing the form.
+
+\subsection{SEO Implementation}
+The application implements multiple SEO best practices:
+
+\subsubsection{Meta Tags}
+Each page in the application includes comprehensive meta tags optimized for search engines and social media platforms. The implementation uses a centralized SEO helper function (\texttt{render\_seo\_meta()}) that generates appropriate meta tags based on the current page. For example, the photobooth page includes the title tag \texttt{<title>Space Photobooth • Photobooth</title>}, which combines the site name with a descriptive page identifier. The meta description is carefully crafted to be between 150-160 characters, such as \texttt{<meta name="description" content="Use our interactive photobooth to capture and customize photos with stickers, filters, and fun effects. Perfect for events and parties!">}, providing a concise summary that appears in search engine results.
+
+Open Graph tags are implemented for social media sharing, including \texttt{og:title}, \texttt{og:description}, \texttt{og:url}, \texttt{og:type}, and \texttt{og:image} with specific dimensions (1200x630 pixels) for optimal display on platforms like Facebook and LinkedIn. Twitter Card metadata is also included with \texttt{twitter:card} set to \texttt{summary\_large\_image} for rich previews when links are shared on Twitter. Additionally, the system includes Schema.org structured data in JSON-LD format, defining the application as a \texttt{WebApplication} type with metadata about the application category, operating system, and pricing information. This structured data helps search engines understand the content and can result in enhanced search result displays.
+
+\subsubsection{Semantic HTML}
+The application follows HTML5 semantic markup principles to improve both SEO and accessibility. Each page is structured using semantic elements that clearly define the content hierarchy: \texttt{<header>} contains the site logo and branding, \texttt{<nav>} wraps the navigation menu, \texttt{<main>} encloses the primary page content, \texttt{<section>} elements divide content into logical sections, and \texttt{<footer>} contains footer information and links. This semantic structure helps search engines understand the page layout and content organization.
+
+Heading hierarchy is carefully maintained with a single \texttt{<h1>} tag per page (typically the main page title), followed by \texttt{<h2>} for major sections, and \texttt{<h3>} for subsections. This hierarchy not only improves SEO but also enhances screen reader navigation for visually impaired users. All images include descriptive \texttt{alt} attributes that convey the image's purpose and content, such as \texttt{alt="Photobooth Interface - Real-time photo capture with effects"} for feature screenshots. ARIA labels are added to interactive elements like buttons and form inputs to provide additional context for assistive technologies, ensuring the application is accessible to users with disabilities.
+
+\subsubsection{Sitemap}
+A dynamic XML sitemap is generated at \texttt{public/sitemap.php} to help search engines discover and index all pages in the application. The sitemap follows the XML Sitemap Protocol 0.9 standard and includes all public-facing pages with their respective metadata. Each URL entry includes the full canonical URL, last modification date (set to the current date for dynamic generation), change frequency (daily for frequently updated pages like the studio dashboard, weekly for feature pages, monthly for informational pages, and yearly for legal pages), and priority values ranging from 0.3 to 1.0 (with 1.0 for the homepage and main features, 0.9 for secondary features, and lower values for less important pages).
+
+The sitemap is generated programmatically by iterating through a predefined array of pages and their configurations, ensuring that new pages can be easily added to the sitemap by updating the configuration array. The XML output includes proper namespaces and schema declarations, making it compatible with all major search engines. The sitemap can be submitted to Google Search Console and other search engine webmaster tools to improve crawling efficiency.
+
+\subsubsection{Friendly URLs}
+URLs follow a clean structure: \texttt{index.php?p=page-name} with descriptive page identifiers.
+
+% Placeholder for screenshot: SEO implementation (view page source or meta tags)
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{screenshots/seo.png}
+    \caption{SEO Implementation - Meta tags and semantic HTML structure}
+    \label{fig:seo}
+\end{figure}
+
+\subsection{Security Practices}
+The application implements multiple layers of security to protect user data and prevent common web vulnerabilities. Password security is ensured through PHP's \texttt{password\_hash()} function, which uses the bcrypt algorithm by default (or Argon2ID if available). This one-way hashing ensures that even if the database is compromised, passwords cannot be easily recovered. During login, \texttt{password\_verify()} is used to compare the submitted password with the stored hash without ever storing or transmitting plain text passwords.
+
+SQL injection attacks are prevented through the exclusive use of prepared statements with PDO. All database queries use parameterized statements where user input is bound as parameters rather than concatenated into SQL strings. For example, instead of \texttt{"SELECT * FROM users WHERE email='\$email'"} (vulnerable), the code uses \texttt{\$stmt->prepare("SELECT * FROM users WHERE email=?")} followed by \texttt{\$stmt->execute([\$email])}, ensuring that user input is always treated as data, never as executable SQL code.
+
+Cross-site scripting (XSS) attacks are mitigated through output escaping using PHP's \texttt{htmlspecialchars()} function with the \texttt{ENT\_QUOTES} flag, which converts special characters like \texttt{<}, \texttt{>}, and \texttt{\&} to their HTML entities. This ensures that any user-generated content displayed on pages cannot execute malicious JavaScript code. CSRF protection is implemented through token validation: each form includes a hidden CSRF token field, and the server validates that the submitted token matches the token stored in the user's session before processing the form submission.
+
+Session security is enhanced through HttpOnly cookies (preventing JavaScript access), secure flag when HTTPS is available, and custom session names to avoid conflicts. Input validation is performed server-side for all user inputs, including email format validation, password strength requirements, and file type checking for uploads. File uploads are secured through validation of file extensions, MIME type checking, and generation of unique filenames to prevent directory traversal attacks and filename conflicts.
+
+\subsection{AJAX Implementation}
+AJAX (Asynchronous JavaScript and XML) is extensively used throughout the application to provide a smooth, responsive user experience without full page reloads. The implementation uses the modern Fetch API for all AJAX requests, which provides better error handling and promise-based syntax compared to the older XMLHttpRequest API.
+
+Frame search uses AJAX to fetch filtered frame lists based on user input and layout selection, updating the frame gallery in real-time. Photobook pagination loads additional photos as users scroll or navigate through pages, reducing initial page load time by only fetching the first batch of images. Avatar updates are handled asynchronously, allowing users to change their profile picture and see the update immediately without refreshing the page. Premium membership requests are submitted via AJAX, providing instant feedback on request status.
+
+All AJAX endpoints follow a consistent response format: successful responses return JSON objects with a \texttt{success: true} flag and a \texttt{data} field containing the requested information, while errors return \texttt{success: false} with an \texttt{error} field containing an error message. The frontend JavaScript handles these responses appropriately, displaying success messages or error alerts to inform users of the operation status. Error handling includes network failure detection, HTTP status code checking, and graceful degradation when AJAX requests fail.
+
+\section{Project Structure}
+
+The project follows an organized folder structure:
+\begin{lstlisting}
+web-photobooth/
+├── app/              # Main application logic
+│   ├── auth/        # Authentication pages
+│   ├── includes/    # Shared components
+│   └── *.php        # Page controllers
+├── admin/           # Admin panel
+├── ajax/            # AJAX endpoints
+├── config/          # Database and configuration
+├── public/          # Public assets
+│   ├── css/         # Stylesheets
+│   ├── js/          # JavaScript files
+│   ├── images/      # Image assets
+│   └── index.php    # Entry point
+└── vendor/          # Composer dependencies
+\end{lstlisting}
+
+\section{Conclusion}
+
+\subsection{Project Achievements}
+This project successfully demonstrates:
+\begin{itemize}
+    \item Full-stack web development skills
+    \item Responsive design implementation
+    \item Secure authentication with multiple providers
+    \item Real-time interactivity using AJAX
+    \item Database design and management
+    \item SEO optimization practices
+    \item Modern UI/UX design principles
+\end{itemize}
+
+\subsection{Lessons Learned}
+Key takeaways from this project:
+\begin{itemize}
+    \item Importance of proper session management in multi-page applications
+    \item Benefits of modular code organization for maintainability
+    \item Value of responsive design testing across devices
+    \item Security considerations in user authentication systems
+    \item Performance optimization through AJAX and lazy loading
+\end{itemize}
+
+\subsection{Future Enhancements}
+Potential improvements for future development:
+\begin{itemize}
+    \item Image compression and optimization
+    \item Advanced photo editing filters
+    \item Social sharing integration
+    \item Real-time collaboration features
+    \item Mobile app development
+    \item Analytics and user tracking
+\end{itemize}
+
+\end{document}
+
