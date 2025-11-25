@@ -316,7 +316,109 @@ function captureOncePNG() {
     }
   }
 
+  // Draw stickers on canvas (after video and filters)
+  // Reset transform before drawing stickers (canvas was mirrored for video)
+  ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset to identity matrix
+  drawStickersOnCanvas(ctx, canvas);
+
   return canvas.toDataURL("image/png");
+}
+
+// Helper function to draw stickers on canvas
+function drawStickersOnCanvas(ctx, canvas) {
+  const photoboothStudio = document.querySelector('.photobooth-studio');
+  const cameraWrapper = document.querySelector('.camera-wrapper');
+  const videoElement = document.getElementById('video');
+  
+  if (!photoboothStudio || !cameraWrapper || !videoElement) return;
+  
+  const stickers = photoboothStudio.querySelectorAll('.placed-sticker');
+  if (stickers.length === 0) return;
+  
+  // Get video position and size
+  const videoRect = videoElement.getBoundingClientRect();
+  const cameraWrapperRect = cameraWrapper.getBoundingClientRect();
+  
+  // Get actual video dimensions (same as canvas dimensions)
+  const videoActualWidth = videoElement.videoWidth || canvas.width;
+  const videoActualHeight = videoElement.videoHeight || canvas.height;
+  
+  // Calculate video position within camera-wrapper
+  const videoOffsetX = videoRect.left - cameraWrapperRect.left;
+  const videoOffsetY = videoRect.top - cameraWrapperRect.top;
+  
+  // Calculate how video is actually displayed vs its actual size
+  // Video uses object-fit: cover, so it fills container but may be cropped
+  const videoDisplayAspect = videoRect.width / videoRect.height;
+  const videoActualAspect = videoActualWidth / videoActualHeight;
+  
+  // Determine which dimension is the limiting factor (width or height)
+  let scale, offsetX = 0, offsetY = 0;
+  
+  if (videoDisplayAspect > videoActualAspect) {
+    // Display is wider than video -> height is limiting, video is cropped on sides
+    scale = videoActualHeight / videoRect.height;
+    const scaledWidth = videoRect.width * scale;
+    offsetX = (scaledWidth - videoActualWidth) / 2;
+  } else {
+    // Display is taller than video -> width is limiting, video is cropped on top/bottom
+    scale = videoActualWidth / videoRect.width;
+    const scaledHeight = videoRect.height * scale;
+    offsetY = (scaledHeight - videoActualHeight) / 2;
+  }
+  
+  // Draw each sticker
+  stickers.forEach(sticker => {
+    const stickerRect = sticker.getBoundingClientRect();
+    const stickerImg = sticker.querySelector('img');
+    
+    if (!stickerImg || !stickerImg.complete) return; // Skip if image not loaded
+    
+    // Calculate sticker position relative to camera-wrapper
+    const stickerX = stickerRect.left - cameraWrapperRect.left;
+    const stickerY = stickerRect.top - cameraWrapperRect.top;
+    
+    // Calculate position relative to video
+    const relativeX = stickerX - videoOffsetX;
+    const relativeY = stickerY - videoOffsetY;
+    
+    // Only draw if sticker is within video bounds
+    if (relativeX >= -stickerRect.width && relativeY >= -stickerRect.height && 
+        relativeX < videoRect.width && relativeY < videoRect.height) {
+      
+      // Calculate scaled position and size for canvas
+      // Note: canvas was mirrored for video, but we reset transform, so now we need to mirror X again
+      // Video is mirrored, so sticker X needs to be flipped to match
+      
+      // Get the displayed sticker size (what user sees on screen)
+      const displayedWidth = stickerRect.width;
+      const displayedHeight = stickerRect.height;
+      
+      // Use uniform scale to maintain aspect ratio
+      // Adjust position to account for video cropping
+      const canvasX = canvas.width - ((relativeX * scale) + offsetX) - (displayedWidth * scale);
+      const canvasY = (relativeY * scale) + offsetY;
+      const canvasWidth = displayedWidth * scale;
+      const canvasHeight = displayedHeight * scale;
+      
+      // Draw sticker on canvas
+      ctx.save();
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.globalAlpha = 1.0;
+      
+      try {
+        // Draw directly from the img element if it's loaded
+        if (stickerImg.complete && stickerImg.naturalWidth > 0) {
+          // Draw with maintained aspect ratio
+          ctx.drawImage(stickerImg, canvasX, canvasY, canvasWidth, canvasHeight);
+        }
+      } catch (e) {
+        console.warn('Error drawing sticker:', e);
+      }
+      
+      ctx.restore();
+    }
+  });
 }
 
 // ---------- Chụp liên tục (4 tấm) ----------
