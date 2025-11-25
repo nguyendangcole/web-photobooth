@@ -54,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     $id = db()->lastInsertId();
     $user = ['id'=>$id,'name'=>$name,'email'=>$email,'avatar_url'=>null,'provider'=>'local'];
-    if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+    // Session đã được init trong config.php
     session_regenerate_id(true);
     login_user($user);
     redirect('?p=studio');

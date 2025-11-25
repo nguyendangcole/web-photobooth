@@ -9,14 +9,8 @@
  * - send_mail(): priority SMTP/PHPMailer if enabled, fallback mail()
  */
 
-if (session_status() === PHP_SESSION_NONE) {
-  ini_set('session.use_strict_mode', '1');
-  ini_set('session.cookie_httponly', '1');
-  if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') {
-    ini_set('session.cookie_secure', '1');
-  }
-  session_start();
-}
+// Initialize session với cấu hình riêng biệt
+init_photobooth_session();
 
 /* ========= Project root & vendor ========= */
 $PROJECT_ROOT = dirname(__DIR__);
@@ -97,6 +91,34 @@ function db(): PDO {
     PDO::ATTR_EMULATE_PREPARES   => false,
   ]);
   return $pdo;
+}
+
+/* ========= Session Helper ========= */
+function init_photobooth_session(): void {
+  if (session_status() === PHP_SESSION_ACTIVE) {
+    return; // Session đã được start rồi
+  }
+  
+  // Set session name riêng biệt để tránh conflict với các web khác
+  session_name('PHOTOBOOTH_SESSION');
+  
+  // Set cookie path để giới hạn cookie chỉ cho folder photobooth
+  $scriptPath = dirname($_SERVER['SCRIPT_NAME'] ?? '/');
+  if (preg_match('#/(web-photobooth|Web-photobooth)(/.*)?$#i', $scriptPath, $matches)) {
+    $cookiePath = '/' . $matches[1] . '/';
+  } else {
+    $cookiePath = rtrim($scriptPath, '/') . '/';
+    if ($cookiePath === '//') $cookiePath = '/';
+  }
+  
+  ini_set('session.use_strict_mode', '1');
+  ini_set('session.cookie_httponly', '1');
+  ini_set('session.cookie_path', $cookiePath);
+  if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') {
+    ini_set('session.cookie_secure', '1');
+  }
+  
+  session_start();
 }
 
 /* ========= Auth / OAuth ========= */
@@ -188,6 +210,8 @@ function logout_user(): void { unset($_SESSION['user']); }
 /* ========= Email (SMTP optional) ========= */
 function send_mail(string $to, string $subject, string $html): bool {
   $useSmtp = bool_env('SMTP_ENABLED', false);
+  
+  // Try SMTP first if enabled and PHPMailer available
   if ($useSmtp && class_exists(\PHPMailer\PHPMailer\PHPMailer::class)) {
     try {
       $mail = new \PHPMailer\PHPMailer\PHPMailer(true);
@@ -196,7 +220,13 @@ function send_mail(string $to, string $subject, string $html): bool {
       $mail->SMTPAuth   = true;
       $mail->Username   = envx('SMTP_USER', '');
       $mail->Password   = envx('SMTP_PASS', '');
-      $secure           = strtolower(envx('SMTP_SECURE', 'tls'));
+      
+      // Enable verbose debug output in development
+      if (strtolower(envx('APP_ENV', 'dev')) === 'dev') {
+        $mail->SMTPDebug = 0; // 0 = off, 1 = client, 2 = client and server
+      }
+      
+      $secure = strtolower(envx('SMTP_SECURE', 'tls'));
       if ($secure === 'ssl') {
         $mail->SMTPSecure = \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_SMTPS;
         $mail->Port       = (int) envx('SMTP_PORT', '465');
@@ -204,6 +234,7 @@ function send_mail(string $to, string $subject, string $html): bool {
         $mail->SMTPSecure = \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port       = (int) envx('SMTP_PORT', '587');
       }
+      
       $fromEmail = envx('SMTP_FROM', 'no-reply@example.com');
       $fromName  = envx('SMTP_FROM_NAME', 'Photobooth');
       $mail->setFrom($fromEmail, $fromName);
@@ -211,16 +242,45 @@ function send_mail(string $to, string $subject, string $html): bool {
       $mail->isHTML(true);
       $mail->Subject = $subject;
       $mail->Body    = $html;
-      $mail->send();
-      return true;
+      
+      $result = $mail->send();
+      if ($result) {
+        error_log("[Email] Sent successfully to: {$to}");
+        return true;
+      }
+      return false;
     } catch (\Throwable $e) {
-      error_log('[SMTP] '.$e->getMessage());
+      $errorMsg = $e->getMessage();
+      error_log("[SMTP Error] Failed to send to {$to}: {$errorMsg}");
+      // Log to file for debugging
+      if (function_exists('error_log')) {
+        $logFile = dirname(__DIR__) . '/logs/email_error.log';
+        $logDir = dirname($logFile);
+        if (!is_dir($logDir)) {
+          @mkdir($logDir, 0755, true);
+        }
+        @file_put_contents($logFile, date('Y-m-d H:i:s') . " - {$errorMsg}\n", FILE_APPEND);
+      }
       return false;
     }
   }
+  
+  // Fallback to PHP mail() function
+  if (!$useSmtp) {
+    error_log("[Email] Using PHP mail() function (SMTP not enabled)");
+  } else {
+    error_log("[Email] PHPMailer not found, falling back to mail()");
+  }
+  
   $headers = "MIME-Version: 1.0\r\nContent-type:text/html;charset=UTF-8\r\n";
   $headers .= "From: ". (envx('SMTP_FROM_NAME', 'Photobooth')) ." <". (envx('SMTP_FROM','no-reply@example.com')) .">\r\n";
-  return @mail($to, $subject, $html, $headers);
+  $result = @mail($to, $subject, $html, $headers);
+  
+  if (!$result) {
+    error_log("[Email] PHP mail() failed for: {$to}");
+  }
+  
+  return $result;
 }
 
 /* ========= Polyfills ========= */

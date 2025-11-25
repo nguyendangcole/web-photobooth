@@ -2,8 +2,21 @@
 // admin/includes/layout_header.php
 // Header & Sidebar cho Admin Panel
 
-if (session_status() !== PHP_SESSION_ACTIVE) {
-  session_start();
+if (session_status() === PHP_SESSION_NONE) {
+  if (function_exists('init_photobooth_session')) {
+    init_photobooth_session();
+  } else {
+    session_name('PHOTOBOOTH_SESSION');
+    $scriptPath = dirname($_SERVER['SCRIPT_NAME'] ?? '/');
+    if (preg_match('#/(web-photobooth|Web-photobooth)(/.*)?$#i', $scriptPath, $matches)) {
+      $cookiePath = '/' . $matches[1] . '/';
+    } else {
+      $cookiePath = rtrim($scriptPath, '/') . '/';
+      if ($cookiePath === '//') $cookiePath = '/';
+    }
+    ini_set('session.cookie_path', $cookiePath);
+    session_start();
+  }
 }
 $currentUser = $_SESSION['user'] ?? null;
 ?>

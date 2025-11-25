@@ -39,7 +39,9 @@ body, html {
 
 /* ==== Inputs ==== */
 .auth-card .form-control-lg,
-.auth-card .form-control {
+.auth-card .form-control,
+.auth-left-inner .form-control-lg,
+.auth-left-inner .form-control {
   background-color: #2b2b2b;
   color: #f5f5f5;
   border: 1px solid #444;
@@ -48,10 +50,13 @@ body, html {
 }
 
 .auth-card .form-control-lg:focus,
-.auth-card .form-control:focus {
+.auth-card .form-control:focus,
+.auth-left-inner .form-control-lg:focus,
+.auth-left-inner .form-control:focus {
   border-color: #8ad0b6;
   background-color: #333;
   box-shadow: 0 0 0 0.15rem rgba(138,208,182,0.25);
+  color: #ffffff;
 }
 
 /* ==== Select Dropdowns ==== */
@@ -86,7 +91,8 @@ body, html {
 }
 
 /* ==== Buttons ==== */
-.auth-card .btn-info {
+.auth-card .btn-info,
+.auth-left-inner .btn-info {
   background: #709085;
   border-color: #709085;
   color: #fff;
@@ -95,33 +101,48 @@ body, html {
   transition: 0.2s;
 }
 
-.auth-card .btn-info:hover {
+.auth-card .btn-info:hover,
+.auth-left-inner .btn-info:hover {
   background: #5f7b74;
   border-color: #5f7b74;
 }
 
 /* ==== Links ==== */
-.auth-card a.link-info {
+.auth-card a.link-info,
+.auth-left-inner a.link-info {
   color: #6bc8b3;
   text-decoration: none;
 }
-.auth-card a.link-info:hover {
+.auth-card a.link-info:hover,
+.auth-left-inner a.link-info:hover {
   color: #88e4ce;
   text-decoration: underline;
 }
 
-.auth-card a.text-white {
+.auth-card a.text-white,
+.auth-left-inner a.text-white {
   color: #ffffff !important;
+}
+
+/* ==== Labels ==== */
+.auth-card .form-label,
+.auth-left-inner .form-label {
+  color: #f1f1f1;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
 }
 
 /* ==== Small text ==== */
 .auth-card .small,
-.auth-card .text-muted {
+.auth-card .text-muted,
+.auth-left-inner .small,
+.auth-left-inner .text-muted {
   color: #aaa !important;
 }
 
 /* ==== Divider ==== */
-.auth-card hr {
+.auth-card hr,
+.auth-left-inner hr {
   border-color: #444;
   opacity: 0.8;
 }

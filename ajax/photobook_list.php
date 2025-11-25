@@ -54,11 +54,25 @@ try {
     $stmt->execute();
 
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $root = dirname(__DIR__);
 
-    // Chuẩn hoá url cho FE (bỏ 'public/')
-    foreach ($rows as &$r) {
-        $r['url'] = preg_replace('#^public/#','', (string)$r['image_path']);
+    // Lọc chỉ các record có file tồn tại và chuẩn hoá url cho FE
+    $validRows = [];
+    foreach ($rows as $r) {
+        $imagePath = (string)$r['image_path'];
+        $fullPath = $root . '/' . $imagePath;
+        
+        // Chỉ thêm vào kết quả nếu file tồn tại
+        if (file_exists($fullPath)) {
+            $r['url'] = preg_replace('#^public/#','', $imagePath);
+            $validRows[] = $r;
+        } else {
+            // Log warning nếu file không tồn tại
+            error_log("photobook_list: File not found - {$fullPath} (ID: {$r['id']})");
+        }
     }
+    
+    $rows = $validRows;
 
     echo json_encode([
         'success' => true,

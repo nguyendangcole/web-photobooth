@@ -27,6 +27,7 @@ $routes = [
   'register'              => APP_PATH . '/auth/register.php',
   'logout'                => APP_PATH . '/auth/logout.php',
   'forgot'                => APP_PATH . '/auth/forgot.php',
+  'verify-otp'            => APP_PATH . '/auth/verify_otp.php',
   'reset'                 => APP_PATH . '/auth/reset.php',
 
   // oauth

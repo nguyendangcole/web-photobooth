@@ -2,8 +2,22 @@
 // app/includes/auth_guard.php
 // REQUIRED: include this file at the beginning of private pages/endpoints (before any output)
 
-if (session_status() !== PHP_SESSION_ACTIVE) {
-  session_start();
+// Sử dụng hàm init session từ config.php nếu có, nếu không thì init thủ công
+if (session_status() === PHP_SESSION_NONE) {
+  if (function_exists('init_photobooth_session')) {
+    init_photobooth_session();
+  } else {
+    session_name('PHOTOBOOTH_SESSION');
+    $scriptPath = dirname($_SERVER['SCRIPT_NAME'] ?? '/');
+    if (preg_match('#/(web-photobooth|Web-photobooth)(/.*)?$#i', $scriptPath, $matches)) {
+      $cookiePath = '/' . $matches[1] . '/';
+    } else {
+      $cookiePath = rtrim($scriptPath, '/') . '/';
+      if ($cookiePath === '//') $cookiePath = '/';
+    }
+    ini_set('session.cookie_path', $cookiePath);
+    session_start();
+  }
 }
 
 // If already logged in, allow through

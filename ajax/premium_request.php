@@ -8,7 +8,23 @@ error_reporting(E_ALL);
 require __DIR__ . '/../config/db.php';
 require __DIR__ . '/../app/includes/auth_guard.php';
 
-session_start();
+// Session đã được init trong auth_guard.php hoặc config.php
+if (session_status() === PHP_SESSION_NONE) {
+  if (function_exists('init_photobooth_session')) {
+    init_photobooth_session();
+  } else {
+    session_name('PHOTOBOOTH_SESSION');
+    $scriptPath = dirname($_SERVER['SCRIPT_NAME'] ?? '/');
+    if (preg_match('#/(web-photobooth|Web-photobooth)(/.*)?$#i', $scriptPath, $matches)) {
+      $cookiePath = '/' . $matches[1] . '/';
+    } else {
+      $cookiePath = rtrim($scriptPath, '/') . '/';
+      if ($cookiePath === '//') $cookiePath = '/';
+    }
+    ini_set('session.cookie_path', $cookiePath);
+    session_start();
+  }
+}
 header('Content-Type: application/json; charset=utf-8');
 
 try {

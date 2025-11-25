@@ -2,8 +2,22 @@
 // app/auth/login.php
 require_once __DIR__ . '/../config.php';
 
-if (session_status() !== PHP_SESSION_ACTIVE) {
-  session_start();
+// Session đã được init trong config.php, chỉ cần check
+if (session_status() === PHP_SESSION_NONE) {
+  if (function_exists('init_photobooth_session')) {
+    init_photobooth_session();
+  } else {
+    session_name('PHOTOBOOTH_SESSION');
+    $scriptPath = dirname($_SERVER['SCRIPT_NAME'] ?? '/');
+    if (preg_match('#/(web-photobooth|Web-photobooth)(/.*)?$#i', $scriptPath, $matches)) {
+      $cookiePath = '/' . $matches[1] . '/';
+    } else {
+      $cookiePath = rtrim($scriptPath, '/') . '/';
+      if ($cookiePath === '//') $cookiePath = '/';
+    }
+    ini_set('session.cookie_path', $cookiePath);
+    session_start();
+  }
 }
 
 // ---- Flash error (if any) ----
@@ -61,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($user && !empty($user['password_hash']) && password_verify($pass, $user['password_hash'])) {
       // Login successful
       // (If login_user already has regenerate_id, can remove line below)
-      if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+      // Session đã được init trong config.php
       session_regenerate_id(true);
 
       login_user($user);
