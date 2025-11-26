@@ -34,16 +34,18 @@ $seoData = default_seo_data('frame');
   
   /* Main content wrapper - scrollable area between header and footer */
   .main-content-wrapper {
-    position: fixed;
-    top: 50px;
+    position: relative;
+    top: 0;
     left: 0;
-    right: 0;
-    bottom: 40px;
-    overflow-y: auto;
+    right: auto;
+    bottom: auto;
+    min-height: calc(100vh - 90px);
+    overflow-y: visible;
     overflow-x: hidden;
-    transition: left 0.3s ease;
+    transition: none;
     display: flex;
     flex-direction: column;
+    padding-top: 70px;
   }
   
   /* Container inside wrapper */
@@ -67,7 +69,7 @@ $seoData = default_seo_data('frame');
     flex-wrap: nowrap;
     box-shadow: 4px 4px 0px #000, 0 4px 20px rgba(0, 0, 0, 0.1);
     position: sticky;
-    top: 8px;
+    top: 10px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 100;
@@ -1409,24 +1411,30 @@ if (photos.length && photos.length !== MAX_PHOTOS) {
 @media (max-width: 768px) {
   /* Adjust main content wrapper for mobile */
   .main-content-wrapper {
-    top: 200px; /* Much more space for wrapped toolbar */
-    bottom: 50px;
+    padding-top: 140px !important;
+    min-height: calc(100vh - 90px);
   }
   
-  /* Frame Toolbar - Mobile optimized */
+  /* Frame Toolbar - Mobile optimized with vertical layout */
   .frame-toolbar {
-    position: fixed;
-    padding: 6px 8px;
-    gap: 5px;
-    top: 60px; /* Below header */
-    left: 8px;
-    right: 8px;
-    max-width: calc(100% - 16px);
-    min-height: auto;
-    flex-wrap: wrap;
-    justify-content: center;
-    transform: none;
-    box-shadow: 3px 3px 0px #000, 0 4px 15px rgba(0, 0, 0, 0.1);
+    position: sticky !important;
+    top: 0px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: auto !important;
+    max-width: 200px !important;
+    margin: 0 !important;
+    padding: 12px 8px !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    min-height: auto !important;
+    box-shadow: 3px 3px 0px #000, 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+    border-radius: 12px !important;
+    z-index: 999 !important;
+    background: linear-gradient(135deg, #fff 0%, #f8f9ff 100%) !important;
+    border: 3px solid #000 !important;
   }
   
   .toolbar-separator {
@@ -1434,11 +1442,16 @@ if (photos.length && photos.length !== MAX_PHOTOS) {
   }
   
   .toolbar-btn {
-    padding: 6px 10px;
-    font-size: 10px;
-    height: 30px;
-    gap: 4px;
-    box-shadow: 1px 1px 0px #000;
+    padding: 10px 16px !important;
+    font-size: 12px !important;
+    height: 38px !important;
+    width: 140px !important;
+    gap: 4px !important;
+    box-shadow: 2px 2px 0px #000 !important;
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+    margin: 0 !important;
+    text-align: center !important;
   }
   
   .toolbar-btn:hover {
@@ -1447,16 +1460,39 @@ if (photos.length && photos.length !== MAX_PHOTOS) {
   }
   
   .toolbar-group {
-    gap: 4px;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 6px !important;
+    width: 100% !important;
+    margin: 4px 0 !important;
   }
   
   .toolbar-btn-group {
-    height: 30px;
+    display: flex !important;
+    flex-direction: column !important;
+    height: auto !important;
+    width: 140px !important;
+    border: 2px solid #000 !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
+    background: rgba(255, 255, 255, 0.9) !important;
   }
   
   .toolbar-btn-group .toolbar-btn {
-    padding: 4px 8px;
-    font-size: 9px;
+    padding: 8px 12px !important;
+    font-size: 11px !important;
+    height: 32px !important;
+    width: 100% !important;
+    border: none !important;
+    border-radius: 0 !important;
+    border-bottom: 1px solid #000 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+  }
+  
+  .toolbar-btn-group .toolbar-btn:last-child {
+    border-bottom: none !important;
   }
   
   /* Canvas area - mobile optimized */
@@ -1514,13 +1550,10 @@ if (photos.length && photos.length !== MAX_PHOTOS) {
 }
 
 @media (max-width: 480px) {
-  /* Extra small screens */
-  .main-content-wrapper {
-    top: 220px; /* Even more space for wrapped toolbar */
-  }
+  /* Extra small screens - main content wrapper inherits from 768px breakpoint */
   
   .frame-toolbar {
-    top: 60px;
+    /* Position sticky inherited from 768px breakpoint */
     padding: 5px 6px;
   }
   
