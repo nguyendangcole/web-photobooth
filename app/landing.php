@@ -1584,7 +1584,7 @@ try {
       
       <a href="?p=premium-upgrade" class="tip-card tc-6" style="text-decoration: none; color: inherit; display: block;">
         <div class="tip-image-wrapper">
-          <img src="<?= BASE_URL ?>images/tip-premium.jpg" alt="Premium tip" class="tip-image" loading="lazy" onerror="this.style.display='none'">
+          <img src="<?= BASE_URL ?>images/tip-experiment.jpg" alt="Premium tip" class="tip-image" loading="lazy" onerror="this.style.display='none'">
           <div class="tip-emoji">★</div>
         </div>
         <h3>PREMIUM</h3>
