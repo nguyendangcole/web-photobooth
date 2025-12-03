@@ -79,6 +79,7 @@ body {
   margin: 0 auto;
   padding: 40px 20px;
   max-width: 1400px;
+  overflow: visible;
 }
 
 /* Photo Item */
@@ -90,6 +91,14 @@ body {
               z-index 0s;
   will-change: transform;
   z-index: 1;
+}
+
+.photo-item[data-layout="vertical"] {
+  max-width: 180px;
+}
+
+.photo-item[data-layout="square"] {
+  max-width: 300px;
 }
 
 .photo-item:hover {
@@ -414,10 +423,72 @@ include __DIR__ . '/includes/page_header.php';
   </div>
 </div>
 
+<!-- Photobook / Gallery User Guide Modal -->
+<div class="modal fade" id="photobookGuideModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border:3px solid #000;border-radius:16px;">
+      <div class="modal-header" style="border-bottom:2px solid #000;background:linear-gradient(135deg,#c1ff72 0%,#00f5ff 100%);">
+        <h5 class="modal-title" style="font-family:'Space Grotesk',sans-serif;font-weight:700;color:#000;">
+          How to use your Gallery
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" style="font-family:'Space Grotesk',sans-serif;padding:1.5rem;color:#222;">
+        <ol style="margin-left:1rem;padding-left:0.5rem;">
+          <li>Your saved frames from the <strong>Frame</strong> page will appear here as photos.</li>
+          <li><strong>Drag</strong> photos around to arrange your own layout on the canvas.</li>
+          <li><strong>Double‑click</strong> a photo to open it in a large lightbox view.</li>
+          <li>Use the small <strong>↓ button</strong> on each photo to download it to your device.</li>
+          <li>Use the small <strong>× button</strong> to delete a photo from your gallery (this cannot be undone).</li>
+          <li>The system remembers positions, so your layout stays similar on refresh.</li>
+          <li>Come back here anytime from the top navigation to revisit your creations.</li>
+        </ol>
+      </div>
+      <div class="modal-footer" style="border-top:2px solid #000;gap:10px;">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                style="font-family:'Space Grotesk',sans-serif;font-weight:600;border:2px solid #000;border-radius:8px;padding:8px 18px;">
+          Close
+        </button>
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal"
+                style="font-family:'Space Grotesk',sans-serif;font-weight:700;background:#c1ff72;color:#000;border:2px solid #000;border-radius:8px;padding:8px 18px;">
+          Got it!
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Floating Help Button for Gallery page -->
+<button id="openPhotobookGuide"
+        type="button"
+        aria-label="Open Gallery guide"
+        style="
+          position:fixed;
+          right:16px;
+          bottom:96px;
+          z-index:1060;
+          width:42px;
+          height:42px;
+          border-radius:50%;
+          border:2px solid #000;
+          background:#fffbe6;
+          box-shadow:2px 2px 0px #000;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          font-family:'Space Grotesk',sans-serif;
+          font-weight:700;
+          font-size:20px;
+          color:#000;
+        ">
+  ?
+</button>
+
 <script>
 (function(){
   const LIST_URL   = '../ajax/photobook_list.php';
   const DELETE_URL = '../ajax/photobook_delete.php';
+  const DRAG_BOUNDS = { overlapX: 12, overlapY: 18 }; // allow 12% overlap horizontally, 18% vertically
 
   // Confirmation Dialog Function
   function showConfirmDialog(title, message, onConfirm) {
@@ -480,15 +551,20 @@ include __DIR__ . '/includes/page_header.php';
     if (!json.success) throw new Error(json.error || 'Load failed');
 
     photos = (json.data || []).map(r => {
+      const layout = (r.layout || 'square').toLowerCase();
       const rel = (r.url || r.image_path || '').replace(/^public\//,'').replace(/^\/+/,'');
+      const isVertical = layout === 'vertical';
+      const minWidth = isVertical ? 110 : 200;
+      const maxWidth = isVertical ? 170 : 280;
       return { 
         ...r, 
+        layout,
         displayUrl: toWebUrl(rel) + '?v=' + Date.now(),
         // Load saved position or generate random
         x: r.x || Math.random() * 70 + 5, // 5-75% of container width
         y: r.y || Math.random() * 40 + 5, // 5-45% of container height
         rotation: 0, // No rotation - keep images straight
-        size: r.size || (Math.random() * 70 + 280) // 280-350px width
+        size: r.size || (Math.random() * (maxWidth - minWidth) + minWidth) // width based on layout
       };
     });
   }
@@ -510,6 +586,7 @@ include __DIR__ . '/includes/page_header.php';
     const item = document.createElement('div');
     item.className = 'photo-item';
     item.dataset.id = photo.id;
+    item.dataset.layout = photo.layout || 'square';
     item.style.left = photo.x + '%';
     item.style.top = photo.y + '%';
     item.style.width = photo.size + 'px';
@@ -584,6 +661,30 @@ include __DIR__ . '/includes/page_header.php';
     });
 
     return item;
+  }
+
+  function clampToGallery(item) {
+    const gallery = document.getElementById('photobookGallery');
+    if (!gallery || !item) return;
+    const galleryRect = gallery.getBoundingClientRect();
+    const itemRect = item.getBoundingClientRect();
+    if (!galleryRect.width || !galleryRect.height || !itemRect.width || !itemRect.height) return;
+
+    const widthPercent = (itemRect.width / galleryRect.width) * 100;
+    const heightPercent = (itemRect.height / galleryRect.height) * 100;
+    const currentLeft = parseFloat(item.style.left) || 0;
+    const currentTop = parseFloat(item.style.top) || 0;
+
+    const minX = -DRAG_BOUNDS.overlapX;
+    const maxX = Math.max(minX, 100 - widthPercent + DRAG_BOUNDS.overlapX);
+    const minY = -DRAG_BOUNDS.overlapY;
+    const maxY = Math.max(minY, 100 - heightPercent + DRAG_BOUNDS.overlapY);
+
+    const clampedLeft = Math.max(minX, Math.min(maxX, currentLeft));
+    const clampedTop = Math.max(minY, Math.min(maxY, currentTop));
+
+    item.style.left = clampedLeft + '%';
+    item.style.top = clampedTop + '%';
   }
 
   // Lightbox functions
@@ -695,10 +796,10 @@ include __DIR__ . '/includes/page_header.php';
         const itemWidthPercent = (itemRect.width / galleryRect.width) * 100;
         const itemHeightPercent = (itemRect.height / galleryRect.height) * 100;
         
-        const minX = -itemWidthPercent * 0.2;
-        const maxX = 100 - itemWidthPercent * 0.8;
-        const minY = 0;
-        const maxY = 100 - itemHeightPercent * 0.5;
+        const minX = -DRAG_BOUNDS.overlapX;
+        const maxX = Math.max(minX, 100 - itemWidthPercent + DRAG_BOUNDS.overlapX);
+        const minY = -DRAG_BOUNDS.overlapY;
+        const maxY = Math.max(minY, 100 - itemHeightPercent + DRAG_BOUNDS.overlapY);
 
         let constrainedX = Math.max(minX, Math.min(maxX, currentLeft));
         let constrainedY = Math.max(minY, Math.min(maxY, currentTop));
@@ -741,9 +842,10 @@ include __DIR__ . '/includes/page_header.php';
       const finalX = (itemRect.left - galleryRect.left) / galleryRect.width * 100;
       const finalY = (itemRect.top - galleryRect.top) / galleryRect.height * 100;
       
-      // Update base position and clear transform
+      // Update base position, clamp within gallery, and clear transform
       item.style.left = finalX + '%';
       item.style.top = finalY + '%';
+      clampToGallery(item);
       item.style.transform = 'none';
 
       // Save position to photo data
@@ -751,8 +853,10 @@ include __DIR__ . '/includes/page_header.php';
       const photo = photos.find(p => p.id === photoId);
       
       if (photo) {
-        photo.x = finalX;
-        photo.y = finalY;
+        const clampedX = parseFloat(item.style.left) || finalX;
+        const clampedY = parseFloat(item.style.top) || finalY;
+        photo.x = clampedX;
+        photo.y = clampedY;
       }
 
       // Clean up
@@ -797,6 +901,7 @@ include __DIR__ . '/includes/page_header.php';
       const element = createPhotoElement(photo);
       makeDraggable(element, photo);
       gallery.appendChild(element);
+      requestAnimationFrame(() => clampToGallery(element));
       
       // Stagger animation
       setTimeout(() => {
@@ -853,7 +958,7 @@ include __DIR__ . '/includes/page_header.php';
     }
   });
 
-  // Initialize
+  // Initialize + Gallery User Guide
   document.addEventListener('DOMContentLoaded', async () => {
     try {
       await loadPhotos();
@@ -867,6 +972,35 @@ include __DIR__ . '/includes/page_header.php';
           <p>${error.message}</p>
         </div>
       `;
+    }
+
+    // Photobook / Gallery User Guide Logic
+    try {
+      const guideBtn = document.getElementById('openPhotobookGuide');
+      const modalEl  = document.getElementById('photobookGuideModal');
+      if (!modalEl || !window.bootstrap) return;
+
+      const guideModal = bootstrap.Modal.getOrCreateInstance(modalEl);
+      const STORAGE_KEY = 'guide_photobook_v1';
+
+      // Open when user clicks help button
+      guideBtn?.addEventListener('click', (e) => {
+        e.preventDefault();
+        guideModal.show();
+      });
+
+      // Auto‑show once for new users
+      const alreadySeen = (typeof localStorage !== 'undefined') && localStorage.getItem(STORAGE_KEY);
+      if (!alreadySeen) {
+        setTimeout(() => {
+          guideModal.show();
+          try {
+            localStorage.setItem(STORAGE_KEY, '1');
+          } catch (_) {}
+        }, 800);
+      }
+    } catch (_) {
+      // Fail silently if anything goes wrong
     }
   });
 })();

@@ -19,18 +19,40 @@ try {
     require __DIR__ . '/../config/db.php';
     $pdo = db();
 
+    // Get current user ID from session
+    $userId = null;
+    if (isset($_SESSION['user']['id'])) {
+        $userId = (int)$_SESSION['user']['id'];
+    }
+    
+    if (!$userId) {
+        throw new Exception('User not authenticated');
+    }
+
     $page  = max(1, (int)($_GET['page'] ?? 1));
     $limit = max(1, min(100, (int)($_GET['limit'] ?? 50)));
     $offset = ($page - 1) * $limit;
 
     $layout = $_GET['layout'] ?? null;
     $params = [];
-    $where  = '';
+    $whereConditions = [];
+
+    // Check if user_id column exists
+    $checkColumn = $pdo->query("SHOW COLUMNS FROM photobook_pages LIKE 'user_id'")->fetch();
+    
+    if ($checkColumn) {
+        // Filter by user_id - only show current user's photos
+        $whereConditions[] = 'user_id = :user_id';
+        $params[':user_id'] = $userId;
+    }
+    // If column doesn't exist, show all (backward compatibility during migration)
 
     if ($layout === 'square' || $layout === 'vertical') {
-        $where = 'WHERE layout = :l';
+        $whereConditions[] = 'layout = :l';
         $params[':l'] = $layout;
     }
+
+    $where = !empty($whereConditions) ? 'WHERE ' . implode(' AND ', $whereConditions) : '';
 
     // total
     $sqlCount = "SELECT COUNT(*) FROM photobook_pages $where";

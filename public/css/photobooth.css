@@ -515,6 +515,11 @@ body {
   overflow: hidden;
 }
 
+/* ===== MOBILE GALLERY ===== */
+.mobile-gallery {
+  display: none; /* Hidden by default, shown on mobile when photos exist */
+}
+
 .floating-photo {
   position: absolute;
   width: 240px;

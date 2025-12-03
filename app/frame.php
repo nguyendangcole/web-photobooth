@@ -369,6 +369,108 @@ if (!IS_LOGGED_IN) {
   </div>
 </div>
 
+<!-- Storage Warning Dialog -->
+<div class="modal fade" id="storageWarningModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border: 3px solid #ff6b35; border-radius: 16px;">
+      <div class="modal-header" style="border-bottom: 2px solid #ff6b35; background: linear-gradient(135deg, #fff4e6 0%, #ffe8cc 100%);">
+        <h5 class="modal-title" style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; color: #ff6b35;">
+          ⚠️ Storage Almost Full
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" style="font-family: 'Space Grotesk', sans-serif; padding: 2rem; color: #222;">
+        <p style="font-size: 1.1rem; margin-bottom: 1.5rem;">
+          Your gallery storage is <strong id="storagePercentDisplay">80%</strong> full.
+        </p>
+        <p style="font-size: 0.95rem; color: #666; margin-bottom: 1.5rem;">
+          Free users have <strong>50 photos (50MB)</strong> storage limit. Upgrade to Premium for <strong>500 photos (500MB)</strong> and unlock exclusive features!
+        </p>
+        <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+          <strong style="color: #ff6b35;">Premium Benefits:</strong>
+          <ul style="margin: 0.5rem 0 0 1.5rem; padding: 0;">
+            <li>500 photos & 500MB storage (vs 50 photos & 50MB)</li>
+            <li>Exclusive premium frames</li>
+            <li>Priority support</li>
+            <li>Early access to new features</li>
+          </ul>
+        </div>
+      </div>
+      <div class="modal-footer" style="border-top: 2px solid #ff6b35; gap: 10px;">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                style="font-family: 'Space Grotesk', sans-serif; font-weight: 600; border: 2px solid #000; border-radius: 8px; padding: 10px 20px;">
+          Maybe Later
+        </button>
+        <button type="button" class="btn btn-warning" id="upgradeToPremiumBtn"
+                style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%); color: white; border: none; border-radius: 8px; padding: 10px 20px;">
+          Upgrade to Premium
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Frame Page User Guide Modal -->
+<div class="modal fade" id="frameGuideModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border:3px solid #000;border-radius:16px;">
+      <div class="modal-header" style="border-bottom:2px solid #000;background:linear-gradient(135deg,#c1ff72 0%,#00f5ff 100%);">
+        <h5 class="modal-title" style="font-family:'Space Grotesk',sans-serif;font-weight:700;color:#000;">
+          How to use the Frame page
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" style="font-family:'Space Grotesk',sans-serif;padding:1.5rem;color:#222;">
+        <ol style="margin-left:1rem;padding-left:0.5rem;">
+          <li><strong>Pick photos</strong> from the Photobooth page (EXPORT TO FRAME) or upload from your device.</li>
+          <li>Choose a <strong>layout</strong> (2×2 or 1×4) at the top toolbar.</li>
+          <li>Open <strong>Frame</strong> in the toolbar to select a frame design that matches the layout.</li>
+          <li>You can <strong>remove</strong> a single photo with the small × button inside each cell.</li>
+          <li>Use <strong>Clear</strong> to remove all photos, or <strong>Remove</strong> to remove the frame overlay.</li>
+          <li>Click <strong>Save</strong> to export a final image that you can download to your device.</li>
+          <li>Use <strong>Gallery ▾ → Add to gallery</strong> to save this frame into your personal gallery.</li>
+        </ol>
+      </div>
+      <div class="modal-footer" style="border-top:2px solid #000;gap:10px;">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                style="font-family:'Space Grotesk',sans-serif;font-weight:600;border:2px solid #000;border-radius:8px;padding:8px 18px;">
+          Close
+        </button>
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal"
+                style="font-family:'Space Grotesk',sans-serif;font-weight:700;background:#c1ff72;color:#000;border:2px solid #000;border-radius:8px;padding:8px 18px;">
+          Got it!
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Floating Help Button for Frame page -->
+<button id="openFrameGuide"
+        type="button"
+        aria-label="Open Frame page guide"
+        style="
+          position:fixed;
+          right:16px;
+          bottom:96px;
+          z-index:1060;
+          width:42px;
+          height:42px;
+          border-radius:50%;
+          border:2px solid #000;
+          background:#fffbe6;
+          box-shadow:2px 2px 0px #000;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          font-family:'Space Grotesk',sans-serif;
+          font-weight:700;
+          font-size:20px;
+          color:#000;
+        ">
+  ?
+</button>
+
 <!-- Main Content -->
 <div class="main-content-wrapper">
 <div class="container">
@@ -554,6 +656,37 @@ document.addEventListener('click', (e) => {
         photobookDropdown.appendChild(photobookDropdownMenu);
       }
     }
+  }
+});
+
+// ===== Frame Page User Guide Logic =====
+document.addEventListener('DOMContentLoaded', () => {
+  try {
+    const guideBtn = document.getElementById('openFrameGuide');
+    const modalEl  = document.getElementById('frameGuideModal');
+    if (!modalEl || !window.bootstrap) return;
+
+    const guideModal = bootstrap.Modal.getOrCreateInstance(modalEl);
+    const STORAGE_KEY = 'guide_frame_v1';
+
+    // Open when user clicks help button
+    guideBtn?.addEventListener('click', (e) => {
+      e.preventDefault();
+      guideModal.show();
+    });
+
+    // Auto‑show once for new users
+    const alreadySeen = (typeof localStorage !== 'undefined') && localStorage.getItem(STORAGE_KEY);
+    if (!alreadySeen) {
+      setTimeout(() => {
+        guideModal.show();
+        try {
+          localStorage.setItem(STORAGE_KEY, '1');
+        } catch (_) {}
+      }, 800);
+    }
+  } catch (_) {
+    // Fail silently if anything goes wrong
   }
 });
 
@@ -864,20 +997,43 @@ clearAllBtn.addEventListener('click', () => {
 saveBtn.addEventListener("click", () => {
   composeCurrentFrame()
     .then(dataURL => {
-      const link = document.createElement("a");
-      link.href = dataURL;
-      link.download = "photobooth.png";
-
-      const isIOS = /iP(ad|hone|od)/.test(navigator.userAgent);
-      const supportsDownload = 'download' in HTMLAnchorElement.prototype;
-
-      if (!supportsDownload || isIOS) {
-        window.open(dataURL, "_blank", "noopener");
-      } else {
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+      // Convert dataURL to Blob for better mobile support
+      const byteString = atob(dataURL.split(',')[1]);
+      const mimeString = dataURL.split(',')[0].split(':')[1].split(';')[0];
+      const ab = new ArrayBuffer(byteString.length);
+      const ia = new Uint8Array(ab);
+      for (let i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
       }
+      const blob = new Blob([ab], { type: mimeString });
+      const blobURL = URL.createObjectURL(blob);
+
+      // Download directly on all devices (mobile and desktop)
+      // This approach works on modern mobile browsers including iOS Safari
+      const link = document.createElement("a");
+      link.href = blobURL;
+      link.download = "photobooth.jpg";
+      link.style.display = "none";
+      
+      // Add to body for better mobile compatibility
+      document.body.appendChild(link);
+      
+      // Trigger download
+      link.click();
+      
+      // Clean up after a short delay
+      setTimeout(() => {
+        try {
+          document.body.removeChild(link);
+        } catch (e) {
+          // Link might already be removed
+        }
+      }, 100);
+      
+      // Clean up blob URL after a delay
+      setTimeout(() => {
+        URL.revokeObjectURL(blobURL);
+      }, 1000);
     })
     .catch(err => {
       console.error(err);
@@ -1095,16 +1251,58 @@ document.getElementById('pbAddBtn')?.addEventListener('click', async (e) => {
       throw new Error(errorMsg);
     }
 
-    // Success! Redirect to photobook page
+    // Success! Check for storage warning
     console.log('✅ Photobook add success!', json);
     
-    // Navigate to photobook page with the newly added image ID
+    // Navigate to photobook page URL
     const currentUrl = window.location.href;
     const baseUrl = currentUrl.split('?')[0]; // Get base URL without query
     const photobookUrl = baseUrl + '?p=photobook' + (json.id ? '&openId=' + json.id : '');
     
-    console.log('Navigating to photobook:', photobookUrl);
-    window.location.href = photobookUrl;
+    // Show storage warning if needed (only when >80% full)
+    if (json.storage_warning && json.storage_percent) {
+      const storageModal = document.getElementById('storageWarningModal');
+      const percentDisplay = document.getElementById('storagePercentDisplay');
+      const upgradeBtn = document.getElementById('upgradeToPremiumBtn');
+      
+      if (storageModal && percentDisplay) {
+        percentDisplay.textContent = Math.round(json.storage_percent) + '%';
+        
+        // Upgrade button handler - redirect to premium page
+        if (upgradeBtn) {
+          upgradeBtn.onclick = () => {
+            const premiumUrl = baseUrl + '?p=premium-upgrade';
+            window.location.href = premiumUrl;
+          };
+        }
+        
+        // Show modal, then redirect after modal is closed
+        if (window.bootstrap) {
+          const modal = bootstrap.Modal.getOrCreateInstance(storageModal);
+          modal.show();
+          
+          // Redirect when modal is hidden
+          storageModal.addEventListener('hidden.bs.modal', () => {
+            console.log('Navigating to photobook:', photobookUrl);
+            window.location.href = photobookUrl;
+          }, { once: true });
+        } else {
+          // Fallback if Bootstrap not available
+          setTimeout(() => {
+            console.log('Navigating to photobook:', photobookUrl);
+            window.location.href = photobookUrl;
+          }, 2000);
+        }
+      } else {
+        // No modal available, redirect immediately
+        console.log('Navigating to photobook:', photobookUrl);
+        window.location.href = photobookUrl;
+      }
+    } else {
+      // No warning needed, redirect immediately
+      console.log('Navigating to photobook:', photobookUrl);
+      window.location.href = photobookUrl;
+    }
   } catch (err) {
     console.error('Photobook add error:', err);
     const errorMsg = err.message || 'Cannot add to Photobook. Please try again.';
@@ -1411,7 +1609,7 @@ if (photos.length && photos.length !== MAX_PHOTOS) {
 @media (max-width: 768px) {
   /* Adjust main content wrapper for mobile */
   .main-content-wrapper {
-    padding-top: 140px !important;
+    padding-top: 120px !important;
     min-height: calc(100vh - 90px);
   }
   
@@ -1424,11 +1622,11 @@ if (photos.length && photos.length !== MAX_PHOTOS) {
     width: auto !important;
     max-width: 200px !important;
     margin: 0 !important;
-    padding: 12px 8px !important;
+    padding: 10px 6px !important;
     flex-direction: column !important;
     align-items: center !important;
     justify-content: center !important;
-    gap: 8px !important;
+    gap: 6px !important;
     min-height: auto !important;
     box-shadow: 3px 3px 0px #000, 0 4px 15px rgba(0, 0, 0, 0.1) !important;
     border-radius: 12px !important;
@@ -1442,10 +1640,10 @@ if (photos.length && photos.length !== MAX_PHOTOS) {
   }
   
   .toolbar-btn {
-    padding: 10px 16px !important;
-    font-size: 12px !important;
-    height: 38px !important;
-    width: 140px !important;
+    padding: 8px 14px !important;
+    font-size: 11px !important;
+    height: 36px !important;
+    width: 130px !important;
     gap: 4px !important;
     box-shadow: 2px 2px 0px #000 !important;
     flex-shrink: 0 !important;
@@ -1463,16 +1661,16 @@ if (photos.length && photos.length !== MAX_PHOTOS) {
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
-    gap: 6px !important;
+    gap: 5px !important;
     width: 100% !important;
-    margin: 4px 0 !important;
+    margin: 3px 0 !important;
   }
   
   .toolbar-btn-group {
     display: flex !important;
     flex-direction: column !important;
     height: auto !important;
-    width: 140px !important;
+    width: 130px !important;
     border: 2px solid #000 !important;
     border-radius: 8px !important;
     overflow: hidden !important;
@@ -1480,9 +1678,9 @@ if (photos.length && photos.length !== MAX_PHOTOS) {
   }
   
   .toolbar-btn-group .toolbar-btn {
-    padding: 8px 12px !important;
-    font-size: 11px !important;
-    height: 32px !important;
+    padding: 7px 10px !important;
+    font-size: 10px !important;
+    height: 30px !important;
     width: 100% !important;
     border: none !important;
     border-radius: 0 !important;
@@ -1497,44 +1695,44 @@ if (photos.length && photos.length !== MAX_PHOTOS) {
   
   /* Canvas area - mobile optimized */
   .canvas-container {
-    padding: 1rem 0.5rem;
-    padding-bottom: 2rem;
-    padding-top: 0.5rem;
+    padding: 0.5rem 0.5rem !important;
+    padding-bottom: 1.5rem !important;
+    padding-top: 0.25rem !important;
   }
   
   .canvas-header {
     flex-direction: column;
-    gap: 0.5rem;
-    margin-bottom: 0.75rem;
+    gap: 0.4rem;
+    margin-bottom: 0.5rem;
   }
   
   .canvas-title {
-    font-size: 1.2rem;
+    font-size: 1rem !important;
   }
   
   .canvas-badge {
-    font-size: 0.65rem;
-    padding: 3px 8px;
+    font-size: 0.6rem !important;
+    padding: 2px 6px !important;
   }
   
   .canvas-hint {
-    font-size: 0.75rem;
+    font-size: 0.7rem !important;
     text-align: center;
-    margin-top: 0.5rem;
+    margin-top: 0.3rem;
   }
   
-  /* Frame preview - scale down for mobile */
+  /* Frame preview - scale down significantly for mobile */
   #frame-preview {
-    transform: scale(0.45);
-    transform-origin: top center;
-    margin-bottom: -150px; /* Compensate for scale */
+    transform: scale(0.5) !important;
+    transform-origin: top center !important;
+    margin-bottom: -100px !important; /* Compensate for scale */
     max-width: 500px !important;
   }
   
   /* Also scale down vertical layout */
   #frame-preview[style*="width: 220px"] {
-    transform: scale(0.55);
-    margin-bottom: -280px;
+    transform: scale(0.55) !important;
+    margin-bottom: -180px !important;
   }
   
   /* Dropdown menu positioning for mobile */
@@ -1552,56 +1750,73 @@ if (photos.length && photos.length !== MAX_PHOTOS) {
 @media (max-width: 480px) {
   /* Extra small screens - main content wrapper inherits from 768px breakpoint */
   
-  .frame-toolbar {
-    /* Position sticky inherited from 768px breakpoint */
-    padding: 5px 6px;
+  .main-content-wrapper {
+    padding-top: 110px !important;
   }
   
   .frame-toolbar {
-    padding: 6px;
-    gap: 4px;
+    padding: 8px 5px !important;
+    gap: 5px !important;
+    max-width: 180px !important;
   }
   
   .toolbar-btn {
-    padding: 5px 8px;
-    font-size: 9px;
-    height: 28px;
+    padding: 6px 12px !important;
+    font-size: 10px !important;
+    height: 32px !important;
+    width: 120px !important;
+  }
+  
+  .toolbar-group {
+    gap: 4px !important;
+    margin: 2px 0 !important;
+  }
+  
+  .toolbar-btn-group {
+    width: 120px !important;
   }
   
   .toolbar-btn-group .toolbar-btn {
-    padding: 3px 6px;
-    font-size: 8px;
+    padding: 6px 8px !important;
+    font-size: 9px !important;
+    height: 28px !important;
+  }
+  
+  .canvas-container {
+    padding: 0.4rem 0.25rem !important;
+    padding-bottom: 1rem !important;
+    padding-top: 0.2rem !important;
+  }
+  
+  .canvas-header {
+    margin-bottom: 0.4rem;
+    gap: 0.3rem;
   }
   
   .canvas-title {
-    font-size: 1rem;
+    font-size: 0.9rem !important;
   }
   
   .canvas-badge {
-    font-size: 0.6rem;
-    padding: 2px 6px;
+    font-size: 0.55rem !important;
+    padding: 2px 5px !important;
+  }
+  
+  .canvas-hint {
+    font-size: 0.65rem !important;
+    margin-top: 0.2rem;
   }
   
   /* Scale down preview even more on very small screens */
   #frame-preview {
-    transform: scale(0.35);
-    margin-bottom: -200px; /* Compensate for scale */
+    transform: scale(0.4) !important;
+    margin-bottom: -80px !important; /* Compensate for scale */
   }
   
   /* Also scale down vertical layout even more */
   #frame-preview[style*="width: 220px"] {
-    transform: scale(0.42);
-    margin-bottom: -380px;
-  }
-  
-  .canvas-container {
-    padding: 0.5rem 0.25rem;
-    padding-bottom: 1.5rem;
-    padding-top: 0.25rem;
-  }
-  
-  .canvas-hint {
-    font-size: 0.7rem;
+    transform: scale(0.45) !important;
+    margin-bottom: -140px !important;
   }
 }
 

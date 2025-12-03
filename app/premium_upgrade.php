@@ -225,6 +225,14 @@ if (!empty($_SESSION['user']['id'])) {
                   <p class="mb-0 text-muted small">Unlimited use of all premium features</p>
                 </div>
               </div>
+
+              <div class="feature-item">
+                <div class="feature-icon">500</div>
+                <div>
+                  <strong>500 Photos & 500MB Storage</strong>
+                  <p class="mb-0 text-muted small">Store up to 500 photos (500MB) in your gallery vs 50 photos (50MB) for free users</p>
+                </div>
+              </div>
             </div>
 
             <!-- Request Form -->

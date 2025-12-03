@@ -372,8 +372,13 @@ $seoData = default_seo_data('photobooth');
     /* Filter dropdown - bottom sheet style on mobile */
     .filter-selector-wrap {
       position: relative !important;
-      z-index: 1 !important;
+      z-index: 150 !important; /* Higher than mobile gallery (100) */
       overflow: visible !important;
+    }
+    
+    .filter-selector {
+      position: relative !important;
+      z-index: 151 !important;
     }
     
     .filter-dropdown {
@@ -400,14 +405,14 @@ $seoData = default_seo_data('photobooth');
       transform: translateY(100%) !important;
       transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
       will-change: transform !important;
-      display: flex !important;
+      display: none !important; /* Hidden by default */
       flex-direction: column !important;
       background: var(--white) !important;
     }
     
     .filter-dropdown.active {
       transform: translateY(0) !important;
-      display: flex !important;
+      display: flex !important; /* Only show when active */
     }
     
     /* Overlay backdrop when dropdown is open */
@@ -490,12 +495,167 @@ $seoData = default_seo_data('photobooth');
     
     /* Floating gallery - adjust for mobile */
     .floating-gallery {
-      z-index: 5 !important;
+      display: none !important; /* Hide floating gallery on mobile */
     }
     
     .floating-photo {
       width: 150px !important;
       height: 150px !important;
+    }
+    
+    /* Mobile Gallery - Below filters card, inside studio grid */
+    .mobile-gallery {
+      position: relative !important;
+      top: auto !important;
+      left: auto !important;
+      right: auto !important;
+      bottom: auto !important;
+      width: 100% !important;
+      background: linear-gradient(135deg, #fff 0%, #f8f9ff 100%) !important;
+      border: 3px solid var(--black) !important;
+      border-radius: 16px !important;
+      padding: 12px 14px !important;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.15) !important;
+      z-index: 100 !important;
+      max-height: 30vh !important;
+      display: flex !important;
+      flex-direction: column !important;
+      margin-top: 0 !important;
+      margin-bottom: 16px !important;
+      order: 4 !important; /* After filters (order 3) */
+    }
+    
+    /* Hide mobile gallery when filter dropdown is open */
+    body.filter-dropdown-open .mobile-gallery {
+      opacity: 0.5 !important;
+      pointer-events: none !important;
+    }
+    
+    .mobile-gallery-header {
+      display: flex !important;
+      justify-content: space-between !important;
+      align-items: center !important;
+      margin-bottom: 8px !important;
+      padding-bottom: 6px !important;
+      border-bottom: 2px solid var(--black) !important;
+      flex-shrink: 0 !important;
+    }
+    
+    .mobile-gallery-title {
+      font-family: 'Space Grotesk', sans-serif !important;
+      font-size: 11px !important;
+      font-weight: 700 !important;
+      letter-spacing: 1px !important;
+      color: var(--black) !important;
+      text-transform: uppercase !important;
+    }
+    
+    .mobile-gallery-count {
+      font-family: 'DM Mono', monospace !important;
+      font-size: 10px !important;
+      font-weight: 700 !important;
+      background: var(--black) !important;
+      color: var(--white) !important;
+      padding: 3px 8px !important;
+      border-radius: 10px !important;
+      min-width: 26px !important;
+      text-align: center !important;
+    }
+    
+    .mobile-gallery-grid {
+      display: grid !important;
+      grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)) !important;
+      gap: 8px !important;
+      overflow-y: auto !important;
+      max-height: calc(28vh - 50px) !important; /* Adjusted for smaller header */
+      padding-right: 4px !important;
+      flex: 1 !important;
+      min-height: 0 !important;
+    }
+    
+    .mobile-gallery-grid::-webkit-scrollbar {
+      width: 4px !important;
+    }
+    
+    .mobile-gallery-grid::-webkit-scrollbar-track {
+      background: rgba(0,0,0,0.05) !important;
+      border-radius: 2px !important;
+    }
+    
+    .mobile-gallery-grid::-webkit-scrollbar-thumb {
+      background: var(--black) !important;
+      border-radius: 2px !important;
+    }
+    
+    .mobile-gallery-item {
+      position: relative !important;
+      aspect-ratio: 1 !important;
+      border-radius: 8px !important;
+      overflow: hidden !important;
+      border: 2px solid var(--black) !important;
+      background: var(--white) !important;
+      cursor: pointer !important;
+      transition: all 0.2s ease !important;
+    }
+    
+    .mobile-gallery-item img {
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: cover !important;
+      display: block !important;
+    }
+    
+    .mobile-gallery-item:active {
+      transform: scale(0.95) !important;
+    }
+    
+    .mobile-gallery-item.selected {
+      border-color: var(--c1ff72) !important;
+      border-width: 3px !important;
+      box-shadow: 0 0 0 2px var(--c1ff72), 0 4px 12px rgba(193, 255, 114, 0.4) !important;
+    }
+    
+    .mobile-gallery-checkmark {
+      position: absolute !important;
+      top: 4px !important;
+      right: 4px !important;
+      width: 24px !important;
+      height: 24px !important;
+      background: var(--c1ff72) !important;
+      color: var(--black) !important;
+      border-radius: 50% !important;
+      display: none !important;
+      align-items: center !important;
+      justify-content: center !important;
+      font-size: 14px !important;
+      font-weight: 700 !important;
+      border: 2px solid var(--black) !important;
+      z-index: 10 !important;
+    }
+    
+    .mobile-gallery-item.selected .mobile-gallery-checkmark {
+      display: flex !important;
+    }
+    
+    /* Adjust studio padding - gallery is now in flow */
+    .photobooth-studio {
+      padding-top: 80px !important;
+      padding-bottom: 20px !important;
+      overflow-y: auto !important;
+      -webkit-overflow-scrolling: touch !important;
+    }
+    
+    /* Ensure filters card is accessible */
+    .filters-card {
+      position: relative !important;
+      z-index: 120 !important;
+      margin-bottom: 16px !important;
+    }
+    
+    /* Ensure studio grid allows scrolling */
+    .studio-grid {
+      min-height: auto !important;
+      padding-bottom: 20px !important;
     }
   }
   
@@ -726,8 +886,17 @@ include __DIR__ . '/includes/page_header.php';
   </div>
 </div>
 
-<!-- Floating Gallery Container -->
+<!-- Floating Gallery Container (Desktop) -->
 <div class="floating-gallery" id="floatingGallery"></div>
+
+<!-- Mobile Gallery Container (Fixed at bottom) -->
+<div class="mobile-gallery" id="mobileGallery">
+  <div class="mobile-gallery-header">
+    <span class="mobile-gallery-title">YOUR SHOTS</span>
+    <span class="mobile-gallery-count" id="mobileGalleryCount">0</span>
+  </div>
+  <div class="mobile-gallery-grid" id="mobileGalleryGrid"></div>
+</div>
 
 <!-- Sticker Sidebar -->
 <div class="sticker-sidebar" id="stickerSidebar">
@@ -823,6 +992,103 @@ include __DIR__ . '/includes/page_header.php';
     </div>
   </div>
 </div>
+
+<!-- Camera Permission Modal -->
+<div class="modal fade" id="cameraPermissionModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border:3px solid #000;border-radius:16px;">
+      <div class="modal-header" style="border-bottom:2px solid #000;background:linear-gradient(135deg,#ffd4ff 0%,#ffe8ff 100%);">
+        <h5 class="modal-title" style="font-family:'Space Grotesk',sans-serif;font-weight:700;color:#000;">
+          Allow camera access
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" style="font-family:'Space Grotesk',sans-serif;padding:1.5rem;color:#222;">
+        <p style="margin-bottom:0.75rem;">
+          This Photobooth needs access to your <strong>camera</strong> so you can see the live preview and capture photos.
+        </p>
+        <ul style="padding-left:1.2rem;margin-bottom:0.75rem;">
+          <li>We only use the camera inside this page to take your photos.</li>
+          <li>No camera feed is stored or shared unless you choose to save or export photos.</li>
+        </ul>
+        <p style="margin-bottom:0;">
+          When your browser shows the permission popup, please click <strong>Allow</strong>.
+        </p>
+      </div>
+      <div class="modal-footer" style="border-top:2px solid #000;gap:10px;">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                style="font-family:'Space Grotesk',sans-serif;font-weight:600;border:2px solid #000;border-radius:8px;padding:8px 18px;">
+          Not now
+        </button>
+        <button type="button" class="btn btn-primary" id="enableCameraBtn"
+                style="font-family:'Space Grotesk',sans-serif;font-weight:700;background:#c1ff72;color:#000;border:2px solid #000;border-radius:8px;padding:8px 18px;">
+          Enable camera
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Photobooth User Guide Modal -->
+<div class="modal fade" id="photoboothGuideModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border:3px solid #000;border-radius:16px;">
+      <div class="modal-header" style="border-bottom:2px solid #000;background:linear-gradient(135deg,#c1ff72 0%,#00f5ff 100%);">
+        <h5 class="modal-title" style="font-family:'Space Grotesk',sans-serif;font-weight:700;color:#000;">
+          How to use the Photobooth
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" style="font-family:'Space Grotesk',sans-serif;padding:1.5rem;color:#222;">
+        <ol style="margin-left:1rem;padding-left:0.5rem;">
+          <li><strong>Allow camera access</strong> so the live preview can start.</li>
+          <li>Use the <strong>FILTER</strong> menu to change the camera look.</li>
+          <li>Choose a <strong>timer</strong> if you want a countdown before capture.</li>
+          <li>Press <strong>CAPTURE</strong> to take photos. They will appear on the right side.</li>
+          <li><strong>Double‑click</strong> a floating photo to select it (blue border). You can select up to 4.</li>
+          <li>Click <strong>EXPORT TO FRAME</strong> to send selected photos to the Frame page.</li>
+          <li>Later, you can <strong>save</strong> the final collage to your device or add it to your gallery.</li>
+        </ol>
+      </div>
+      <div class="modal-footer" style="border-top:2px solid #000;gap:10px;">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                style="font-family:'Space Grotesk',sans-serif;font-weight:600;border:2px solid #000;border-radius:8px;padding:8px 18px;">
+          Close
+        </button>
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal"
+                style="font-family:'Space Grotesk',sans-serif;font-weight:700;background:#c1ff72;color:#000;border:2px solid #000;border-radius:8px;padding:8px 18px;">
+          Got it!
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Floating Help Button -->
+<button id="openPhotoboothGuide"
+        type="button"
+        aria-label="Open Photobooth guide"
+        style="
+          position:fixed;
+          right:16px;
+          bottom:96px;
+          z-index:1060;
+          width:42px;
+          height:42px;
+          border-radius:50%;
+          border:2px solid #000;
+          background:#fffbe6;
+          box-shadow:2px 2px 0px #000;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          font-family:'Space Grotesk',sans-serif;
+          font-weight:700;
+          font-size:20px;
+          color:#000;
+        ">
+  ?
+</button>
 
 <?php
 // ===== Playlist: scan public/audio/*.mp3 (put audio1.mp3 here to recognize) =====
@@ -1214,62 +1480,128 @@ document.addEventListener('click', (e) => {
     }
     
     updateExportButton();
+    updateMobileGalleryCount();
   }
   
-  // Add photo to floating gallery
+  // Check if mobile - function to check dynamically
+  function checkIsMobile() {
+    return window.innerWidth <= 768 || /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  }
+  
+  const mobileGallery = document.getElementById('mobileGallery');
+  const mobileGalleryGrid = document.getElementById('mobileGalleryGrid');
+  const mobileGalleryCount = document.getElementById('mobileGalleryCount');
+  
+  // Update mobile gallery count
+  function updateMobileGalleryCount() {
+    if (mobileGalleryCount) {
+      mobileGalleryCount.textContent = capturedImages.length;
+    }
+    // Hide mobile gallery if no photos
+    if (mobileGallery && capturedImages.length === 0) {
+      mobileGallery.style.display = 'none';
+    }
+  }
+  
+  // Add photo to floating gallery (desktop) or mobile gallery
   window.addFloatingPhoto = function(imageSrc) {
-    const photoEl = document.createElement('div');
-    photoEl.className = 'floating-photo new-photo';
-    photoEl.setAttribute('data-animate-item', 'zoom-in');
+    const isMobile = checkIsMobile();
     
-    const img = document.createElement('img');
-    img.src = imageSrc;
-    img.alt = 'Captured photo';
-    photoEl.appendChild(img);
+    // Ensure floating gallery is visible on desktop
+    if (!isMobile && floatingGallery) {
+      floatingGallery.style.display = 'block';
+    }
     
-    // Add selection checkmark
-    const checkmark = document.createElement('div');
-    checkmark.className = 'photo-checkmark';
-    checkmark.innerHTML = '✓';
-    photoEl.appendChild(checkmark);
+    // Ensure mobile gallery is hidden on desktop
+    if (!isMobile && mobileGallery) {
+      mobileGallery.style.display = 'none';
+    }
     
-    // Random position and size (no rotation - keep photos straight)
-    const pos = getRandomPosition();
-    const scale = 0.85 + Math.random() * 0.3; // 0.85 to 1.15 (varying sizes)
-    const zIndex = 10 + Math.floor(Math.random() * 20); // Random stacking
-    
-    photoEl.style.left = pos.x + 'px';
-    photoEl.style.top = pos.y + 'px';
-    // Store scale for use after animation
-    photoEl.dataset.scale = scale;
-    photoEl.style.zIndex = zIndex;
-    
-    // Store position
-    photoEl.dataset.x = pos.x;
-    photoEl.dataset.y = pos.y;
-    
-    // Double-click handler for selection
-    photoEl.addEventListener('dblclick', function(e) {
-      e.preventDefault();
-      togglePhotoSelection(this);
-    });
-    
-    // Drag handlers
-    photoEl.addEventListener('mousedown', startDrag);
-    photoEl.addEventListener('touchstart', startDrag, { passive: false });
-    
-    floatingGallery.appendChild(photoEl);
-    capturedImages.push(photoEl);
-    
-    // Trigger animation, then apply scale
-    setTimeout(() => {
-      photoEl.classList.add('animate-visible');
-      // Apply scale after animation completes
+    if (isMobile && mobileGalleryGrid) {
+      // Mobile: Add to fixed gallery at bottom
+      const photoEl = document.createElement('div');
+      photoEl.className = 'mobile-gallery-item';
+      
+      const img = document.createElement('img');
+      img.src = imageSrc;
+      img.alt = 'Captured photo';
+      photoEl.appendChild(img);
+      
+      // Add selection checkmark
+      const checkmark = document.createElement('div');
+      checkmark.className = 'mobile-gallery-checkmark';
+      checkmark.innerHTML = '✓';
+      photoEl.appendChild(checkmark);
+      
+      // Single click handler for selection on mobile
+      photoEl.addEventListener('click', function(e) {
+        e.preventDefault();
+        togglePhotoSelection(this);
+      });
+      
+      mobileGalleryGrid.appendChild(photoEl);
+      capturedImages.push(photoEl);
+      updateMobileGalleryCount();
+      
+      // Show mobile gallery when first photo is added
+      if (mobileGallery && capturedImages.length === 1) {
+        mobileGallery.style.display = 'flex';
+      }
+    } else {
+      // Desktop: Add to floating gallery
+      const photoEl = document.createElement('div');
+      photoEl.className = 'floating-photo new-photo';
+      photoEl.setAttribute('data-animate-item', 'zoom-in');
+      
+      const img = document.createElement('img');
+      img.src = imageSrc;
+      img.alt = 'Captured photo';
+      photoEl.appendChild(img);
+      
+      // Add selection checkmark
+      const checkmark = document.createElement('div');
+      checkmark.className = 'photo-checkmark';
+      checkmark.innerHTML = '✓';
+      photoEl.appendChild(checkmark);
+      
+      // Random position and size (no rotation - keep photos straight)
+      const pos = getRandomPosition();
+      const scale = 0.85 + Math.random() * 0.3; // 0.85 to 1.15 (varying sizes)
+      const zIndex = 10 + Math.floor(Math.random() * 20); // Random stacking
+      
+      photoEl.style.left = pos.x + 'px';
+      photoEl.style.top = pos.y + 'px';
+      // Store scale for use after animation
+      photoEl.dataset.scale = scale;
+      photoEl.style.zIndex = zIndex;
+      
+      // Store position
+      photoEl.dataset.x = pos.x;
+      photoEl.dataset.y = pos.y;
+      
+      // Desktop: Double click to select (this is desktop code, so always use dblclick)
+      photoEl.addEventListener('dblclick', function(e) {
+        e.preventDefault();
+        togglePhotoSelection(this);
+      });
+      
+      // Drag handlers
+      photoEl.addEventListener('mousedown', startDrag);
+      photoEl.addEventListener('touchstart', startDrag, { passive: false });
+      
+      floatingGallery.appendChild(photoEl);
+      capturedImages.push(photoEl);
+      
+      // Trigger animation, then apply scale
       setTimeout(() => {
-        const savedScale = photoEl.dataset.scale || scale;
-        photoEl.style.transform = `scale(${savedScale})`;
-      }, 500);
-    }, 100);
+        photoEl.classList.add('animate-visible');
+        // Apply scale after animation completes
+        setTimeout(() => {
+          const savedScale = photoEl.dataset.scale || scale;
+          photoEl.style.transform = `scale(${savedScale})`;
+        }, 500);
+      }, 100);
+    }
   };
   
   function startDrag(e) {
@@ -1643,6 +1975,37 @@ function makeStickerDraggable(sticker) {
     sticker.remove();
   });
 }
+
+// ===== Photobooth User Guide Logic =====
+document.addEventListener('DOMContentLoaded', () => {
+  try {
+    const guideBtn = document.getElementById('openPhotoboothGuide');
+    const modalEl  = document.getElementById('photoboothGuideModal');
+    if (!modalEl || !window.bootstrap) return;
+
+    const guideModal = bootstrap.Modal.getOrCreateInstance(modalEl);
+    const STORAGE_KEY = 'guide_photobooth_v1';
+
+    // Open when user clicks help button
+    guideBtn?.addEventListener('click', (e) => {
+      e.preventDefault();
+      guideModal.show();
+    });
+
+    // Auto‑show once for new users
+    const alreadySeen = (typeof localStorage !== 'undefined') && localStorage.getItem(STORAGE_KEY);
+    if (!alreadySeen) {
+      setTimeout(() => {
+        guideModal.show();
+        try {
+          localStorage.setItem(STORAGE_KEY, '1');
+        } catch (_) {}
+      }, 800);
+    }
+  } catch (_) {
+    // Fail silently if anything goes wrong
+  }
+});
 </script>
 
 </body>

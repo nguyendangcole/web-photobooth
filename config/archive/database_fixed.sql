@@ -1,5 +1,5 @@
 -- ============================================
--- Script SQL hoàn chỉnh cho Web Photobooth
+-- Script SQL đã sửa lỗi Foreign Key cho Hostinger
 -- Import vào phpMyAdmin
 -- ============================================
 
@@ -70,7 +70,7 @@ CREATE TABLE IF NOT EXISTS `states` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ============================================
--- 3. BẢNG USERS (Người dùng)
+-- 3. BẢNG USERS (Người dùng) - ĐÃ SỬA KIỂU DỮ LIỆU
 -- ============================================
 
 DROP TABLE IF EXISTS `users`;
@@ -89,8 +89,8 @@ CREATE TABLE IF NOT EXISTS `users` (
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `address` varchar(255) DEFAULT NULL,
-  `country_id` int DEFAULT NULL,
-  `state_id` int DEFAULT NULL,
+  `country_id` mediumint UNSIGNED DEFAULT NULL COMMENT 'Changed to mediumint to match countries.id',
+  `state_id` mediumint UNSIGNED DEFAULT NULL COMMENT 'Changed to mediumint to match states.id',
   `city_name` varchar(255) DEFAULT NULL,
   `is_premium` tinyint(1) NOT NULL DEFAULT '0',
   `premium_until` datetime DEFAULT NULL,
@@ -100,8 +100,8 @@ CREATE TABLE IF NOT EXISTS `users` (
   KEY `fk_country` (`country_id`),
   KEY `fk_state` (`state_id`),
   KEY `idx_is_premium` (`is_premium`),
-  CONSTRAINT `fk_country` FOREIGN KEY (`country_id`) REFERENCES `countries` (`id`),
-  CONSTRAINT `fk_state` FOREIGN KEY (`state_id`) REFERENCES `states` (`id`)
+  CONSTRAINT `fk_country` FOREIGN KEY (`country_id`) REFERENCES `countries` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_state` FOREIGN KEY (`state_id`) REFERENCES `states` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- ============================================
@@ -157,7 +157,7 @@ CREATE TABLE IF NOT EXISTS `photobook_albums` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ============================================
--- 7. BẢNG PHOTOBOOK_PAGES (Trang photobook)
+-- 7. BẢNG PHOTOBOOK_PAGES (Trang photobook) - ĐÃ THÊM user_id
 -- ============================================
 
 DROP TABLE IF EXISTS `photobook_pages`;
@@ -202,14 +202,9 @@ INSERT INTO `frames` (`id`, `name`, `src`, `layout`, `is_premium`) VALUES
 -- ============================================
 -- LƯU Ý: 
 -- Để import đầy đủ dữ liệu countries và states,
--- bạn cần chạy thêm 2 file sau:
+-- bạn cần chạy thêm 2 file sau (nếu có):
 -- 1. countries.sql - chứa dữ liệu 250 quốc gia
 -- 2. states.sql - chứa dữ liệu các tỉnh/thành phố
--- 
--- Hoặc bạn có thể import từng file riêng biệt:
--- - Import countries.sql trước
--- - Import states.sql sau
--- - Sau đó import file này (database_complete.sql)
 -- ============================================
 
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

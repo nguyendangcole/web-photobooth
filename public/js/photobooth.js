@@ -90,13 +90,39 @@ filterOptions.forEach(opt => {
 });
 */
 
-// ---------- Webcam ----------
-if (navigator.mediaDevices?.getUserMedia) {
-  navigator.mediaDevices.getUserMedia({ video: true })
-    .then(stream => video.srcObject = stream)
-    .catch(err => showAlert("Không thể truy cập webcam: " + err));
-} else {
-  showAlert("Trình duyệt không hỗ trợ camera.");
+// ---------- Webcam (permission flow) ----------
+let cameraStream = null;
+
+async function requestCameraStream() {
+  if (!navigator.mediaDevices?.getUserMedia) {
+    showAlert("Your browser does not support camera.");
+    return false;
+  }
+  try {
+    // Close any previous stream
+    if (cameraStream) {
+      try {
+        cameraStream.getTracks().forEach(t => t.stop());
+      } catch (_) {}
+      cameraStream = null;
+    }
+
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    cameraStream = stream;
+    if (video) {
+      video.srcObject = stream;
+      try {
+        // Some browsers require an explicit play() call after setting srcObject
+        await video.play();
+      } catch (_) {
+        // Ignore play errors; browser may auto‑play anyway
+      }
+    }
+    return true;
+  } catch (err) {
+    showAlert("Không thể truy cập webcam: " + err.message);
+    return false;
+  }
 }
 
 // ---------- Overlay Ready ----------
@@ -469,7 +495,12 @@ async function startGuidedSession(totalShots = MAX_SHOTS) {
 }
 
 // ---------- Buttons ----------
-startBtn?.addEventListener("click", () => {
+startBtn?.addEventListener("click", async () => {
+  // Ensure camera is running before starting guided session
+  if (!video?.srcObject) {
+    const ok = await requestCameraStream();
+    if (!ok) return;
+  }
   startGuidedSession(MAX_SHOTS);
 });
 
@@ -500,5 +531,43 @@ exportBtn?.addEventListener("click", async () => {
 });
 
 // ---------- Init ----------
-document.addEventListener("DOMContentLoaded", toggleExportButton);
+document.addEventListener("DOMContentLoaded", () => {
+  toggleExportButton();
+
+  // Camera permission guiding (uses Bootstrap modal from photobooth.php)
+  try {
+    const modalEl = document.getElementById("cameraPermissionModal");
+    const enableBtn = document.getElementById("enableCameraBtn");
+    if (!modalEl || !window.bootstrap) return;
+
+    const cameraModal = bootstrap.Modal.getOrCreateInstance(modalEl);
+    const STORAGE_KEY = "camera_permission_shown_v1";
+
+    // Has user already seen the guide at least once?
+    const alreadyShown = (typeof localStorage !== "undefined") && localStorage.getItem(STORAGE_KEY);
+
+    if (!alreadyShown) {
+      // First time: show guide modal, wait for user to click "Enable camera"
+      setTimeout(() => {
+        cameraModal.show();
+        try {
+          localStorage.setItem(STORAGE_KEY, "1");
+        } catch (_) {}
+      }, 600);
+    } else {
+      // Guide was shown before; user may have already granted permission
+      // → try to start camera immediately on page load
+      requestCameraStream();
+    }
+
+    // When user clicks "Enable camera", request getUserMedia
+    enableBtn?.addEventListener("click", async (e) => {
+      e.preventDefault();
+      cameraModal.hide();
+      await requestCameraStream();
+    });
+  } catch (_) {
+    // Fail silently if anything goes wrong
+  }
+});
 

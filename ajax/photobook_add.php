@@ -105,13 +105,76 @@ try {
     
     error_log('photobook_add:File saved successfully. Path: ' . $path . ', Size: ' . $saved . ' bytes');
 
+    // Get current user ID from session (auth_guard.php already checked login)
+    $userId = null;
+    if (isset($_SESSION['user']['id'])) {
+        $userId = (int)$_SESSION['user']['id'];
+    }
+    
+    if (!$userId) {
+        throw new Exception('User not authenticated');
+    }
+
+    // ===== STORAGE LIMIT CHECK =====
+    // Get user info (is_premium, storage_used)
+    $userStmt = $pdo->prepare("SELECT is_premium, COALESCE(storage_used, 0) as storage_used FROM users WHERE id = ?");
+    $userStmt->execute([$userId]);
+    $userInfo = $userStmt->fetch(PDO::FETCH_ASSOC);
+    
+    if (!$userInfo) {
+        throw new Exception('User not found');
+    }
+    
+    $isPremium = !empty($userInfo['is_premium']);
+    $currentStorage = (int)($userInfo['storage_used'] ?? 0);
+    $fileSize = strlen($bin); // Size in bytes
+    
+    // Define limits: Free = 50MB or 50 photos, Premium = 500MB or 500 photos
+    $maxStorageBytes = $isPremium ? (500 * 1024 * 1024) : (50 * 1024 * 1024); // 500MB or 50MB
+    $maxPhotos = $isPremium ? 500 : 50;
+    
+    // Check photo count limit
+    $photoCountStmt = $pdo->prepare("SELECT COUNT(*) FROM photobook_pages WHERE user_id = ?");
+    $photoCountStmt->execute([$userId]);
+    $photoCount = (int)$photoCountStmt->fetchColumn();
+    
+    if ($photoCount >= $maxPhotos) {
+        throw new Exception('You have reached the maximum number of photos (' . $maxPhotos . '). Please upgrade to Premium for more storage.');
+    }
+    
+    // Check storage limit (bytes)
+    if (($currentStorage + $fileSize) > $maxStorageBytes) {
+        $usedMB = round($currentStorage / (1024 * 1024), 1);
+        $maxMB = round($maxStorageBytes / (1024 * 1024), 0);
+        throw new Exception('Storage limit exceeded. You are using ' . $usedMB . 'MB of ' . $maxMB . 'MB. Please upgrade to Premium for more storage.');
+    }
+    
+    // Calculate storage warning threshold (80% = warning, 90% = critical)
+    $newStorage = $currentStorage + $fileSize;
+    $storagePercent = ($newStorage / $maxStorageBytes) * 100;
+    $needsWarning = $storagePercent >= 80;
+
     // Lưu DB (image_path lưu kèm prefix 'public/')
     $relPath = 'public/photobook/' . date('Y/m') . '/' . $fname;
     try {
-        $stmt = $pdo->prepare("INSERT INTO photobook_pages(image_path, layout) VALUES (?, ?)");
-        $stmt->execute([$relPath, $layout]);
+        // Check if user_id column exists, if not use old query (backward compatibility)
+        $checkColumn = $pdo->query("SHOW COLUMNS FROM photobook_pages LIKE 'user_id'")->fetch();
+        if ($checkColumn) {
+            $stmt = $pdo->prepare("INSERT INTO photobook_pages(image_path, layout, user_id) VALUES (?, ?, ?)");
+            $stmt->execute([$relPath, $layout, $userId]);
+        } else {
+            // Fallback for old database structure
+            $stmt = $pdo->prepare("INSERT INTO photobook_pages(image_path, layout) VALUES (?, ?)");
+            $stmt->execute([$relPath, $layout]);
+        }
         $id = (string)$pdo->lastInsertId();
-        error_log('photobook_add: Database insert successful. ID: ' . $id);
+        error_log('photobook_add: Database insert successful. ID: ' . $id . ', User ID: ' . $userId);
+        
+        // Update user storage_used
+        $updateStorageStmt = $pdo->prepare("UPDATE users SET storage_used = ? WHERE id = ?");
+        $updateStorageStmt->execute([$newStorage, $userId]);
+        error_log('photobook_add: Updated storage_used to ' . $newStorage . ' bytes for user ' . $userId);
+        
     } catch (Throwable $e) {
         error_log('photobook_add: Database insert failed: ' . $e->getMessage());
         throw new Exception('Database insert failed: ' . $e->getMessage());
@@ -120,7 +183,16 @@ try {
     // Trả thêm url (đã bỏ prefix public/)
     $url = preg_replace('#^public/#','', $relPath);
 
-    echo json_encode(['success'=>true, 'id'=>$id, 'path'=>$relPath, 'url'=>$url]);
+    // Return success with warning flag if storage is getting full
+    echo json_encode([
+        'success'=>true, 
+        'id'=>$id, 
+        'path'=>$relPath, 
+        'url'=>$url,
+        'storage_warning'=>$needsWarning,
+        'storage_percent'=>round($storagePercent, 1),
+        'is_premium'=>$isPremium
+    ]);
 } catch (Throwable $e) {
     // Log error for debugging
     error_log('photobook_add ERROR: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
