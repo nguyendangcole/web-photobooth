@@ -183,11 +183,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <!-- Right (slideshow) -->
       <div class="col-12 col-md-6 d-none d-md-block position-relative">
         <div class="slideshow-container h-100">
-          <div class="slide" style="background-image:url('<?= asset('images/bg1.png') ?>');"></div>
-          <div class="slide" style="background-image:url('<?= asset('images/bg2.png') ?>');"></div>
-          <div class="slide" style="background-image:url('<?= asset('images/bg3.png') ?>');"></div>
-          <div class="slide" style="background-image:url('<?= asset('images/bg4.png') ?>');"></div>
-          <div class="slide" style="background-image:url('<?= asset('images/bg5.png') ?>');"></div>
+          <div class="slide" style="background-image:url('<?= asset('images/background-gradient-1.png') ?>');"></div>
+          <div class="slide" style="background-image:url('<?= asset('images/background-gradient-2.png') ?>');"></div>
+          <div class="slide" style="background-image:url('<?= asset('images/background-gradient-3.png') ?>');"></div>
+          <div class="slide" style="background-image:url('<?= asset('images/background-gradient-4.png') ?>');"></div>
+          <div class="slide" style="background-image:url('<?= asset('images/background-gradient-5.png') ?>');"></div>
         </div>
       </div>
     </div>

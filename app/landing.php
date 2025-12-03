@@ -86,6 +86,158 @@ try {
     }
     
   </style>
+  <style>
+    /* Cookie Consent Banner */
+    .cookie-consent-banner {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(135deg, #fff 0%, #f8f9ff 100%);
+      border-top: 3px solid #000;
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+      padding: 1.5rem 2rem;
+      z-index: 10000;
+      display: none;
+      font-family: 'Space Grotesk', sans-serif;
+      animation: slideUp 0.4s ease-out;
+    }
+    
+    .cookie-consent-banner.show {
+      display: block;
+    }
+    
+    @keyframes slideUp {
+      from {
+        transform: translateY(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+    
+    .cookie-consent-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+    
+    .cookie-consent-text {
+      flex: 1;
+      min-width: 300px;
+    }
+    
+    .cookie-consent-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #000;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    
+    .cookie-consent-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 2px solid #000;
+      object-fit: cover;
+      flex-shrink: 0;
+      box-shadow: 2px 2px 0px #000;
+    }
+    
+    .cookie-consent-description {
+      font-size: 0.9rem;
+      color: #333;
+      line-height: 1.5;
+      margin: 0;
+    }
+    
+    .cookie-consent-description a {
+      color: #ff6b35;
+      text-decoration: underline;
+      font-weight: 600;
+    }
+    
+    .cookie-consent-buttons {
+      display: flex;
+      gap: 1rem;
+      flex-shrink: 0;
+    }
+    
+    .cookie-btn {
+      padding: 10px 24px;
+      border: 2px solid #000;
+      border-radius: 8px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      box-shadow: 2px 2px 0px #000;
+    }
+    
+    .cookie-btn-accept {
+      background: linear-gradient(135deg, #c1ff72 0%, #a8ff5e 100%);
+      color: #000;
+    }
+    
+    .cookie-btn-accept:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 4px 4px 0px #000;
+    }
+    
+    .cookie-btn-decline {
+      background: #fff;
+      color: #000;
+    }
+    
+    .cookie-btn-decline:hover {
+      background: #f8f9fa;
+      transform: translate(-2px, -2px);
+      box-shadow: 4px 4px 0px #000;
+    }
+    
+    @media (max-width: 768px) {
+      .cookie-consent-banner {
+        padding: 1rem 1.5rem;
+      }
+      
+      .cookie-consent-content {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+      }
+      
+      .cookie-consent-buttons {
+        width: 100%;
+        flex-direction: column;
+      }
+      
+      .cookie-btn {
+        width: 100%;
+      }
+      
+      .cookie-consent-title {
+        font-size: 1rem;
+      }
+      
+      .cookie-consent-description {
+        font-size: 0.85rem;
+      }
+    }
+  </style>
 </head>
 <body>
 
@@ -343,7 +495,7 @@ try {
       <div class="frame-product">
         <div class="frame-badge frame-badge-yellow">Classic layout</div>
         <div class="frame-box">
-          <img src="<?= BASE_URL ?>images/tip-1.jpg" alt="1x4 Frame Preview" class="frame-preview-img frame-preview-contain" loading="lazy">
+          <img src="<?= BASE_URL ?>images/tip-frame-1x4.jpg" alt="1x4 Frame Preview" class="frame-preview-img frame-preview-contain" loading="lazy">
         </div>
         <div class="frame-details">
           <h3 class="frame-name">1×4 Frame</h3>
@@ -366,7 +518,7 @@ try {
       <div class="frame-product">
         <div class="frame-badge frame-badge-pink">Grid layout</div>
         <div class="frame-box">
-          <img src="<?= BASE_URL ?>images/tip-2.jpg" alt="2x2 Frame Preview" class="frame-preview-img" loading="lazy">
+          <img src="<?= BASE_URL ?>images/tip-frame-2x2.jpg" alt="2x2 Frame Preview" class="frame-preview-img" loading="lazy">
         </div>
         <div class="frame-details">
           <h3 class="frame-name">2×2 Frame</h3>
@@ -744,7 +896,7 @@ try {
         <?php foreach ($frames as $frame): ?>
         <div class="frame-sample-card">
           <div class="frame-sample-image">
-            <img src="<?= BASE_URL . htmlspecialchars($frame['display_image'] ?? $frame['src']) ?>" alt="<?= htmlspecialchars($frame['name']) ?>" loading="lazy" onerror="this.src='<?= BASE_URL ?>images/1.png'">
+            <img src="<?= BASE_URL . htmlspecialchars($frame['display_image'] ?? $frame['src']) ?>" alt="<?= htmlspecialchars($frame['name']) ?>" loading="lazy" onerror="this.src='<?= BASE_URL ?>images/frame-normal.png'">
             <?php if ($frame['is_premium']): ?>
               <span class="frame-premium-badge">PREMIUM</span>
             <?php endif; ?>
@@ -763,7 +915,7 @@ try {
         <?php foreach ($frames as $frame): ?>
         <div class="frame-sample-card" aria-hidden="true">
           <div class="frame-sample-image">
-            <img src="<?= BASE_URL . htmlspecialchars($frame['display_image'] ?? $frame['src']) ?>" alt="<?= htmlspecialchars($frame['name']) ?>" loading="lazy" onerror="this.src='<?= BASE_URL ?>images/1.png'">
+            <img src="<?= BASE_URL . htmlspecialchars($frame['display_image'] ?? $frame['src']) ?>" alt="<?= htmlspecialchars($frame['name']) ?>" loading="lazy" onerror="this.src='<?= BASE_URL ?>images/frame-normal.png'">
             <?php if ($frame['is_premium']): ?>
               <span class="frame-premium-badge">PREMIUM</span>
             <?php endif; ?>
@@ -1548,7 +1700,7 @@ try {
     
     <div class="footer-bottom">
       <p>&copy; 2025 FutureFrame. All rights reserved.</p>
-      <p>Designed with ✨ for the future</p>
+      <p>Show your style</p>
     </div>
   </div>
 </footer>
@@ -2099,6 +2251,13 @@ html {
   animation: badge-wiggle 0.5s ease !important;
 }
 
+/* Badge text colors - COSMIC, STELLAR, and NEBULA in black */
+.hero-badges .badge-pink,
+.hero-badges .badge-cyan,
+.hero-badges .badge-yellow {
+  color: #000 !important;
+}
+
 .visual-card:hover {
   animation: feature-bounce 0.6s ease !important;
 }
@@ -2459,6 +2618,112 @@ html {
   
   // Google Maps embed URL from store location
   mapIframe.src = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.497030260064!2d106.65454717456957!3d10.77319281793749!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752ec3c161a3fb%3A0xef77cd47a1cc691e!2zVHLGsOG7nW5nIMSQ4bqhaSBo4buNYyBCw6FjaCBraG9hIC0gxJDhuqFpIGjhu41jIFF14buRYyBnaWEgVFAuSENN!5e0!3m2!1svi!2s!4v1763749407484!5m2!1svi!2s';
+})();
+</script>
+
+<!-- Cookie Consent Banner -->
+<div id="cookieConsentBanner" class="cookie-consent-banner">
+  <div class="cookie-consent-content">
+    <div class="cookie-consent-text">
+      <div class="cookie-consent-title">
+        <img id="cookieConsentAvatar" class="cookie-consent-avatar" src="<?= BASE_URL ?>images/avatars/avatar-default-1.png" alt="Avatar">
+        Cookie Consent
+      </div>
+      <p class="cookie-consent-description">
+        We use cookies to enhance your browsing experience, analyze site traffic, and personalize content. 
+        By clicking "Accept", you consent to our use of cookies. 
+        <a href="?p=privacy" target="_blank">Learn more</a> about our cookie policy.
+      </p>
+    </div>
+    <div class="cookie-consent-buttons">
+      <button class="cookie-btn cookie-btn-decline" id="cookieDeclineBtn">Decline</button>
+      <button class="cookie-btn cookie-btn-accept" id="cookieAcceptBtn">Accept</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// Cookie Consent Banner
+(function() {
+  const COOKIE_CONSENT_KEY = 'cookie_consent_accepted';
+  const COOKIE_CONSENT_EXPIRY_DAYS = 365; // 1 year
+  
+  const banner = document.getElementById('cookieConsentBanner');
+  const acceptBtn = document.getElementById('cookieAcceptBtn');
+  const declineBtn = document.getElementById('cookieDeclineBtn');
+  const avatarImg = document.getElementById('cookieConsentAvatar');
+  
+  if (!banner) return;
+  
+  // Random avatar on load (1-5)
+  if (avatarImg) {
+    const randomAvatar = Math.floor(Math.random() * 5) + 1;
+    avatarImg.src = '<?= BASE_URL ?>images/avatars/avatar-default-' + randomAvatar + '.png';
+  }
+  
+  // Check if user has already made a choice
+  function hasConsent() {
+    return localStorage.getItem(COOKIE_CONSENT_KEY) !== null;
+  }
+  
+  // Save consent preference
+  function saveConsent(accepted) {
+    const expiryDate = new Date();
+    expiryDate.setTime(expiryDate.getTime() + (COOKIE_CONSENT_EXPIRY_DAYS * 24 * 60 * 60 * 1000));
+    
+    localStorage.setItem(COOKIE_CONSENT_KEY, JSON.stringify({
+      accepted: accepted,
+      timestamp: Date.now(),
+      expiry: expiryDate.getTime()
+    }));
+    
+    // Also set PHP cookie for server-side use
+    document.cookie = `cookie_consent=${accepted ? 'accepted' : 'declined'}; expires=${expiryDate.toUTCString()}; path=/; SameSite=Lax`;
+  }
+  
+  // Hide banner with animation
+  function hideBanner() {
+    banner.style.animation = 'slideDown 0.3s ease-out';
+    setTimeout(() => {
+      banner.classList.remove('show');
+      banner.style.display = 'none';
+    }, 300);
+  }
+  
+  // Show banner if no consent yet
+  if (!hasConsent()) {
+    setTimeout(() => {
+      banner.classList.add('show');
+    }, 1000); // Show after 1 second
+  }
+  
+  // Accept button handler
+  acceptBtn?.addEventListener('click', () => {
+    saveConsent(true);
+    hideBanner();
+  });
+  
+  // Decline button handler
+  declineBtn?.addEventListener('click', () => {
+    saveConsent(false);
+    hideBanner();
+  });
+  
+  // Add slideDown animation
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes slideDown {
+      from {
+        transform: translateY(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateY(100%);
+        opacity: 0;
+      }
+    }
+  `;
+  document.head.appendChild(style);
 })();
 </script>
 

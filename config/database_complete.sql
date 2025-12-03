@@ -182,22 +182,22 @@ CREATE TABLE IF NOT EXISTS `photobook_pages` (
 
 -- Chèn dữ liệu frames
 INSERT INTO `frames` (`id`, `name`, `src`, `layout`, `is_premium`) VALUES
-(1, 'Normal', 'public/images/6.png', 'vertical', 0),
-(2, 'Cat', 'public/images/20.png', 'vertical', 0),
-(3, 'Star', 'public/images/21.png', 'vertical', 0),
-(4, 'Crazy(1)', 'public/images/22.png', 'vertical', 0),
-(5, 'Crazy(2)', 'public/images/23.png', 'vertical', 0),
-(6, 'Friends', 'public/images/24.png', 'vertical', 0),
-(7, 'Mybeloved', 'public/images/25.png', 'vertical', 0),
-(8, 'QUANQUE', 'public/images/26.png', 'vertical', 0),
-(9, 'Longtimenosee', 'public/images/27.png', 'vertical', 0),
-(10, 'vintage (1)', 'public/images/7.png', 'vertical', 0),
-(11, 'Y2K', 'public/images/8.png', 'vertical', 0),
-(12, '#Vietnamese', 'public/images/11.png', 'vertical', 0),
-(13, '#Vietnamese', 'public/images/12.png', 'square', 0),
-(14, '#Crazy', 'public/images/13.png', 'square', 0),
-(15, '#1989', 'public/images/14.png', 'square', 0),
-(16, 'Papers', 'public/images/10.png', 'square', 0);
+(1, 'Normal', 'public/images/frame-normal.png', 'vertical', 0),
+(2, 'Cat', 'public/images/frame-cat.png', 'vertical', 0),
+(3, 'Star', 'public/images/frame-star.png', 'vertical', 0),
+(4, 'Crazy(1)', 'public/images/frame-crazy-1.png', 'vertical', 0),
+(5, 'Crazy(2)', 'public/images/frame-crazy-2.png', 'vertical', 0),
+(6, 'Friends', 'public/images/frame-friends.png', 'vertical', 0),
+(7, 'Mybeloved', 'public/images/frame-mybeloved.png', 'vertical', 0),
+(8, 'QUANQUE', 'public/images/frame-quanque.png', 'vertical', 0),
+(9, 'Longtimenosee', 'public/images/frame-longtimenosee.png', 'vertical', 0),
+(10, 'vintage (1)', 'public/images/frame-vintage-1.png', 'vertical', 0),
+(11, 'Y2K', 'public/images/frame-y2k.png', 'vertical', 0),
+(12, '#Vietnamese', 'public/images/frame-vietnamese-vertical.png', 'vertical', 0),
+(13, '#Vietnamese', 'public/images/frame-vietnamese-square.png', 'square', 0),
+(14, '#Crazy', 'public/images/frame-crazy-square.png', 'square', 0),
+(15, '#1989', 'public/images/frame-1989.png', 'square', 0),
+(16, 'Papers', 'public/images/frame-papers.png', 'square', 0);
 
 -- ============================================
 -- LƯU Ý: 

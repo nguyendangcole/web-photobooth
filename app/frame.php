@@ -738,33 +738,39 @@ let currentFrameLayout = null;
 
 // map layout for some old overlays (if still used)
 const FRAME_LAYOUT = {
-  "images/6.png":  "vertical",
-  "images/7.png":  "vertical",
-  "images/8.png":  "vertical",
-  "images/11.png": "vertical",
-  "images/10.png": "square",
-  "images/12.png": "square",
-  "images/13.png": "square",
-  "images/14.png": "square",
-  "images/20.png": "vertical",
-  "images/21.png": "vertical",
-  "images/22.png": "vertical",
-  "images/23.png": "vertical",
-  "images/24.png": "vertical",
-  "images/25.png": "vertical",
-  "images/26.png": "vertical",
-  "images/27.png": "vertical"
+  "images/frame-normal.png":  "vertical",
+  "images/frame-vintage-1.png":  "vertical",
+  "images/frame-y2k.png":  "vertical",
+  "images/frame-vietnamese-vertical.png": "vertical",
+  "images/frame-papers.png": "square",
+  "images/frame-vietnamese-square.png": "square",
+  "images/frame-crazy-square.png": "square",
+  "images/frame-1989.png": "square",
+  "images/frame-cat.png": "vertical",
+  "images/frame-star.png": "vertical",
+  "images/frame-crazy-1.png": "vertical",
+  "images/frame-crazy-2.png": "vertical",
+  "images/frame-friends.png": "vertical",
+  "images/frame-mybeloved.png": "vertical",
+  "images/frame-quanque.png": "vertical",
+  "images/frame-longtimenosee.png": "vertical"
 };
 
 // =================== DIALOG ===================
-function showDialog(message) {
-  const box = document.getElementById('dialogMessage');
-  if (box) box.textContent = message;
-  const modalEl = document.getElementById('infoDialog');
-  if (modalEl && window.bootstrap) {
-    bootstrap.Modal.getOrCreateInstance(modalEl).show();
+function showDialog(message, type = 'info') {
+  // Use toast if available, otherwise fallback to modal/alert
+  if (typeof window.toast !== 'undefined') {
+    const toastType = type === 'error' ? 'error' : type === 'warning' ? 'warning' : type === 'success' ? 'success' : 'info';
+    window.toast[toastType](message);
   } else {
-    alert(message);
+    const box = document.getElementById('dialogMessage');
+    if (box) box.textContent = message;
+    const modalEl = document.getElementById('infoDialog');
+    if (modalEl && window.bootstrap) {
+      bootstrap.Modal.getOrCreateInstance(modalEl).show();
+    } else {
+      alert(message);
+    }
   }
 }
 
@@ -919,7 +925,7 @@ function renderGrid(type) {
 function applyTemplate(templateSrc, layout) {
   const needLayout = layout || FRAME_LAYOUT[templateSrc] || null;
   if (needLayout && needLayout !== currentLayout) {
-    showDialog(`This frame is for ${needLayout} layout. Please select the correct layout above.`);
+    showDialog(`This frame is for ${needLayout} layout. Please select the correct layout above.`, 'warning');
     return;
   }
   currentFrameSrc = templateSrc;
@@ -961,11 +967,11 @@ uploadInput.addEventListener('change', async (e) => {
 
   const remain = MAX_PHOTOS - photos.length;
   if (remain <= 0) {
-    showDialog("You already have 4 photos. Delete some if you want to change photos.");
+    showDialog("You already have 4 photos. Delete some if you want to change photos.", 'warning');
     return;
   }
   if (files.length > remain) {
-    showDialog(`You only have space for ${remain} photo(s).`);
+    showDialog(`You only have space for ${remain} photo(s).`, 'info');
     return;
   }
 
@@ -979,10 +985,10 @@ uploadInput.addEventListener('change', async (e) => {
     persistPhotos(); // will only save if logged in
     renderGrid(currentLayout);
     const need = MAX_PHOTOS - photos.length;
-    if (need > 0) showDialog(`Still need ${need} more photo(s) to export frame.`);
+    if (need > 0) showDialog(`Still need ${need} more photo(s) to export frame.`, 'info');
   } catch (err) {
     console.error(err);
-    showDialog('Cannot process image: ' + err.message);
+    showDialog('Cannot process image: ' + err.message, 'error');
   }
 });
 
@@ -990,13 +996,23 @@ clearAllBtn.addEventListener('click', () => {
   photos = [];
   try { localStorage.removeItem(PHOTOS_KEY); } catch(_) {}
   renderGrid(currentLayout);
-  showDialog('All photos deleted.');
+  showDialog('All photos deleted.', 'success');
 });
 
 // =================== SAVE (Large Canvas + PNG lossless) ===================
 saveBtn.addEventListener("click", () => {
+  // Set button loading state
+  if (typeof window.loading !== 'undefined') {
+    window.loading.button(saveBtn, true);
+    window.loading.show('Composing frame...', true);
+    window.loading.progress(20);
+  }
+  
   composeCurrentFrame()
     .then(dataURL => {
+      if (typeof window.loading !== 'undefined') {
+        window.loading.progress(60);
+      }
       // Convert dataURL to Blob for better mobile support
       const byteString = atob(dataURL.split(',')[1]);
       const mimeString = dataURL.split(',')[0].split(':')[1].split(';')[0];
@@ -1034,10 +1050,28 @@ saveBtn.addEventListener("click", () => {
       setTimeout(() => {
         URL.revokeObjectURL(blobURL);
       }, 1000);
+      
+      // Hide loading and show success
+      if (typeof window.loading !== 'undefined') {
+        window.loading.progress(100);
+        window.loading.hide();
+        window.loading.button(saveBtn, false);
+      }
+      
+      if (typeof window.toast !== 'undefined') {
+        window.toast.success('Image downloaded!', 3000);
+      }
     })
     .catch(err => {
       console.error(err);
-      showDialog(err.message || 'Error exporting image');
+      
+      // Hide loading
+      if (typeof window.loading !== 'undefined') {
+        window.loading.hide();
+        window.loading.button(saveBtn, false);
+      }
+      
+      showDialog(err.message || 'Error exporting image', 'error');
     });
 });
 
@@ -1166,8 +1200,15 @@ document.getElementById('pbAddBtn')?.addEventListener('click', async (e) => {
     }
     
     if (!IS_LOGGED_IN) {
-      showDialog('Please login to add to Photobook.');
+      showDialog('Please login to add to Photobook.', 'warning');
       return;
+    }
+    
+    // Set button loading state
+    if (typeof window.loading !== 'undefined') {
+      window.loading.button(pbAddBtn, true);
+      window.loading.show('Adding to Photobook...', true);
+      window.loading.progress(10);
     }
     
     // Get layout: 'square' or 'vertical' (map 'vertical' from UI to 'vertical' for server)
@@ -1176,7 +1217,15 @@ document.getElementById('pbAddBtn')?.addEventListener('click', async (e) => {
     
     console.log('Adding to photobook - Layout:', layout, 'UI Layout:', uiLayout);
     
+    if (typeof window.loading !== 'undefined') {
+      window.loading.progress(30);
+    }
+    
     const dataURL = await composeCurrentFrame();
+    
+    if (typeof window.loading !== 'undefined') {
+      window.loading.progress(50);
+    }
     console.log('Composed frame dataURL length:', dataURL ? dataURL.length : 0);
     
     if (!dataURL || typeof dataURL !== 'string' || dataURL.length === 0) {
@@ -1202,6 +1251,10 @@ document.getElementById('pbAddBtn')?.addEventListener('click', async (e) => {
       credentials: 'same-origin', // Ensure cookies (session) are sent
       body: JSON.stringify({ image: dataURL, layout })
     });
+    
+    if (typeof window.loading !== 'undefined') {
+      window.loading.progress(80);
+    }
     
     console.log('Response status:', res.status, res.statusText);
     
@@ -1254,6 +1307,18 @@ document.getElementById('pbAddBtn')?.addEventListener('click', async (e) => {
     // Success! Check for storage warning
     console.log('✅ Photobook add success!', json);
     
+    // Hide loading and show success
+    if (typeof window.loading !== 'undefined') {
+      window.loading.progress(100);
+      window.loading.hide();
+      window.loading.button(pbAddBtn, false);
+    }
+    
+    // Show success toast
+    if (typeof window.toast !== 'undefined') {
+      window.toast.success('Photo added to Photobook!', 3000);
+    }
+    
     // Navigate to photobook page URL
     const currentUrl = window.location.href;
     const baseUrl = currentUrl.split('?')[0]; // Get base URL without query
@@ -1305,8 +1370,15 @@ document.getElementById('pbAddBtn')?.addEventListener('click', async (e) => {
     }
   } catch (err) {
     console.error('Photobook add error:', err);
+    
+    // Hide loading
+    if (typeof window.loading !== 'undefined') {
+      window.loading.hide();
+      window.loading.button(pbAddBtn, false);
+    }
+    
     const errorMsg = err.message || 'Cannot add to Photobook. Please try again.';
-    showDialog(errorMsg);
+    showDialog(errorMsg, 'error');
     
     // If it's a "need more photos" error, make it more user-friendly
     if (errorMsg.includes('need') && errorMsg.includes('photo')) {
@@ -1356,7 +1428,7 @@ if (photos.length && photos.length !== MAX_PHOTOS) {
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Mono:wght@300;400;500&display=swap');
 
 :root{
-  --page-bg-url: url('images/67.png'); /* ← change full page background image here if desired */
+  --page-bg-url: url('images/page-background.png'); /* ← change full page background image here if desired */
   --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   --accent-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
   --lime-color: #c1ff72;

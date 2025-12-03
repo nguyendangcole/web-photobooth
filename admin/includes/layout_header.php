@@ -520,7 +520,7 @@ $currentUser = $_SESSION['user'] ?? null;
         <li class="nav-item">
           <a href="../public/?p=studio" class="nav-link">
             <i class="bi bi-box-arrow-left"></i>
-            <span>Go to photobooth</span>
+            <span>Go to studio</span>
           </a>
         </li>
       </ul>

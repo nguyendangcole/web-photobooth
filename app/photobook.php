@@ -638,8 +638,17 @@ include __DIR__ . '/includes/page_header.php';
           });
           const j = await r.json();
           if (!j.success) { 
-            alert(j.error || 'Delete failed'); 
+            if (typeof window.toast !== 'undefined') {
+              window.toast.error(j.error || 'Delete failed');
+            } else {
+              alert(j.error || 'Delete failed');
+            }
             return; 
+          }
+          
+          // Show success toast
+          if (typeof window.toast !== 'undefined') {
+            window.toast.success('Photo deleted!', 2000);
           }
           await loadPhotos();
           renderGallery();

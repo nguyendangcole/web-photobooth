@@ -17,7 +17,7 @@ if (empty($user['avatar_url']) && !empty($user['email'])) {
 }
 
 // Default avatars - you can add avatars to public/images/avatars/ folder
-// File names: avatar-1.png, avatar-2.png, avatar-3.png, ...
+// File names: avatar-default-1.png, avatar-default-2.png, avatar-default-3.png, ...
 $avatarsDir = ROOT_PATH . '/public/images/avatars/';
 $defaultAvatars = [];
 

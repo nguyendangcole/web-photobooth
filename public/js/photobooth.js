@@ -33,7 +33,12 @@ let photos = [];
 
 // ---------- UI helpers ----------
 function showAlert(message) {
-  alert(message);
+  // Use toast if available, otherwise fallback to alert
+  if (typeof window.toast !== 'undefined') {
+    window.toast.error(message);
+  } else {
+    alert(message);
+  }
 }
 function toggleExportButton() {
   if (!exportBtn) return;
@@ -95,10 +100,19 @@ let cameraStream = null;
 
 async function requestCameraStream() {
   if (!navigator.mediaDevices?.getUserMedia) {
-    showAlert("Your browser does not support camera.");
+    if (typeof window.toast !== 'undefined') {
+      window.toast.error("Your browser does not support camera.");
+    } else {
+      alert("Your browser does not support camera.");
+    }
     return false;
   }
   try {
+    // Show loading
+    if (typeof window.loading !== 'undefined') {
+      window.loading.show('Accessing camera...');
+    }
+    
     // Close any previous stream
     if (cameraStream) {
       try {
@@ -118,9 +132,30 @@ async function requestCameraStream() {
         // Ignore play errors; browser may auto‑play anyway
       }
     }
+    
+    // Hide loading
+    if (typeof window.loading !== 'undefined') {
+      window.loading.hide();
+    }
+    
+    // Show success toast
+    if (typeof window.toast !== 'undefined') {
+      window.toast.success('Camera connected!', 2000);
+    }
+    
     return true;
   } catch (err) {
-    showAlert("Không thể truy cập webcam: " + err.message);
+    // Hide loading
+    if (typeof window.loading !== 'undefined') {
+      window.loading.hide();
+    }
+    
+    const errorMsg = "Cannot access camera: " + err.message;
+    if (typeof window.toast !== 'undefined') {
+      window.toast.error(errorMsg);
+    } else {
+      alert(errorMsg);
+    }
     return false;
   }
 }
@@ -196,7 +231,12 @@ function compressDataURL(dataUrl, maxEdge = 1400, quality = 0.82) {
 // ---------- Capture (canvas + filter/preset) ----------
 function captureOncePNG() {
   if (!video.videoWidth || !video.videoHeight) {
-    showAlert("Camera chưa sẵn sàng, vui lòng thử lại.");
+    const msg = "Camera not ready. Please try again.";
+    if (typeof window.toast !== 'undefined') {
+      window.toast.warning(msg);
+    } else {
+      alert(msg);
+    }
     return null;
   }
   const canvas = document.createElement("canvas");
@@ -488,9 +528,17 @@ async function startGuidedSession(totalShots = MAX_SHOTS) {
 
   } catch (e) {
     console.error(e);
-    showAlert("Có lỗi xảy ra khi chụp.");
+    const msg = "Error occurred while capturing photos.";
+    if (typeof window.toast !== 'undefined') {
+      window.toast.error(msg);
+    } else {
+      alert(msg);
+    }
   } finally {
     startBtn.disabled = false;
+    if (typeof window.loading !== 'undefined') {
+      window.loading.button(startBtn, false);
+    }
   }
 }
 
@@ -501,33 +549,94 @@ startBtn?.addEventListener("click", async () => {
     const ok = await requestCameraStream();
     if (!ok) return;
   }
+  
+  // Set button loading state
+  if (typeof window.loading !== 'undefined') {
+    window.loading.button(startBtn, true);
+  }
+  
   startGuidedSession(MAX_SHOTS);
 });
 
 exportBtn?.addEventListener("click", async () => {
   if (photos.length < MAX_SHOTS) {
-    showAlert(`Chưa đủ ảnh để xuất frame! (${photos.length}/${MAX_SHOTS})`);
+    const msg = `Not enough photos! (${photos.length}/${MAX_SHOTS})`;
+    if (typeof window.toast !== 'undefined') {
+      window.toast.warning(msg);
+    } else {
+      alert(msg);
+    }
     return;
+  }
+
+  // Set button loading state
+  if (typeof window.loading !== 'undefined') {
+    window.loading.button(exportBtn, true);
+    window.loading.show('Preparing photos...', false);
   }
 
   // Lần 1: thử lưu
   try {
     localStorage.setItem("selectedPhotos", JSON.stringify(photos.slice(0, MAX_SHOTS)));
+    
+    if (typeof window.toast !== 'undefined') {
+      window.toast.success('Photos saved! Redirecting...', 2000);
+    }
+    
+    setTimeout(() => {
+      window.location.href = FRAME_URL;
+    }, 500);
   } catch (e) {
     // Nếu quota → nén mạnh hơn và thử lại
+    if (typeof window.loading !== 'undefined') {
+      window.loading.show('Compressing photos...', true);
+      window.loading.progress(30);
+    }
+    
     try {
       const tighter = await Promise.all(
-        photos.slice(0, MAX_SHOTS).map(p => compressDataURL(p, 1200, 0.7))
+        photos.slice(0, MAX_SHOTS).map((p, idx) => {
+          if (typeof window.loading !== 'undefined') {
+            window.loading.progress(30 + (idx + 1) * 15);
+          }
+          return compressDataURL(p, 1200, 0.7);
+        })
       );
+      
+      if (typeof window.loading !== 'undefined') {
+        window.loading.progress(90);
+      }
+      
       localStorage.setItem("selectedPhotos", JSON.stringify(tighter));
+      
+      if (typeof window.loading !== 'undefined') {
+        window.loading.progress(100);
+        window.loading.hide();
+      }
+      
+      if (typeof window.toast !== 'undefined') {
+        window.toast.success('Photos compressed and saved! Redirecting...', 2000);
+      }
+      
+      setTimeout(() => {
+        window.location.href = FRAME_URL;
+      }, 500);
     } catch (e2) {
       console.error(e2);
-      showAlert("Bộ nhớ trình duyệt đầy. Hãy dùng nút “Add to Photobook” ở trang Frame (lưu lên server) rồi mở Photobook để xem.");
+      if (typeof window.loading !== 'undefined') {
+        window.loading.hide();
+        window.loading.button(exportBtn, false);
+      }
+      
+      const msg = "Browser storage full. Please use 'Add to Photobook' button on Frame page to save to server.";
+      if (typeof window.toast !== 'undefined') {
+        window.toast.error(msg, 6000);
+      } else {
+        alert(msg);
+      }
       return;
     }
   }
-
-  window.location.href = FRAME_URL;
 });
 
 // ---------- Init ----------

@@ -28,8 +28,8 @@ $imgCamera  = BASE_URL . 'images/camera.png';
 $imgFrame   = BASE_URL . 'images/frame.png';
 $imgBook    = BASE_URL . 'images/gallery.png'; // ← THÊM: ảnh dẫn tới trang Photobook
 
-$bgDesktop  = BASE_URL . 'images/55.png';
-$bgMobile   = BASE_URL . 'images/56.png';
+$bgDesktop  = BASE_URL . 'images/menu-bg-desktop.png';
+$bgMobile   = BASE_URL . 'images/menu-bg-mobile.png';
 ?>
 :root { --hover-accent: #c1ff72; }
 

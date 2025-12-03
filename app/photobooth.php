@@ -1110,6 +1110,10 @@ if (is_dir($audioDirFs)) {
 <!-- Audio tag placed at the end (not displayed) -->
 <audio id="pbMusic" preload="auto"></audio>
 
+<!-- Toast & Loading Scripts -->
+<script src="<?= asset('js/toast.js') ?>"></script>
+<script src="<?= asset('js/loading.js') ?>"></script>
+
 <!-- Main scripts -->
 <script src="<?= asset('js/photobooth.js') ?>?v=<?= time() ?>"></script>
 
