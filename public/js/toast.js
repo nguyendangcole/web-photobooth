@@ -95,8 +95,9 @@
     remove: removeToast
   };
 
-  // Auto-load CSS if not already loaded
-  if (!document.getElementById('toast-css')) {
+  // CSS should be loaded via page_footer.php
+  // This is kept for backward compatibility if CSS is not loaded
+  if (!document.getElementById('toast-css') && !document.querySelector('link[href*="toast.css"]')) {
     const link = document.createElement('link');
     link.id = 'toast-css';
     link.rel = 'stylesheet';

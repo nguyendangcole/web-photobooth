@@ -720,40 +720,40 @@ try {
     <div class="chaos-collage" id="collageContainer">
       <!-- Users can add images here - these are placeholders -->
       <div class="collage-img img-pos-1" data-id="1">
-        <img src="<?= BASE_URL ?>images/collage-1.jpg" alt="Creative shot" loading="lazy" onerror="this.parentElement.style.background='linear-gradient(135deg, #667eea 0%, #764ba2 100%)'">
+        <img src="<?= BASE_URL ?>images/collage-creative-1.jpg" alt="Creative shot" loading="lazy" onerror="this.parentElement.style.background='linear-gradient(135deg, #667eea 0%, #764ba2 100%)'">
       </div>
       <div class="collage-img img-pos-2" data-id="2">
-        <img src="<?= BASE_URL ?>images/collage-2.jpg" alt="Creative shot" loading="lazy" onerror="this.parentElement.style.background='linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'">
+        <img src="<?= BASE_URL ?>images/collage-creative-2.jpg" alt="Creative shot" loading="lazy" onerror="this.parentElement.style.background='linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'">
       </div>
       <div class="collage-img img-pos-3" data-id="3">
-        <img src="<?= BASE_URL ?>images/collage-3.jpg" alt="Creative shot" loading="lazy" onerror="this.parentElement.style.background='linear-gradient(135deg, #fa709a 0%, #fee140 100%)'">
+        <img src="<?= BASE_URL ?>images/collage-creative-3.jpg" alt="Creative shot" loading="lazy" onerror="this.parentElement.style.background='linear-gradient(135deg, #fa709a 0%, #fee140 100%)'">
       </div>
       <div class="collage-img img-pos-4" data-id="4">
-        <img src="<?= BASE_URL ?>images/collage-4.jpg" alt="Creative shot" loading="lazy" onerror="this.parentElement.style.background='linear-gradient(135deg, #30cfd0 0%, #330867 100%)'">
+        <img src="<?= BASE_URL ?>images/collage-creative-4.jpg" alt="Creative shot" loading="lazy" onerror="this.parentElement.style.background='linear-gradient(135deg, #30cfd0 0%, #330867 100%)'">
       </div>
       <div class="collage-img img-pos-5" data-id="5">
-        <img src="<?= BASE_URL ?>images/collage-5.jpg" alt="Creative shot" loading="lazy" onerror="this.parentElement.style.background='linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)'">
+        <img src="<?= BASE_URL ?>images/collage-creative-5.jpg" alt="Creative shot" loading="lazy" onerror="this.parentElement.style.background='linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)'">
       </div>
       <div class="collage-img img-pos-6" data-id="6">
-        <img src="<?= BASE_URL ?>images/collage-6.jpg" alt="Creative shot" loading="lazy" onerror="this.parentElement.style.background='linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)'">
+        <img src="<?= BASE_URL ?>images/collage-creative-6.jpg" alt="Creative shot" loading="lazy" onerror="this.parentElement.style.background='linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)'">
       </div>
       <div class="collage-img img-pos-7" data-id="7">
-        <img src="<?= BASE_URL ?>images/collage-7.jpg" alt="Creative shot" loading="lazy" onerror="this.parentElement.style.background='linear-gradient(135deg, #667eea 0%, #764ba2 100%)'">
+        <img src="<?= BASE_URL ?>images/collage-creative-7.jpg" alt="Creative shot" loading="lazy" onerror="this.parentElement.style.background='linear-gradient(135deg, #667eea 0%, #764ba2 100%)'">
       </div>
       <div class="collage-img img-pos-8" data-id="8">
-        <img src="<?= BASE_URL ?>images/collage-8.jpg" alt="Creative shot" loading="lazy" onerror="this.parentElement.style.background='linear-gradient(135deg, #ff6b6b 0%, #feca57 100%)'">
+        <img src="<?= BASE_URL ?>images/collage-creative-8.jpg" alt="Creative shot" loading="lazy" onerror="this.parentElement.style.background='linear-gradient(135deg, #ff6b6b 0%, #feca57 100%)'">
       </div>
       <div class="collage-img img-pos-9" data-id="9">
-        <img src="<?= BASE_URL ?>images/collage-9.jpg" alt="Creative shot" loading="lazy" onerror="this.parentElement.style.background='linear-gradient(135deg, #48dbfb 0%, #0abde3 100%)'">
+        <img src="<?= BASE_URL ?>images/collage-creative-9.jpg" alt="Creative shot" loading="lazy" onerror="this.parentElement.style.background='linear-gradient(135deg, #48dbfb 0%, #0abde3 100%)'">
       </div>
       <div class="collage-img img-pos-10" data-id="10">
-        <img src="<?= BASE_URL ?>images/collage-10.jpg" alt="Creative shot" loading="lazy" onerror="this.parentElement.style.background='linear-gradient(135deg, #ee5a6f 0%, #f29263 100%)'">
+        <img src="<?= BASE_URL ?>images/collage-creative-10.jpg" alt="Creative shot" loading="lazy" onerror="this.parentElement.style.background='linear-gradient(135deg, #ee5a6f 0%, #f29263 100%)'">
       </div>
       <div class="collage-img img-pos-11" data-id="11">
-        <img src="<?= BASE_URL ?>images/collage-11.jpg" alt="Creative shot" loading="lazy" onerror="this.parentElement.style.background='linear-gradient(135deg, #5f27cd 0%, #341f97 100%)'">
+        <img src="<?= BASE_URL ?>images/collage-creative-11.jpg" alt="Creative shot" loading="lazy" onerror="this.parentElement.style.background='linear-gradient(135deg, #5f27cd 0%, #341f97 100%)'">
       </div>
       <div class="collage-img img-pos-12" data-id="12">
-        <img src="<?= BASE_URL ?>images/collage-12.jpg" alt="Creative shot" loading="lazy" onerror="this.parentElement.style.background='linear-gradient(135deg, #00d2d3 0%, #54a0ff 100%)'">
+        <img src="<?= BASE_URL ?>images/collage-creative-12.jpg" alt="Creative shot" loading="lazy" onerror="this.parentElement.style.background='linear-gradient(135deg, #00d2d3 0%, #54a0ff 100%)'">
       </div>
     </div>
   </div>
@@ -770,37 +770,37 @@ try {
     <div class="gallery-grid">
       <div class="gal-item gi-1">
         <div class="gal-img" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-          <img src="<?= BASE_URL ?>images/gallery-1.jpg" alt="Alien theme" loading="lazy" onerror="this.style.display='none'">
+          <img src="<?= BASE_URL ?>images/gallery-alien-theme.jpg" alt="Alien theme" loading="lazy" onerror="this.style.display='none'">
         </div>
         <div class="gal-tag">#ALIEN</div>
       </div>
       <div class="gal-item gi-2">
         <div class="gal-img" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
-          <img src="<?= BASE_URL ?>images/gallery-2.jpg" alt="Y2K theme" loading="lazy" onerror="this.style.display='none'">
+          <img src="<?= BASE_URL ?>images/gallery-y2k-theme.jpg" alt="Y2K theme" loading="lazy" onerror="this.style.display='none'">
         </div>
         <div class="gal-tag">#Y2K</div>
       </div>
       <div class="gal-item gi-3">
         <div class="gal-img" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
-          <img src="<?= BASE_URL ?>images/gallery-3.jpg" alt="Neon theme" loading="lazy" onerror="this.style.display='none'">
+          <img src="<?= BASE_URL ?>images/gallery-neon-theme.jpg" alt="Neon theme" loading="lazy" onerror="this.style.display='none'">
         </div>
         <div class="gal-tag">#NEON</div>
       </div>
       <div class="gal-item gi-4">
         <div class="gal-img" style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);">
-          <img src="<?= BASE_URL ?>images/gallery-4.jpg" alt="Cyber theme" loading="lazy" onerror="this.style.display='none'">
+          <img src="<?= BASE_URL ?>images/gallery-cyber-theme.jpg" alt="Cyber theme" loading="lazy" onerror="this.style.display='none'">
         </div>
         <div class="gal-tag">#CYBER</div>
       </div>
       <div class="gal-item gi-5">
         <div class="gal-img" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">
-          <img src="<?= BASE_URL ?>images/gallery-5.jpg" alt="Retro theme" loading="lazy" onerror="this.style.display='none'">
+          <img src="<?= BASE_URL ?>images/gallery-retro-theme.jpg" alt="Retro theme" loading="lazy" onerror="this.style.display='none'">
         </div>
         <div class="gal-tag">#RETRO</div>
       </div>
       <div class="gal-item gi-6">
         <div class="gal-img" style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);">
-          <img src="<?= BASE_URL ?>images/gallery-6.jpg" alt="Fashion theme" loading="lazy" onerror="this.style.display='none'">
+          <img src="<?= BASE_URL ?>images/gallery-fashion-theme.jpg" alt="Fashion theme" loading="lazy" onerror="this.style.display='none'">
         </div>
         <div class="gal-tag">#FASHION</div>
       </div>

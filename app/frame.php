@@ -23,6 +23,10 @@ $seoData = default_seo_data('frame');
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Mono:wght@300;400;500&family=Bebas+Neue&display=swap" rel="stylesheet">
+  
+  <!-- HEIC to JPEG Converter Library -->
+  <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
+  
   <style>
   /* Adjust page content for compact header */
   body {
@@ -987,8 +991,14 @@ uploadInput.addEventListener('change', async (e) => {
     const need = MAX_PHOTOS - photos.length;
     if (need > 0) showDialog(`Still need ${need} more photo(s) to export frame.`, 'info');
   } catch (err) {
-    console.error(err);
-    showDialog('Cannot process image: ' + err.message, 'error');
+    console.error('Image upload error:', err);
+    const errorMsg = err.message || 'Cannot process image. Please make sure the file is a valid image.';
+    showDialog(errorMsg, 'error');
+    
+    // Show toast if available
+    if (typeof window.toast !== 'undefined') {
+      window.toast.error(errorMsg);
+    }
   }
 });
 
@@ -1089,10 +1099,81 @@ function loadImageFromURL(url) {
   });
 }
 
+// Convert HEIC/HEIF to JPEG using heic2any library
+async function convertHeicToJpeg(file) {
+  // Check if file is HEIC/HEIF
+  const isHeic = file.name.toLowerCase().endsWith('.heic') || 
+                 file.name.toLowerCase().endsWith('.heif') ||
+                 file.type === 'image/heic' || 
+                 file.type === 'image/heif';
+  
+  if (!isHeic) {
+    return file; // Return original file if not HEIC
+  }
+  
+  // Check if heic2any library is loaded
+  if (typeof heic2any === 'undefined') {
+    throw new Error('HEIC conversion library not loaded. Please wait a moment and try again.');
+  }
+  
+  try {
+    // Convert HEIC to JPEG blob
+    const convertedBlobs = await heic2any({
+      blob: file,
+      toType: 'image/jpeg',
+      quality: 0.92
+    });
+    
+    // heic2any returns array, get first blob
+    const jpegBlob = Array.isArray(convertedBlobs) ? convertedBlobs[0] : convertedBlobs;
+    
+    // Create a new File object from the converted blob
+    const jpegFile = new File([jpegBlob], file.name.replace(/\.(heic|heif)$/i, '.jpg'), {
+      type: 'image/jpeg',
+      lastModified: file.lastModified
+    });
+    
+    return jpegFile;
+  } catch (err) {
+    console.error('HEIC conversion error:', err);
+    throw new Error('Cannot convert HEIC image. Please convert to JPEG/PNG first or try again.');
+  }
+}
+
 async function fileToCompressedDataURL(file) {
-  const blobURL = URL.createObjectURL(file);
+  // Check file size (max 10MB)
+  const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+  if (file.size > MAX_FILE_SIZE) {
+    throw new Error('File is too large. Maximum size is 10MB.');
+  }
+  
+  // Convert HEIC to JPEG if needed
+  let processedFile = file;
+  try {
+    processedFile = await convertHeicToJpeg(file);
+  } catch (err) {
+    // If conversion fails, try to proceed with original file
+    // (might be a different format that browser can handle)
+    if (err.message.includes('HEIC conversion')) {
+      throw err; // Re-throw HEIC conversion errors
+    }
+    // Otherwise continue with original file
+  }
+  
+  // Validate file type after conversion
+  if (!processedFile.type.match(/^image\/(jpeg|jpg|png|gif|webp)$/i)) {
+    throw new Error('Invalid file type. Please upload an image file (JPEG, PNG, GIF, WebP, or HEIC).');
+  }
+  
+  const blobURL = URL.createObjectURL(processedFile);
   try {
     const img = await loadImageFromURL(blobURL);
+    
+    // Validate image dimensions
+    if (img.width === 0 || img.height === 0) {
+      throw new Error('Invalid image dimensions. The image may be corrupted.');
+    }
+    
     const long0 = Math.max(img.width, img.height);
     const scale = long0 > MAX_EDGE ? (MAX_EDGE / long0) : 1;
     const w = Math.round(img.width * scale);
@@ -1102,6 +1183,12 @@ async function fileToCompressedDataURL(file) {
     const ctx = c.getContext('2d');
     ctx.drawImage(img, 0, 0, w, h);
     return c.toDataURL(OUTPUT_MIME, OUTPUT_QUALITY);
+  } catch (err) {
+    // Provide more specific error message
+    if (err.message.includes('Cannot decode')) {
+      throw new Error('Cannot decode image. The file may be corrupted or not a valid image.');
+    }
+    throw err;
   } finally {
     URL.revokeObjectURL(blobURL);
   }
