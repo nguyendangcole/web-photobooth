@@ -1,26 +1,36 @@
-# Space Photobooth - Web Programming Project
+# 🚀 SPACE PHOTOBOOTH • CAPTURE THE COSMOS
 
-A modern, full-stack web application for creating, editing, and organizing digital photos with interactive photobooth functionality, frame composition tools, and photobook gallery system.
+A cosmic photobooth experience that transports your memories to another dimension. Create • Transform • Explore infinite possibilities with our space-themed photo application.
 
-## 🚀 Features
+**🌌 Live Demo:** [https://mediumspringgreen-wolf-877794.hostingersite.com](https://mediumspringgreen-wolf-877794.hostingersite.com)
+
+**🎥 Watch Demo:** [https://youtu.be/SWZQMlKU4vg](https://youtu.be/SWZQMlKU4vg)
+
+## 🌟 Features
 
 ### Core Functionality
-- **Interactive Photobooth**: Real-time webcam capture with countdown timer and effects
-- **Frame Composer**: Upload photos and apply 100+ pre-designed frames (vertical/square layouts)
-- **Photobook Gallery**: Organize and manage photo collections with date-based organization
-- **Premium Membership**: Exclusive frames and features for premium users
+- **📸 Instant Capture**: Webcam support with countdown timer and multi-shot capabilities
+- **🎨 Alien Frames**: 100+ unique frames with sci-fi & Y2K aesthetics (vertical & square layouts)
+- **📸 Photobook Gallery**: Organize and manage photo collections with date-based organization
+- **⭐ Premium Membership**: Exclusive frames and advanced features for premium users
+- **🎭 Real-time Filters**: Live effects and transformations
+- **💾 Save & Share**: Export high-quality photos and create digital photobooks
+- **🎨 Customization**: Adjust brightness, contrast, saturation + text & stickers
+- **📱 Responsive Design**: Works seamlessly on desktop, tablet, and mobile devices
 
 ### User Authentication
-- **Local Authentication**: Email/password registration and login
-- **OAuth Integration**: Login with Google and Facebook
-- **Password Recovery**: OTP-based password reset via email
-- **Email Verification**: Token-based email verification system
+- **🔐 Local Authentication**: Email/password registration and login
+- **🌐 Social Login**: OAuth integration with Google and Facebook
+- **🔑 Password Recovery**: OTP-based password reset via email
+- **✉️ Email Verification**: Token-based email verification system
+- **🛡️ Security**: CSRF protection, SQL injection prevention, XSS protection, secure sessions
 
 ### Technical Features
-- **Responsive Design**: Fully responsive across desktop, tablet, and mobile devices
-- **AJAX Search**: Real-time frame search with dropdown suggestions
-- **SEO Optimized**: Meta tags, semantic HTML, sitemap, and friendly URLs
-- **Security**: CSRF protection, SQL injection prevention, XSS protection, secure sessions
+- **🔍 AJAX Search**: Real-time frame search with dropdown suggestions
+- **🚀 SEO Optimized**: Meta tags, semantic HTML, sitemap, and friendly URLs
+- **⚡ Performance**: Gzip compression, browser caching, optimized assets
+- **🎯 Modern UI**: Clean, space-themed interface with smooth animations
+- **🔧 Developer Friendly**: Well-documented code with modular architecture
 
 ## 📋 Requirements
 
@@ -165,21 +175,22 @@ web-photobooth/
 ## 🎨 Technologies Used
 
 ### Frontend
-- **HTML5**: Semantic markup
-- **CSS3**: Responsive design, animations, modern styling
-- **JavaScript (ES6+)**: Interactive features, AJAX, DOM manipulation
-- **Bootstrap 5**: UI framework for responsive components
+- **🎨 HTML5**: Semantic markup with modern structure
+- **💎 CSS3**: Responsive design, animations, space-themed styling
+- **⚡ JavaScript (ES6+)**: Interactive features, AJAX, DOM manipulation
+- **🎯 Bootstrap 5**: UI framework for responsive components
 
 ### Backend
-- **PHP 7.4+**: Server-side logic
-- **MySQL**: Database management
-- **PDO**: Database abstraction layer
-- **PHPMailer**: Email functionality
+- **🐘 PHP 7.4+**: Server-side logic with modern practices
+- **🗄️ MySQL**: Database management with optimized queries
+- **🔌 PDO**: Database abstraction layer for security
+- **📧 PHPMailer**: Advanced email functionality
 
 ### Libraries & Tools
-- **Composer**: PHP dependency management
-- **Google OAuth API**: Social login
-- **Facebook Login API**: Social login
+- **📦 Composer**: PHP dependency management
+- **🔐 Google OAuth API**: Social login integration
+- **📘 Facebook Login API**: Social authentication
+- **🎨 Custom Frame Engine**: Dynamic frame application system
 
 ## 🔐 Security Features
 
@@ -191,12 +202,27 @@ web-photobooth/
 - Input validation and sanitization
 - File upload security (type validation, secure naming)
 
+## 🌌 Live Project
+
+**🚀 URL:** [https://mediumspringgreen-wolf-877794.hostingersite.com](https://mediumspringgreen-wolf-877794.hostingersite.com)
+
+**🎥 Demo Video:** [Watch on YouTube](https://youtu.be/SWZQMlKU4vg?si=KewBJJBh9HLB2BDm)
+
+**⭐ Key Features in Production:**
+- ✅ Fully functional OAuth authentication
+- ✅ 100+ space-themed frames
+- ✅ Real-time photo capture and processing
+- ✅ Premium membership system
+- ✅ Mobile-responsive design
+- ✅ SEO-optimized URLs
+- ✅ Email verification system
+
 ## 📱 Responsive Design
 
-The application is fully responsive with breakpoints:
-- **Desktop**: > 768px (full layout)
-- **Tablet**: 481px - 768px (adjusted grid)
-- **Mobile**: ≤ 480px (single column, hamburger menu)
+The application is fully responsive with cosmic breakpoints:
+- **🖥️ Desktop**: > 768px (full cosmic layout)
+- **📱 Tablet**: 481px - 768px (adjusted grid)
+- **📲 Mobile**: ≤ 480px (single column, hamburger menu)
 
 ## 🔍 SEO Features
 
@@ -245,29 +271,27 @@ The application is fully responsive with breakpoints:
 - Verify PHP `upload_max_filesize` and `post_max_size` settings
 - Check error logs for specific issues
 
-## 📝 License
-
-This project is developed for educational purposes as part of a Web Programming course.
-
-## 👤 Author
-
-Your Name - [Your Email](mailto:your.email@example.com)
-
-## 🙏 Acknowledgments
-
-- Bootstrap team for the responsive framework
-- PHPMailer contributors
-- Google and Facebook for OAuth APIs
-- All open-source libraries used in this project
-
 ## 📚 Documentation
 
 For detailed documentation on specific features:
-- Database schema: See `config/database_complete.sql`
-- Email setup: See `config/ENV_EMAIL_SETUP.md`
-- Deployment: See `DEPLOY_NGROK.md` (if applicable)
+- 🗄️ **Database schema**: See `config/database_complete.sql`
+- 📧 **Email setup**: See `config/ENV_EMAIL_SETUP.md`
+- 🚀 **Deployment**: See deployment guide above
+- 🎥 **Video Tutorial**: [YouTube Demo](https://youtu.be/SWZQMlKU4vg?si=KewBJJBh9HLB2BDm)
 
 ---
 
-**Note**: This is a course project. For production use, additional security measures and optimizations should be implemented.
+**🌌 Created with cosmic energy for the Web Programming course.**
+
+**👨‍🚀 Author:** Cole Nguyen - [Portfolio](https://mediumspringgreen-wolf-877794.hostingersite.com)
+
+**🙏 Acknowledgments**
+- Bootstrap team for the responsive framework
+- PHPMailer contributors for email magic
+- Google and Facebook for OAuth APIs
+- All open-source libraries used in this cosmic journey
+
+**⚡ Ready to create something alien?**
+
+> "In the vast expanse of digital space, every photo tells a story of cosmic adventure."
 
