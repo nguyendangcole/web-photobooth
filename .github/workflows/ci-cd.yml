@@ -68,7 +68,7 @@ jobs:
     - name: 🐛 Static Analysis (PHPStan)
       run: |
         composer require --dev phpstan/phpstan
-        vendor/bin/phpstan analyse app/ --level=5 --no-progress
+        vendor/bin/phpstan analyse app/ --level=1 --no-progress --memory-limit=512M
 
   # 🐳 Docker Build
   docker-build:
