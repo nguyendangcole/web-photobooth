@@ -16,5 +16,10 @@
         "test": "vendor/bin/phpunit",
         "lint": "vendor/bin/php-cs-fixer fix --dry-run --diff",
         "analyse": "vendor/bin/phpstan analyse app/"
+    },
+    "config": {
+        "platform": {
+            "php": "8.3"
+        }
     }
 }
