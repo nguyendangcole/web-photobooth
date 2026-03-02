@@ -1,0 +1,95 @@
+version: '3.8'
+
+services:
+  # 🚀 Space Photobooth Application
+  app:
+    build:
+      context: .
+      target: development
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www/html
+      - ./uploads:/var/www/html/uploads
+      - ./public/photobook:/var/www/html/public/photobook
+      - ./logs:/var/www/html/logs
+    environment:
+      - PHP_MEMORY_LIMIT=512M
+      - UPLOAD_MAX_FILESIZE=20M
+      - POST_MAX_SIZE=20M
+    depends_on:
+      - db
+      - redis
+    networks:
+      - photobooth-network
+    restart: unless-stopped
+
+  # 🗄️ MySQL Database
+  db:
+    image: mysql:8.0
+    container_name: photobooth-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: photobooth_db
+      MYSQL_USER: photobooth
+      MYSQL_PASSWORD: photobooth123
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./config/database_complete.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - photobooth-network
+    restart: unless-stopped
+    command: --default-authentication-plugin=mysql_native_password
+
+  # 🧠 Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: photobooth-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - photobooth-network
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+
+  # 📧 MailHog (Development Email Testing)
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: photobooth-mail
+    ports:
+      - "1025:1025"  # SMTP
+      - "8025:8025"  # Web UI
+    networks:
+      - photobooth-network
+    restart: unless-stopped
+
+  # 📊 PhpMyAdmin
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: photobooth-phpmyadmin
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: root
+    ports:
+      - "8081:80"
+    depends_on:
+      - db
+    networks:
+      - photobooth-network
+    restart: unless-stopped
+
+volumes:
+  db_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  photobooth-network:
+    driver: bridge

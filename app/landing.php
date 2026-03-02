@@ -48,6 +48,13 @@ try {
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Mono:wght@300;400;500&family=Bebas+Neue&display=swap" rel="stylesheet">
   <!-- GSAP Library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script>
+    // Register ScrollTrigger when GSAP loads
+    if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+      gsap.registerPlugin(ScrollTrigger);
+    }
+  </script>
   <style>
     /* Animated Background Gradients */
     @keyframes gradientShift {
@@ -83,6 +90,228 @@ try {
       50% { border-color: #4facfe; }
       75% { border-color: #feca57; }
       100% { border-color: #ff6b9d; }
+    }
+    
+    /* Scroll Progress Bar */
+    .scroll-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 0%;
+      height: 4px;
+      background: linear-gradient(90deg, #c1ff72 0%, #8c52ff 50%, #ff6b9d 100%);
+      z-index: 10001;
+      transition: width 0.1s ease;
+      box-shadow: 0 0 10px rgba(193, 255, 114, 0.5);
+    }
+    
+    /* Particle Background */
+    .particles-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+      opacity: 0.6;
+      animation: particleFloat 20s infinite ease-in-out;
+    }
+    
+    @keyframes particleFloat {
+      0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.3; }
+      25% { transform: translate(100px, -100px) scale(1.2); opacity: 0.6; }
+      50% { transform: translate(-50px, -200px) scale(0.8); opacity: 0.4; }
+      75% { transform: translate(-100px, -50px) scale(1.1); opacity: 0.5; }
+    }
+    
+    /* Glassmorphism Effect */
+    .glass-effect {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    /* Cursor Trail */
+    .cursor-trail {
+      position: fixed;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      mix-blend-mode: difference;
+      transition: transform 0.1s ease;
+    }
+    
+    /* Magnetic Button Effect */
+    .magnetic-btn {
+      transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    
+    /* 3D Card Effect */
+    .card-3d {
+      transform-style: preserve-3d;
+      transition: transform 0.3s ease;
+    }
+    
+    .card-3d:hover {
+      transform: perspective(1000px) rotateY(5deg) rotateX(-5deg) translateZ(20px);
+    }
+    
+    /* Gradient Text Animation */
+    .gradient-text-animated {
+      background: linear-gradient(90deg, #c1ff72, #8c52ff, #ff6b9d, #4facfe, #c1ff72);
+      background-size: 300% 100%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: gradientShift 5s ease infinite;
+    }
+    
+    /* Loading Screen */
+    .loading-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+    
+    .loading-screen.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+    
+    .loading-spinner {
+      width: 60px;
+      height: 60px;
+      border: 4px solid rgba(193, 255, 114, 0.2);
+      border-top-color: #c1ff72;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .loading-text {
+      margin-top: 20px;
+      color: #c1ff72;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    
+    /* Smooth Scroll Indicator */
+    .scroll-indicator {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      opacity: 0.7;
+      transition: opacity 0.3s ease;
+    }
+    
+    .scroll-indicator.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    
+    .scroll-indicator-text {
+      color: #c1ff72;
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+    
+    .scroll-indicator-arrow {
+      width: 20px;
+      height: 30px;
+      border: 2px solid #c1ff72;
+      border-radius: 15px;
+      position: relative;
+    }
+    
+    .scroll-indicator-arrow::before {
+      content: '';
+      position: absolute;
+      top: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 4px;
+      height: 4px;
+      background: #c1ff72;
+      border-radius: 50%;
+      animation: scrollBounce 1.5s infinite;
+    }
+    
+    @keyframes scrollBounce {
+      0%, 100% { top: 8px; opacity: 1; }
+      50% { top: 18px; opacity: 0.3; }
+    }
+    
+    /* Enhanced Hover Effects */
+    .hover-lift {
+      transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.3s ease;
+    }
+    
+    .hover-lift:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    }
+    
+    /* Glow Effect */
+    .glow-effect {
+      position: relative;
+    }
+    
+    .glow-effect::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: linear-gradient(45deg, #c1ff72, #8c52ff, #ff6b9d, #4facfe);
+      border-radius: inherit;
+      z-index: -1;
+      opacity: 0;
+      filter: blur(10px);
+      transition: opacity 0.3s ease;
+    }
+    
+    .glow-effect:hover::before {
+      opacity: 0.7;
     }
     
   </style>
@@ -241,6 +470,27 @@ try {
 </head>
 <body>
 
+<!-- Loading Screen -->
+<div class="loading-screen" id="loadingScreen">
+  <div class="loading-spinner"></div>
+  <div class="loading-text">LOADING COSMOS...</div>
+</div>
+
+<!-- Scroll Progress Bar -->
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<!-- Particle Background -->
+<div class="particles-container" id="particlesContainer"></div>
+
+<!-- Scroll Indicator -->
+<div class="scroll-indicator" id="scrollIndicator">
+  <div class="scroll-indicator-text">SCROLL</div>
+  <div class="scroll-indicator-arrow"></div>
+</div>
+
+<!-- Cursor Trail -->
+<div class="cursor-trail" id="cursorTrail"></div>
+
 <!-- Navigation -->
 <nav class="main-nav">
   <div class="nav-wrapper">
@@ -288,11 +538,11 @@ try {
     </p>
     
     <div class="hero-actions">
-      <a href="?p=<?= $isLoggedIn ? 'studio' : 'register' ?>" class="btn btn-primary">
+      <a href="?p=<?= $isLoggedIn ? 'studio' : 'register' ?>" class="btn btn-primary magnetic-btn glow-effect">
         <span>START CREATING</span>
         <span class="btn-arrow">→</span>
       </a>
-      <a href="#about" class="btn btn-outline">LEARN MORE</a>
+      <a href="#about" class="btn btn-outline magnetic-btn">LEARN MORE</a>
     </div>
     
     <div class="hero-stats">
@@ -829,7 +1079,7 @@ try {
         <!-- Example: https://www.youtube.com/watch?v=VIDEO_ID -->
         <iframe 
           id="youtube-video"
-          src="https://www.youtube.com/embed/VIDEO_ID?rel=0" 
+          src="https://www.youtube.com/embed/SWZQMlKU4vg?rel=0" 
           frameborder="0" 
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
           allowfullscreen
@@ -2319,16 +2569,73 @@ html {
   perspective: 1000px;
 }
 
-/* Accessibility: Respect reduced motion */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
+    /* Accessibility: Respect reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+    
+    /* Responsive Enhancements */
+    @media (max-width: 768px) {
+      .particles-container {
+        display: none; /* Hide particles on mobile for performance */
+      }
+      
+      .cursor-trail {
+        display: none; /* Hide cursor trail on mobile */
+      }
+      
+      .card-3d:hover {
+        transform: none; /* Disable 3D effect on mobile */
+      }
+      
+      .loading-text {
+        font-size: 14px;
+      }
+      
+      .scroll-progress {
+        height: 3px;
+      }
+    }
+    
+    /* Enhanced Button Styles */
+    .btn-primary.glow-effect::before {
+      border-radius: 8px;
+    }
+    
+    /* Smooth Transitions for All Interactive Elements */
+    a, button, .feature-card, .frame-product, .review-card, .tip-card {
+      transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    
+    /* Ripple Effect on Click */
+    .ripple-effect {
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .ripple-effect::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.5);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+    
+    .ripple-effect:active::after {
+      width: 300px;
+      height: 300px;
+    }
 </style>
 
 <!-- Drag and Drop for Collage Images using HTML5 Drag API -->
@@ -2618,6 +2925,360 @@ html {
   
   // Google Maps embed URL from store location
   mapIframe.src = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.497030260064!2d106.65454717456957!3d10.77319281793749!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752ec3c161a3fb%3A0xef77cd47a1cc691e!2zVHLGsOG7nW5nIMSQ4bqhaSBo4buNYyBCw6FjaCBraG9hIC0gxJDhuqFpIGjhu41jIFF14buRYyBnaWEgVFAuSENN!5e0!3m2!1svi!2s!4v1763749407484!5m2!1svi!2s';
+})();
+
+// ===== ENHANCED VISUAL FEATURES =====
+
+// Loading Screen
+(function() {
+  const loadingScreen = document.getElementById('loadingScreen');
+  if (!loadingScreen) return;
+  
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      loadingScreen.classList.add('hidden');
+      setTimeout(() => {
+        loadingScreen.style.display = 'none';
+      }, 500);
+    }, 800);
+  });
+})();
+
+// Scroll Progress Bar
+(function() {
+  const progressBar = document.getElementById('scrollProgress');
+  if (!progressBar) return;
+  
+  window.addEventListener('scroll', () => {
+    const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    const scrolled = (window.scrollY / windowHeight) * 100;
+    progressBar.style.width = scrolled + '%';
+  });
+})();
+
+// Scroll Indicator
+(function() {
+  const scrollIndicator = document.getElementById('scrollIndicator');
+  if (!scrollIndicator) return;
+  
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 100) {
+      scrollIndicator.classList.add('hidden');
+    } else {
+      scrollIndicator.classList.remove('hidden');
+    }
+  });
+})();
+
+// Particle Background
+(function() {
+  const container = document.getElementById('particlesContainer');
+  if (!container) return;
+  
+  const colors = ['#c1ff72', '#8c52ff', '#ff6b9d', '#4facfe', '#feca57'];
+  const particleCount = 50;
+  
+  for (let i = 0; i < particleCount; i++) {
+    const particle = document.createElement('div');
+    particle.className = 'particle';
+    
+    const size = Math.random() * 4 + 2;
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    const x = Math.random() * 100;
+    const y = Math.random() * 100;
+    const delay = Math.random() * 20;
+    
+    particle.style.width = size + 'px';
+    particle.style.height = size + 'px';
+    particle.style.background = color;
+    particle.style.left = x + '%';
+    particle.style.top = y + '%';
+    particle.style.animationDelay = delay + 's';
+    particle.style.boxShadow = `0 0 ${size * 2}px ${color}`;
+    
+    container.appendChild(particle);
+  }
+})();
+
+// Cursor Trail Effect
+(function() {
+  const cursorTrail = document.getElementById('cursorTrail');
+  if (!cursorTrail) return;
+  
+  let mouseX = 0, mouseY = 0;
+  let trailX = 0, trailY = 0;
+  
+  document.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+  });
+  
+  function animateTrail() {
+    trailX += (mouseX - trailX) * 0.1;
+    trailY += (mouseY - trailY) * 0.1;
+    
+    cursorTrail.style.left = trailX - 10 + 'px';
+    cursorTrail.style.top = trailY - 10 + 'px';
+    
+    requestAnimationFrame(animateTrail);
+  }
+  
+  animateTrail();
+  
+  // Hide on mobile
+  if (window.innerWidth < 768) {
+    cursorTrail.style.display = 'none';
+  }
+})();
+
+// Magnetic Button Effect
+(function() {
+  const magneticButtons = document.querySelectorAll('.magnetic-btn');
+  
+  magneticButtons.forEach(btn => {
+    btn.addEventListener('mousemove', function(e) {
+      const rect = this.getBoundingClientRect();
+      const x = e.clientX - rect.left - rect.width / 2;
+      const y = e.clientY - rect.top - rect.height / 2;
+      
+      const moveX = x * 0.15;
+      const moveY = y * 0.15;
+      
+      this.style.transform = `translate(${moveX}px, ${moveY}px)`;
+    });
+    
+    btn.addEventListener('mouseleave', function() {
+      this.style.transform = 'translate(0, 0)';
+    });
+  });
+})();
+
+// 3D Card Effect
+(function() {
+  const cards = document.querySelectorAll('.feature-card, .frame-product, .review-card, .tip-card');
+  
+  cards.forEach(card => {
+    card.classList.add('card-3d');
+    
+    card.addEventListener('mousemove', function(e) {
+      const rect = this.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      
+      const rotateX = (y - centerY) / 10;
+      const rotateY = (centerX - x) / 10;
+      
+      this.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(20px)`;
+    });
+    
+    card.addEventListener('mouseleave', function() {
+      this.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateZ(0)';
+    });
+  });
+})();
+
+// Enhanced Scroll Animations with GSAP ScrollTrigger
+(function() {
+  // Wait for GSAP and ScrollTrigger to load
+  function initScrollAnimations() {
+    if (typeof gsap === 'undefined') {
+      setTimeout(initScrollAnimations, 100);
+      return;
+    }
+    
+    // Try to register ScrollTrigger if available
+    if (typeof ScrollTrigger !== 'undefined') {
+      gsap.registerPlugin(ScrollTrigger);
+      
+      // Parallax effect for hero visual cards
+      gsap.utils.toArray('.visual-card').forEach((card, i) => {
+        gsap.to(card, {
+          scrollTrigger: {
+            trigger: '.hero',
+            start: 'top top',
+            end: 'bottom top',
+            scrub: true
+          },
+          y: (i + 1) * 50,
+          rotation: (i + 1) * 5,
+          ease: 'none'
+        });
+      });
+    }
+  }
+  
+  // Initialize when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initScrollAnimations);
+  } else {
+    initScrollAnimations();
+  }
+})();
+
+// Gradient Text Animation
+(function() {
+  const gradientTexts = document.querySelectorAll('.gradient');
+  gradientTexts.forEach(text => {
+    text.classList.add('gradient-text-animated');
+  });
+})();
+
+// Smooth Scroll Enhancement
+(function() {
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        const offsetTop = target.offsetTop - 80;
+        window.scrollTo({
+          top: offsetTop,
+          behavior: 'smooth'
+        });
+      }
+    });
+  });
+})();
+
+// Add hover lift effect to cards
+(function() {
+  const cards = document.querySelectorAll('.feature-card, .frame-product, .review-card, .tip-card, .gal-item');
+  cards.forEach(card => {
+    card.classList.add('hover-lift');
+  });
+})();
+
+// Ripple Effect on Buttons
+(function() {
+  const buttons = document.querySelectorAll('.btn, .frame-btn, .cookie-btn');
+  
+  buttons.forEach(button => {
+    button.classList.add('ripple-effect');
+    
+    button.addEventListener('click', function(e) {
+      const ripple = document.createElement('span');
+      const rect = this.getBoundingClientRect();
+      const size = Math.max(rect.width, rect.height);
+      const x = e.clientX - rect.left - size / 2;
+      const y = e.clientY - rect.top - size / 2;
+      
+      ripple.style.width = ripple.style.height = size + 'px';
+      ripple.style.left = x + 'px';
+      ripple.style.top = y + 'px';
+      ripple.style.position = 'absolute';
+      ripple.style.borderRadius = '50%';
+      ripple.style.background = 'rgba(255, 255, 255, 0.6)';
+      ripple.style.transform = 'scale(0)';
+      ripple.style.animation = 'ripple 0.6s ease-out';
+      ripple.style.pointerEvents = 'none';
+      
+      this.style.position = 'relative';
+      this.style.overflow = 'hidden';
+      this.appendChild(ripple);
+      
+      setTimeout(() => ripple.remove(), 600);
+    });
+  });
+  
+  // Add ripple animation
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes ripple {
+      to {
+        transform: scale(4);
+        opacity: 0;
+      }
+    }
+  `;
+  document.head.appendChild(style);
+})();
+
+// Enhanced Image Loading with Fade In
+(function() {
+  const images = document.querySelectorAll('img[loading="lazy"]');
+  
+  images.forEach(img => {
+    img.style.opacity = '0';
+    img.style.transition = 'opacity 0.5s ease';
+    
+    if (img.complete) {
+      img.style.opacity = '1';
+    } else {
+      img.addEventListener('load', function() {
+        this.style.opacity = '1';
+      });
+    }
+  });
+})();
+
+// Dynamic Background Color Based on Scroll
+(function() {
+  const hero = document.querySelector('.hero');
+  if (!hero) return;
+  
+  window.addEventListener('scroll', () => {
+    const scrolled = window.scrollY / window.innerHeight;
+    const hue = 200 + (scrolled * 60); // Shift hue from blue to purple
+    
+    if (scrolled < 1) {
+      hero.style.filter = `hue-rotate(${scrolled * 30}deg)`;
+    }
+  });
+})();
+
+// Add Sparkle Effect on Hero Title
+(function() {
+  const heroTitle = document.querySelector('.hero-title');
+  if (!heroTitle) return;
+  
+  function createSparkle() {
+    const sparkle = document.createElement('span');
+    sparkle.style.position = 'absolute';
+    sparkle.style.width = '4px';
+    sparkle.style.height = '4px';
+    sparkle.style.background = '#c1ff72';
+    sparkle.style.borderRadius = '50%';
+    sparkle.style.pointerEvents = 'none';
+    sparkle.style.boxShadow = '0 0 6px #c1ff72';
+    
+    const x = Math.random() * 100;
+    const y = Math.random() * 100;
+    
+    sparkle.style.left = x + '%';
+    sparkle.style.top = y + '%';
+    sparkle.style.animation = 'sparkleFade 2s ease-out forwards';
+    
+    heroTitle.style.position = 'relative';
+    heroTitle.appendChild(sparkle);
+    
+    setTimeout(() => sparkle.remove(), 2000);
+  }
+  
+  // Create sparkles periodically
+  setInterval(createSparkle, 3000);
+  
+  // Add sparkle animation
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes sparkleFade {
+      0% {
+        opacity: 0;
+        transform: scale(0);
+      }
+      50% {
+        opacity: 1;
+        transform: scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: scale(0) translateY(-20px);
+      }
+    }
+  `;
+  document.head.appendChild(style);
 })();
 </script>
 
