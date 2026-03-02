@@ -2,7 +2,7 @@
 
 A cosmic photobooth experience that transports your memories to another dimension. Create • Transform • Explore infinite possibilities with our space-themed photo application.
 
-**🌌 Live Demo:** [https://mediumspringgreen-wolf-877794.hostingersite.com](https://mediumspringgreen-wolf-877794.hostingersite.com)
+**🌌 Live Demo:** [https://mediumspringgreen-wolf-877794.hostingersite.com](https://mediumspringgreen-wolf-877794.hostingersite.com/?p=landing)
 
 **🎥 Watch Demo:** [https://youtu.be/SWZQMlKU4vg](https://youtu.be/SWZQMlKU4vg)
 
