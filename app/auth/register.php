@@ -2,7 +2,8 @@
 require_once __DIR__ . '/../config.php';
 
 $err = '';
-$name = $email = '';
+$name = '';
+$email = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   if (!csrf_verify($_POST['_csrf'] ?? null)) {
@@ -90,13 +91,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="mb-3">
               <label class="form-label" style="font-size:0.9rem">Username</label>
               <input name="name" type="text" class="form-control" style="font-size:0.9rem;padding:0.5rem"
-                     value="<?= htmlspecialchars($name ?? '', ENT_QUOTES) ?>" required minlength="2">
+                     value="<?= htmlspecialchars($name, ENT_QUOTES) ?>" required minlength="2">
             </div>
 
             <div class="mb-3">
               <label class="form-label" style="font-size:0.9rem">Email</label>
               <input name="email" type="email" class="form-control" style="font-size:0.9rem;padding:0.5rem"
-                     value="<?= htmlspecialchars($email ?? '', ENT_QUOTES) ?>" required>
+                     value="<?= htmlspecialchars($email, ENT_QUOTES) ?>" required>
             </div>
 
             <div class="row mb-3 g-2">
