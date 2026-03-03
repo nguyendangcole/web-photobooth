@@ -9,13 +9,22 @@ RUN apt-get update && apt-get install -y \
     libfreetype6-dev \
     libjpeg62-turbo-dev \
     libpng-dev \
+    libwebp-dev \
+    libxpm-dev \
     libzip-dev \
+    libonig-dev \
+    pkg-config \
+    build-essential \
     zip \
     unzip \
     git \
     curl \
     mariadb-client \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-configure gd \
+        --with-freetype \
+        --with-jpeg \
+        --with-webp \
+        --with-xpm \
     && docker-php-ext-install -j$(nproc) \
         gd \
         pdo \
