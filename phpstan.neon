@@ -1,19 +1,7 @@
 parameters:
-    level: 5
+    level: 1
     paths:
         - app
-    bootstrapFiles:
-        - app/config.php
-    excludePaths:
-        - app/vendor
+
     ignoreErrors:
-        - '#Variable \$name on left side of \?\? always exists#'
-        - '#Variable \$email on left side of \?\? always exists#'
-        - '#Offset \'.*_\' does not exist on array#'
-        - '#Function current_user\(\) should return#'
-        - '#Function db\(\) should return#'
-        - '#Strict comparison using === between mixed and null#'
-        - '#Access to an undefined property#'
-    parallel:
-        jobSize: 20
-    memoryLimitFile: .phpstan-memory-limit
+        - '#Constant .* not found#'

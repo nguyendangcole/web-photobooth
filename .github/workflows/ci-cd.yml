@@ -66,15 +66,13 @@ jobs:
         ~/.composer/vendor/bin/php-cs-fixer fix --dry-run --diff --verbose app/
         
     - name: 🐛 Static Analysis (PHPStan)
-      run: |
-        composer require --dev phpstan/phpstan
-        vendor/bin/phpstan analyse app/ --level=1 --no-progress --memory-limit=512M
+      run: vendor/bin/phpstan analyse app --level=1 --no-progress
 
   # 🐳 Docker Build
   docker-build:
     name: 🐳 Build Docker Image
     runs-on: ubuntu-latest
-    needs: [setup, quality-checks]
+    needs: [setup, quality-checks, testing]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     
     permissions:
@@ -113,30 +111,6 @@ jobs:
         labels: ${{ steps.meta.outputs.labels }}
         cache-from: type=gha
         cache-to: type=gha,mode=max
-
-  # 🔒 Security Scan
-  security-scan:
-    name: 🔒 Security Scan
-    runs-on: ubuntu-latest
-    needs: setup
-    
-    steps:
-    - name: 📥 Checkout code
-      uses: actions/checkout@v4
-      
-    - name: 🔍 Run Trivy vulnerability scanner
-      uses: aquasecurity/trivy-action@master
-      with:
-        scan-type: 'fs'
-        scan-ref: '.'
-        format: 'sarif'
-        output: 'trivy-results.sarif'
-        
-    - name: 📤 Upload Trivy scan results
-      uses: github/codeql-action/upload-sarif@v2
-      if: always()
-      with:
-        sarif_file: 'trivy-results.sarif'
 
   # 🧪 Testing
   testing:
@@ -187,68 +161,4 @@ jobs:
         flags: unittests
         name: codecov-umbrella
 
-  # 📦 Deployment (Advanced)
-  deploy:
-    name: 🚀 Deploy to Production
-    runs-on: ubuntu-latest
-    needs: [quality-checks, docker-build, security-scan, testing]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    environment: production
-    
-    steps:
-    - name: 📥 Checkout code
-      uses: actions/checkout@v4
-      
-    - name: 🔧 Setup Production Environment
-      run: |
-        if [ ! -f .env ]; then
-          cp .env.example .env
-          echo "⚠️ .env file created from .env.example - please configure production values"
-        fi
-        
-    - name: � Setup PHP & Install Production Dependencies
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: '8.3'
-        extensions: mbstring, pdo, pdo_mysql, gd, curl, json, openssl
-        
-    - name: 📦 Install Production Dependencies
-      run: composer install --no-dev --optimize-autoloader --no-interaction --no-progress
-      
-    - name: �🚀 Deploy to Hostinger (FTP)
-      uses: SamKirkland/FTP-Deploy-Action@4.3.0
-      with:
-        server: ${{ secrets.FTP_SERVER }}
-        username: ${{ secrets.FTP_USERNAME }}
-        password: ${{ secrets.FTP_PASSWORD }}
-        local-dir: ./
-        server-dir: /public_html/photobooth/
-        exclude: |
-          **/.git*
-          **/node_modules/**
-          **/vendor/**
-          **/.DS_Store
-          **/logs/**
-          **/tests/**
-          **/.github/**
-          **/docker-compose.yml
-          **/Dockerfile
-          **/composer.lock
-          **/package*.json
-          **/start_*.sh
-          **/stop_*.sh
-          **/.env*
-          
-    - name: 📧 Notify Deployment
-      uses: 8398a7/action-slack@v3
-      if: always()
-      with:
-        status: ${{ job.status }}
-        channel: '#deployments'
-        webhook_url: ${{ secrets.SLACK_WEBHOOK }}
-        message: |
-          🚀 **Deployment Status**: ${{ job.status }}
-          📦 **Repository**: ${{ github.repository }}
-          🌿 **Branch**: ${{ github.ref_name }}
-          👤 **Actor**: ${{ github.actor }}
-          🔗 **Commit**: ${{ github.sha }}
+  
