@@ -199,13 +199,29 @@ jobs:
     - name: 📥 Checkout code
       uses: actions/checkout@v4
       
-    - name: 🚀 Deploy to Hostinger (FTP)
+    - name: 🔧 Setup Production Environment
+      run: |
+        if [ ! -f .env ]; then
+          cp .env.example .env
+          echo "⚠️ .env file created from .env.example - please configure production values"
+        fi
+        
+    - name: � Setup PHP & Install Production Dependencies
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.3'
+        extensions: mbstring, pdo, pdo_mysql, gd, curl, json, openssl
+        
+    - name: 📦 Install Production Dependencies
+      run: composer install --no-dev --optimize-autoloader --no-interaction --no-progress
+      
+    - name: �🚀 Deploy to Hostinger (FTP)
       uses: SamKirkland/FTP-Deploy-Action@4.3.0
       with:
         server: ${{ secrets.FTP_SERVER }}
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
-        local-dir: ./public/
+        local-dir: ./
         server-dir: /public_html/photobooth/
         exclude: |
           **/.git*
@@ -213,6 +229,15 @@ jobs:
           **/vendor/**
           **/.DS_Store
           **/logs/**
+          **/tests/**
+          **/.github/**
+          **/docker-compose.yml
+          **/Dockerfile
+          **/composer.lock
+          **/package*.json
+          **/start_*.sh
+          **/stop_*.sh
+          **/.env*
           
     - name: 📧 Notify Deployment
       uses: 8398a7/action-slack@v3
